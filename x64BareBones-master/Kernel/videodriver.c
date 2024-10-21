@@ -122,3 +122,13 @@ void printMap(uint32_t HexColour, uint8_t map[], uint64_t x, uint64_t y){
         printByte(hexColour,map[i],x,y+i);
     }
 }
+
+void printCharacter(uint32_t hexCollor, char c, uint64_t x, uint64_t y){
+	printBitMap(hexCollor, getFontChar(c), x, y);
+}
+
+void printString(uint32_t hexCollor, char* s){
+	while(*s != 0){
+		printCharacter(hexCollor, *s, cx, cy);
+	}
+}
