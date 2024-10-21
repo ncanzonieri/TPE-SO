@@ -38,6 +38,8 @@ struct vbe_mode_info_structure {
 	uint16_t off_screen_mem_size;	// size of memory in the framebuffer but not being displayed on the screen
 	uint8_t reserved1[206];
 } __attribute__ ((packed));
+static uint64_t cx=0;
+static uint64_t cy=0;
 
 typedef struct vbe_mode_info_structure * VBEInfoPtr;
 
@@ -107,20 +109,18 @@ void drawchar_transparent_8BPP(unsigned char c, int x, int y, int fgcolor)
 	}
 }
 
-void printByte(uint32_t hexColour, uint8_t palabra, uint64_t x, uint64_t y){
-    uint8_t base = 1;
-    for(int i = 0; i<8; i++, base = base<<1){
-      if((string & base) > 0){
-        putpixel(hexColour,x+1,y);
-      }
-    }
+void printByte(uint32_t hexCollor, uint8_t string, uint64_t x, uint64_t y){
+	uint8_t base = 1;
+	for(int i=7; i>=0; i--, base=base<<1){
+		if((string & base)>0)
+			putPixel(hexCollor, x+i, y);
+	}
 }
-
-
-void printMap(uint32_t HexColour, uint8_t map[], uint64_t x, uint64_t y){
-    for(int i = 0; i<16; i++){
-        printByte(hexColour,map[i],x,y+i);
-    }
+ 
+void printBitMap(uint32_t hexCollor, uint8_t map[], uint64_t x, uint64_t y){
+	for(int i=0; i<16; i++){
+		printByte(hexCollor,map[i],x,y+i);
+	}
 }
 
 void printCharacter(uint32_t hexCollor, char c, uint64_t x, uint64_t y){
@@ -129,7 +129,25 @@ void printCharacter(uint32_t hexCollor, char c, uint64_t x, uint64_t y){
 
 void printString(uint32_t hexCollor, char* s){
 	while(*s != 0){
-		printCharacter(hexCollor, *s, cx, cy);
+		if(*s == '\n'){
+			newLine();
+		}else{
+			printCharacter(hexCollor, *s, cx, cy);
+			nextBlank();
+		}
 		s++;
 	}
+}
+
+void nextBlank(){
+	if(cx+8 >= VBE_mode_info->width){
+		newLine();
+	}else{
+		cx+=8;
+	}
+}
+
+void newLine(){
+	cy+=16;
+	cx=0;
 }
