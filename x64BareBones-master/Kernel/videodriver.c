@@ -130,5 +130,6 @@ void printCharacter(uint32_t hexCollor, char c, uint64_t x, uint64_t y){
 void printString(uint32_t hexCollor, char* s){
 	while(*s != 0){
 		printCharacter(hexCollor, *s, cx, cy);
+		s++;
 	}
 }
