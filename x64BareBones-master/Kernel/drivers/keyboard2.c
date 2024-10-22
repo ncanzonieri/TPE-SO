@@ -53,13 +53,13 @@ static volatile uint64_t registers[REGS_AMOUNT];
 
 static volatile uint8_t registersFilled = 0;
 
-void keyboard_handler() {
-    uint8_t scancode = _getScancode();
-    updateFlags(scancode);
-    char ascii = scancodeToAscii(scancode);
-    if(activeCtrl && (ascii == 'r' || ascii == 'R')) {
+void keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
+    uint8_t scancode = _getScancode(); // esta se hace en asm, la llama desde Kernel/asm/libasm.asm
+    updateFlags(scancode); // chequea flags
+    char ascii = scancodeToAscii(scancode); // convierte a ascii
+    if(activeCtrl && (ascii == 'r' || ascii == 'R')) { // comando para printear 
         registersFilled = 1;
-        updateRegisters();
+        updateRegisters(); // esto de asm
     }
     else if (ascii != 0) {
         cb_push(ascii);
@@ -131,7 +131,7 @@ static char cb_pop() {
 }
 
 void updateRegisters() {
-    _updateRegisters();
+    _updateRegisters(); // esta es de asm
     uint64_t * r = _getRegisters();
     for(int i = 0; i < REGS_AMOUNT; i++) {
         registers[i] = r[i];

@@ -97,8 +97,8 @@ static void checkKeyR(uint8_t key){
 
 static char flagRegister = 0;
 
-void keyboardHanlder(){
-    u_int8_t key = ScanKey();
+void keyboardHanlder(){ // lo llama desde IrqKeyboard (IDT)
+    u_int8_t key = ScanKey(); // esta se hace en asm, 
     checkKeyP(key);
     checkKeyR(key);
     if( isCTRLP && ( toAscii(key) == 'p') ){

@@ -37,6 +37,7 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
+	/*
 	char buffer[10];
 
 	ncPrint("[x64BareBones]");
@@ -45,7 +46,7 @@ void * initializeKernelBinary()
 	ncPrint("CPU Vendor:");
 	ncPrint(cpuVendor(buffer));
 	ncNewline();
-
+	*/ 
 	ncPrint("[Loading modules]");
 	ncNewline();
 	void * moduleAddresses[] = {
@@ -54,6 +55,7 @@ void * initializeKernelBinary()
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
+	/*
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
@@ -79,9 +81,12 @@ void * initializeKernelBinary()
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
+	*/
+	clearBSS(&bss, &endOfKernel - &bss);	
 	return getStackBase();
+	
 }
-
+/*
 void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char backcolour, int x, int y)
 {
      uint16_t attrib = (backcolour << 4) | (forecolour & 0x0F);
@@ -89,9 +94,10 @@ void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char bac
      where = (volatile uint16_t *)0xB8000 + (y * 80 + x) ;
      *where = c | (attrib << 8);
 }
-
-int main()
+*/ 
+int main() 
 {	
+	/* AFUERA 
 	char * arqui = "Arquitectura de computadoras";
 	for(int i = 0; i< 24;i++){
 		WriteCharacter(arqui[i],0xA,0x5,30+i,5+i);
@@ -122,4 +128,5 @@ int main()
 
 	ncPrint("[Finished]");
 	return 0;
+	*/ 
 }
