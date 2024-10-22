@@ -14,8 +14,6 @@
 #define RIGHT_SHIFT 0
 #define LEFT_SHIFT 0
 #define LEFT_ALT 0
-
-
 // --------------- MORE DEFINES ---------------
 //---------- Pressed ------------
 #define ESC_P 1
@@ -72,9 +70,7 @@ static char keyboardM[KEYBOARD_DIM][2] = {
     {0, 0}, // (keypad) * pressed
     {LEFT_ALT, LEFT_ALT},
     {SPACE, SPACE} 
-
 };
-
 
 static void checkKeyP(u_int8_t key){
     if (key == LEFT_ALT_P) {
