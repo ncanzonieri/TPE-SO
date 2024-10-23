@@ -64,7 +64,7 @@ void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char bac
 // de aca sale todo, se cargan las idts y dps de ahi arranca todo
 int main() 
 {	
-	setupIDT();
+	load_idt();
 	// algo mas
 	return 0;
 }
