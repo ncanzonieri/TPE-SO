@@ -1,4 +1,4 @@
-# N libASM
+; N libASM
 GLOBAL cpuVendor
 GLOBAL _getScancode
 GLOBAL _getRegisters
@@ -62,4 +62,4 @@ _getRegisters:
     ret
 
 section .bss 
-_registersMemory resq 17 // reserve qword, 
+_registersMemory resq 17 ; reserve qword, 

@@ -18,9 +18,9 @@ GLOBAL _exception0Handler
 GLOBAL _getSnapshot
 
 EXTERN irqDispatcher
-EXTERN syscallDispatcher  // NO HECHA
-EXTERN exceptionDispatcher // NO HECHA
-EXTERN getStackBase      //NO HECHA 
+EXTERN syscallDispatcher  ; NO HECHA
+EXTERN exceptionDispatcher ; NO HECHA
+EXTERN getStackBase      ; NO HECHA 
 
 section .rodata
     userland equ 0x400000
