@@ -53,62 +53,6 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     framebuffer[offset+2]   =  (hexColor >> 16) & 0xFF;
 }
 
-//this is the bitmap font you've loaded
-unsigned char *font;
-
-void drawchar_8BPP(unsigned char c, int x, int y, int fgcolor, int bgcolor)
-{
-	void *dest;
-	uint32_t *dest32;
-	unsigned char *src;
-	int row;
-	uint32_t fgcolor32;
-	uint32_t bgcolor32;
-
-    videoBuffer = VBE_mode_info;
-
-	fgcolor32 = fgcolor | (fgcolor << 8) | (fgcolor << 16) | (fgcolor << 24);
-	bgcolor32 = bgcolor | (bgcolor << 8) | (bgcolor << 16) | (bgcolor << 24);
-	src = font + c * 16;
-	dest = videoBuffer + y * bytes_per_line + x;
-	for(row = 0; row < 16; row++) {
-		if(*src != 0) {
-			mask_low = mask_table[*src][0];
-			mask_high = mask_table[*src][1];
-			dest32 = dest;
-			dest32[0] = (bgcolor32 & ~s) | (fgcolor32 & mask_low);
-			dest32[1] = (bgcolor32 & ~mask_high) | (fgcolor32 & mask_high);
-		}
-		src++;
-		dest += bytes_per_line;
-	}
-}
-
-
-void drawchar_transparent_8BPP(unsigned char c, int x, int y, int fgcolor)
-{
-	void *dest;
-	uint32_t *dest32;
-	unsigned char *src;
-	int row;
-	uint32_t fgcolor32;
-
-	fgcolor32 = fgcolor | (fgcolor << 8) | (fgcolor << 16) | (fgcolor << 24);
-	src = font + c * 16;
-	dest = videoBuffer + y * bytes_per_line + x;
-	for(row = 0; row < 16; row++) {
-		if(*src != 0) {
-			mask_low = mask_table[*src][0];
-			mask_high = mask_table[*src][1];
-			dest32 = dest;
-			dest32[0] = (dest[0] & ~mask_low) | (fgcolor32 & mask_low);
-			dest32[1] = (dest[1] & ~mask_high) | (fgcolor32 & mask_high);
-		}
-		src++;
-		dest += bytes_per_line;
-	}
-}
-
 void printByte(uint32_t hexCollor, uint8_t string, uint64_t x, uint64_t y){
 	uint8_t base = 1;
 	for(int i=7; i>=0; i--, base=base<<1){
