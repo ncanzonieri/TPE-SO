@@ -37,16 +37,7 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
-	/*
-	char buffer[10];
-
-	ncPrint("[x64BareBones]");
-	ncNewline();
-
-	ncPrint("CPU Vendor:");
-	ncPrint(cpuVendor(buffer));
-	ncNewline();
-	*/ 
+	
 	ncPrint("[Loading modules]");
 	ncNewline();
 	void * moduleAddresses[] = {
@@ -55,33 +46,7 @@ void * initializeKernelBinary()
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
-	/*
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
-
-	ncPrint("[Initializing kernel's binary]");
-	ncNewline();
-
-	clearBSS(&bss, &endOfKernel - &bss);
-
-	ncPrint("  text: 0x");
-	ncPrintHex((uint64_t)&text);
-	ncNewline();
-	ncPrint("  rodata: 0x");
-	ncPrintHex((uint64_t)&rodata);
-	ncNewline();
-	ncPrint("  data: 0x");
-	ncPrintHex((uint64_t)&data);
-	ncNewline();
-	ncPrint("  bss: 0x");
-	ncPrintHex((uint64_t)&bss);
-	ncNewline();
-
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
-	*/
+	
 	clearBSS(&bss, &endOfKernel - &bss);	
 	return getStackBase();
 	
@@ -95,38 +60,11 @@ void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char bac
      *where = c | (attrib << 8);
 }
 */ 
+
+// de aca sale todo, se cargan las idts y dps de ahi arranca todo
 int main() 
 {	
-	/* AFUERA 
-	char * arqui = "Arquitectura de computadoras";
-	for(int i = 0; i< 24;i++){
-		WriteCharacter(arqui[i],0xA,0x5,30+i,5+i);
-	}
-
-	uint32_t hexColor = 0X00FF0000;
-	putPixel(hexColor,20,20);
-	drawchar_8BPP(65, 100, 50, 0xFF0000, 0xFFFFFF);
-	drawchar_transparent_8BPP(65, 150, 50, 0xFF0000); 
-	//ncPrint("ARQUITECTURA DE COMPUTADORAS");
-	ncNewline();
-	ncPrint("[Kernel Main]");
-	ncNewline();
-	ncPrint("  Sample code module at 0x");
-	ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	ncNewline();
-	ncPrint("  Calling the sample code module returned: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	ncNewline();
-	ncNewline();
-
-	ncPrint("  Sample data module at 0x");
-	ncPrintHex((uint64_t)sampleDataModuleAddress);
-	ncNewline();
-	ncPrint("  Sample data module contents: ");
-	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();
-
-	ncPrint("[Finished]");
+	setupIDT();
+	// algo mas
 	return 0;
-	*/ 
 }

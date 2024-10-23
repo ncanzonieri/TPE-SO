@@ -4,6 +4,8 @@
 extern uint8_t _getScancode();
 extern void _updateRegisters();
 extern uint64_t * _getRegisters();
+
+
 static char scancodeToAscii(uint8_t scancode);
 static void updateFlags(uint8_t scancode);
 static int cb_isEmpty();

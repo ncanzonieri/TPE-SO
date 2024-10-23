@@ -44,7 +44,7 @@ static char isCTRLP = 0; // CTRL pressed
     static char bufferDim=0; 
     static char buffer[BUFFER_DIM];
 
-
+// ---------------- EXTERN FUNCTIONS -------------
 extern u_int8_t scanKey();
 extern u_int64_t registers();
 
