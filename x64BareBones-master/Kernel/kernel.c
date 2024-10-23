@@ -2,8 +2,8 @@
 #include <string.h>
 #include <lib.h>
 #include <moduleLoader.h>
-#include <naiveConsole.h>
 #include <videodriver.h>
+#include <idtLoader.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -64,6 +64,7 @@ void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char bac
 // de aca sale todo, se cargan las idts y dps de ahi arranca todo
 int main() 
 {	
+	printString(0x0000FF00,"TIMER TICK");
 	load_idt();
 	// algo mas
 	return 0;

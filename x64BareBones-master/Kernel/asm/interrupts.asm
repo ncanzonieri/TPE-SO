@@ -1,3 +1,4 @@
+
 GLOBAL _cli
 GLOBAL _sti
 GLOBAL picMasterMask
@@ -11,26 +12,16 @@ GLOBAL _irq02Handler
 GLOBAL _irq03Handler
 GLOBAL _irq04Handler
 GLOBAL _irq05Handler
-GLOBAL _irq80Handler
-GLOBAL _exception6Handler
+
 GLOBAL _exception0Handler
 
-GLOBAL _getSnapshot
-
 EXTERN irqDispatcher
-EXTERN syscallDispatcher  ; NO HECHA
-EXTERN exceptionDispatcher ; NO HECHA
-EXTERN getStackBase      ; NO HECHA 
-
-section .rodata
-    userland equ 0x400000
+EXTERN exceptionDispatcher
 
 SECTION .text
 
-%macro pushState 1
-    %if %1
-        push rax
-    %endif
+%macro pushState 0
+	push rax
 	push rbx
 	push rcx
 	push rdx
@@ -47,7 +38,7 @@ SECTION .text
 	push r15
 %endmacro
 
-%macro popState 1
+%macro popState 0
 	pop r15
 	pop r14
 	pop r13
@@ -62,41 +53,11 @@ SECTION .text
 	pop rdx
 	pop rcx
 	pop rbx
-	%if %1
-	    pop rax
-	%endif
-%endmacro
-
-%macro fillSnapshot 0
-    mov [regs], rax
-    mov [regs+8], rbx
-    mov [regs+16], rcx
-    mov [regs+24], rdx
-    mov [regs+32], rsi
-    mov [regs+40], rdi
-    mov [regs+48], rbp
-    mov [regs+56], r8
-    mov [regs+64], r9
-    mov [regs+72], r10
-    mov [regs+80], r11
-    mov [regs+88], r12
-    mov [regs+96], r13
-    mov [regs+104], r14
-    mov [regs+112], r15
-    mov rax, [rsp + 24] ;rsp
-    mov [regs+120], rax
-    mov rax, [rsp] ;rip
-    mov [regs+128], rax
-    mov rax, [rsp+16] ;rflags
-    mov [regs+136], rax
-    mov rax, [rsp+8] ;cs
-    mov [regs+144], rax
-    mov rax, [rsp+32] ;ss
-    mov [regs+152], rax
+	pop rax
 %endmacro
 
 %macro irqHandlerMaster 1
-	pushState 1
+	pushState
 
 	mov rdi, %1 ; pasaje de parametro
 	call irqDispatcher
@@ -105,34 +66,21 @@ SECTION .text
 	mov al, 20h
 	out 20h, al
 
-	popState 1
+	popState
 	iretq
 %endmacro
 
-%macro exceptionHandler 1
 
-    fillSnapshot
+
+%macro exceptionHandler 1
+	pushState
 
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	call getStackBase
-
-	mov [rsp+24], rax
-
-	mov rax, userland
-	mov [rsp], rax
-
+	popState
 	iretq
 %endmacro
-
-
-
-
-_getSnapshot:
-   mov rax, regs
-   ret
-
 
 
 _hlt:
@@ -190,22 +138,10 @@ _irq04Handler:
 _irq05Handler:
 	irqHandlerMaster 5
 
-;Syscall
-_irq80Handler:
-    pushState 0
-    mov r9, rax
-    call syscallDispatcher
-    popState 0
-    iretq
-
 
 ;Zero Division Exception
 _exception0Handler:
 	exceptionHandler 0
-
-;Invalid Opcode Exception
-_exception6Handler:
-    exceptionHandler 6
 
 haltcpu:
 	cli
@@ -216,4 +152,3 @@ haltcpu:
 
 SECTION .bss
 	aux resq 1
-	regs resq 20

@@ -10,9 +10,7 @@ then
     echo 'nombre no válido'
     exit 1
 fi
-docker exec -it $nombre make clean –C /root/Toolchain
-docker exec -it $nombre make clean –C /root/
-docker exec -it $nombre make –C /root/Toolchain
-docker exec -it $nombre make –C /root/
+docker exec -w"/root/Toolchain" -it $nombre make clean all
+docker exec -w"/root" -it $nombre make clean all
 docker stop $nombre &> /dev/null
 exit 0
