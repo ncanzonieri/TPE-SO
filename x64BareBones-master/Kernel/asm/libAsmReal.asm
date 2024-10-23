@@ -9,7 +9,7 @@ section .text
 getKeyCode: 
 
     xor rax, rax ; seteo rax en 0
-	in al, 60 
+	in al, 60h 
 	ret
 
 
