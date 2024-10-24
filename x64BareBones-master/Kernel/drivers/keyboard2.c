@@ -1,9 +1,9 @@
 #include <keyboard2.h>
 #include <sysCalls.h>
 
-extern uint8_t _getScancode();
-extern void _updateRegisters();
-extern uint64_t * _getRegisters();
+extern uint8_t getKeyCode();
+extern void updateRegisters();
+extern uint64_t * getRegisters();
 
 
 static char scancodeToAscii(uint8_t scancode);
@@ -56,7 +56,7 @@ static volatile uint64_t registers[REGS_AMOUNT];
 static volatile uint8_t registersFilled = 0;
 
 void keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
-    uint8_t scancode = _getScancode(); // esta se hace en asm, la llama desde Kernel/asm/libasm.asm
+    uint8_t scancode = getKeyCode(); // esta se hace en asm, la llama desde Kernel/asm/libasm.asm
     updateFlags(scancode); // chequea flags
     char ascii = scancodeToAscii(scancode); // convierte a ascii
     if(activeCtrl && (ascii == 'r' || ascii == 'R')) { // comando para printear 
