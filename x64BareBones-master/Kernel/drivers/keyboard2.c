@@ -1,5 +1,5 @@
-#include <keyboardDriver.h>
-#include <syscall_lib.h>
+#include <keyboard2.h>
+#include <sysCalls.h>
 
 extern uint8_t _getScancode();
 extern void _updateRegisters();
@@ -133,14 +133,14 @@ static char cb_pop() {
 }
 
 void updateRegisters() {
-    _updateRegisters(); // esta es de asm
-    uint64_t * r = _getRegisters();
+    loadRegisters(); // esta es de asm
+    uint64_t * r = getRegisters();
     for(int i = 0; i < REGS_AMOUNT; i++) {
         registers[i] = r[i];
     }
 }
 
-uint64_t getRegisters(uint64_t * r) {
+uint64_t putRegisters(uint64_t * r) {
     if(!registersFilled) {
         return 0;
     }
