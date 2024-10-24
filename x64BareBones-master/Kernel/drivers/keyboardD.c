@@ -45,8 +45,8 @@ static char isCTRLP = 0; // CTRL pressed
     static char buffer[BUFFER_DIM];
 
 // ---------------- EXTERN FUNCTIONS -------------
-extern u_int8_t scanKey();
-extern u_int64_t registers();
+extern uint8_t scanKey();
+extern uint64_t registers();
 
 
 
@@ -72,7 +72,7 @@ static char keyboardM[KEYBOARD_DIM][2] = {
     {SPACE, SPACE} 
 };
 
-static void checkKeyP(u_int8_t key){
+static void checkKeyP(uint8_t key){
     if (key == LEFT_ALT_P) {
         isAltP = 1;
     } else if (key == CTRL_P) {
@@ -98,7 +98,7 @@ static void checkKeyR(uint8_t key){
 static char flagRegister = 0;
 
 void keyboardHanlder(){ // lo llama desde IrqKeyboard (IDT)
-    u_int8_t key = ScanKey(); // esta se hace en asm, 
+    uint8_t key = ScanKey(); // esta se hace en asm, 
     checkKeyP(key);
     checkKeyR(key);
     if( isCTRLP && ( toAscii(key) == 'p') ){
