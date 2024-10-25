@@ -1,0 +1,7 @@
+
+
+
+
+void registers(){
+    getRegisters(); 
+}
