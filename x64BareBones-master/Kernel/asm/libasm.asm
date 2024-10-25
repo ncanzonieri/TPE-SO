@@ -3,6 +3,7 @@ GLOBAL cpuVendor
 GLOBAL getKeyCode
 GLOBAL getRegisters
 GLOBAL loadRegisters
+GLOBAL rtcDriver
 section .text
 
 cpuVendor:
@@ -25,6 +26,18 @@ cpuVendor:
 
 	pop rbx
 
+	mov rsp, rbp
+	pop rbp
+	ret
+
+rtcDriver:
+	push rbp
+	mov rbp, rsp
+	push rbx
+	mov rax, rdi
+	out 70h, al
+	in al, 71h
+	pop rbx
 	mov rsp, rbp
 	pop rbp
 	ret
