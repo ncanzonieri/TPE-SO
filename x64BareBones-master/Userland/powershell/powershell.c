@@ -15,5 +15,5 @@ void powershell(){
     setTheme();
     printf("Welcome");
     char userBuffer[MAX];
-    char userCoy[MAX];
+    char userCopy[MAX];
 }
