@@ -1,75 +1,73 @@
-#include <getCurrentTime.h>
+
 #include <time.h>
 #include <commands.h>
-
 #include <string.h>
+
+
 #define MAX 15
-
-
-
-// Hay que acomodarlo bien pero dps lo hacemos
-
-
-
-static void homeScreen(){
-    clear();
-
-}
-
-
-#define GREEN 0x66FF66
-
-void welcome(){
-    char * localDate = getDay();
-    printf("Today's date is: %s\n", localDate);
-    printf("Enter 'help' to see the help options.");
-    printString(GREEN, "Steve $"); // call syscall write
-    
-}
-
-
 #define MAX_DIM 256
+
 #define DELETE 8
 #define CERO 0
 #define ESC 27
 #define TAB 9
 #define MAX_COMMANDS 9
+#define GREEN 0x66FF66 // Font Scale
+#define ERROR -1
 
-// ---------------- COMMANDS ----------------------
+
+void welcome();
+void getCommands();
+void startShell(char * v);
+int belongs(char * v);
+void runCommands(int index);
 
 void (* runFuncts[])() = {registers, divx0, codOpInvalid, help, snake, time, snake, zoomIn, zoomOut};
 
-// ----------------GET, Start - SHELL -----------------------
 
+
+#define DEFAULT_SCALE 1
+
+void welcome(){
+    clear();
+    setFont(DEFAULT_SCALE);
+    char * localDate = getDay();
+    printf("Today's date is: %s\n", localDate);
+}
 
 void getCommands(){
+    char v[MAX_DIM] = {0};
+    char copy[MAX_DIM] = {0};
+    int index = 0; 
     char c;
     while(1){
-        char v[MAX_DIM] = {0};
-        int index = 0; 
-		while( (c = getchar()) != '\n'){
-			if( c != ESC){
-				if( c == TAB){
-					int tab = 4;
-					for( int i=0; i <tab; i++){
-						v[index++] = ' ';
-						callWrite(c);
-					}
-				}
+        putSteve(); // username
+		while(1){
+            if( c != ESC){ // 27
 				v[index++] = c;
 				callWrite(c);
-			}if( c == DELETE ){
+            }
+            else if( c == DELETE ){ // 8
 				if( index > CERO)
 					index--;
 					callDel(); // systemcall a delete 
 			} 
-		}
+            else if(c == TAB){
+                int tab = 4;
+	            for( int i=0; i <tab; i++){
+                    v[index++] = ' ';
+			        callWrite(c);
+		        }
+            }else{
+                v[index++] = c;
+                callWrite(c);
+            }
+        }
 		v[index] = 0;
-		startShell(v);
+        strcpy(v, copy);
+		startShell(copy);
     }
 }
-
-#define ERROR -1
 
 void startShell(char * v){
     if( v == 0){ // es raro este if
@@ -79,7 +77,7 @@ void startShell(char * v){
 
 
 int belongs(char * v){
-    char * commands[MAX_COMMANDS] = { "registers", "divx0", "codOpInvalid", "help", "snake", "time", "snake", "zoomIn", "zoomOut"};
+    char * commands[MAX_COMMANDS] = { "registers", "divx0", "codOpInvalid", "help", "snake", "time", "zoomIn", "zoomOut"};
     for( int i=0; i < MAX_COMMANDS; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;
@@ -95,4 +93,8 @@ void runCommands(int index){
     }
     runFuncts[index]; 
 
+}
+
+void putSteve(){
+    printString(GREEN, "steve $");
 }

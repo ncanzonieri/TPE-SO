@@ -10,6 +10,9 @@
 #define FONT_HEIGHT 16
 
 
+// https://github.com/dhepper/font8x8/blob/master/font8x8_basic.h
+// otro fontmap por las dudas
+
 static uint8_t fontBitmap[] =
         {
                 /*Unicode: U+0020 ( ) , Width: 5 */
