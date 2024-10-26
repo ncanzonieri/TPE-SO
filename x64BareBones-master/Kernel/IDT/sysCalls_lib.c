@@ -7,37 +7,37 @@ enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, GET_COORDS, CLEAR_SCREEN,
  GET_SCREEN_INFO, GET_FONT_INFO, GET_TIME, SET_FONT_SCALE, GET_REGISTERS, SLEEP,
  PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR};
 
-void syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
+uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
     switch(rax){
         case READ:
-            sys_read((uint8_t) otherRegs[0], (uint8_t *) otherRegs[1], (uint32_t*) otherRegs[2]);
-            break;
+            return sys_read((uint8_t) otherRegs[0], (uint8_t *) otherRegs[1], otherRegs[2]);
         case WRITE:
-            sys_write((uint8_t) otherRegs[0], (char *) otherRegs[1], (uint32_t*) otherRegs[2], (uint32_t) otherRegs[3]);
-            break;
+            return sys_write((uint8_t) otherRegs[0], (char *) otherRegs[1], otherRegs[2], (uint32_t) otherRegs[3]);
+        default:
+            return 0;
     }
 }
 
 //USO BUFFER DE KEYBOARD2.C SE LO PASO COMO PARAMETRO
-void sys_read(uint8_t fd, uint8_t* buffer, uint32_t* count){
+uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
     if(fd != STDIN)
         return 0;
 
-    for(int i = 0; i < *count;i++){
+    for(int i = 0; i < count;i++){
         char c = kb_getchar();
         if(c == 0){
-            *count=i; //cuantos caracteres fueron leidos
-            return;  
+            return i; //cuantos caracteres fueron leidos
         }
         //sino cargo en mi buffer 
         buffer[i] = c;
     }
+    return count;
 }
 
-void sys_write(uint8_t fd, const char * buffer, uint32_t* count, uint32_t color) {
+uint64_t sys_write(uint8_t fd, const char * buffer, uint64_t count, uint32_t color) {
     // STDOUT is the only file descriptor supported so far
     if (fd == STDOUT) {
-        for(int i = 0; i < *count; i++) {
+        for(int i = 0; i < count; i++) {
             if(buffer[i] != ESC) {
                 // Check if the character fits in the screen
                 if ((print_x + getFontWidth() * getScale()) > getScreenWidth()) {
@@ -46,8 +46,7 @@ void sys_write(uint8_t fd, const char * buffer, uint32_t* count, uint32_t color)
                 }
                 if ((print_y + getFontHeight() * getScale()) > getScreenHeight()) {
                     // No more space in the screen, return the number of characters written
-                    *count=i;
-                    return;
+                    return i;
                 }
                 // Check if the character is a special case
                 if (!printSpecialCases(buffer[i])) {
@@ -56,7 +55,9 @@ void sys_write(uint8_t fd, const char * buffer, uint32_t* count, uint32_t color)
                 }
             }
         }
+        return count;
     }
+    return 0;
 }
 
 static int printSpecialCases(char c) {
