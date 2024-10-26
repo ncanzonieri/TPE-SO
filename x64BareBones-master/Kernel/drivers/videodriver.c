@@ -41,10 +41,14 @@ struct vbe_mode_info_structure {
 } __attribute__ ((packed));
 static uint64_t cx=0;
 static uint64_t cy=0;
+static uint32_t bgColor=0x00000000;
+static uint8_t scale=1;
 
 typedef struct vbe_mode_info_structure * VBEInfoPtr;
 
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
+
+uint32_t getFontInfo()
 
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
@@ -54,17 +58,24 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     framebuffer[offset+2]   =  (hexColor >> 16) & 0xFF;
 }
 
+void printScaledPixel(uint32_t hexColor, uint64_t x, uint64_t y){
+	for(int i=0; i<scale; i++){
+		for(int j=0; j<scale; j++){
+			putPixel(hexColor, x+i, y+j);
+		}
+	}
+}
+
 void printByte(uint32_t hexCollor, uint8_t string, uint64_t x, uint64_t y){
 	uint8_t base = 1;
-	for(int i=7; i>=0; i--, base=base<<1){
-		if((string & base)>0)
-			putPixel(hexCollor, x+i, y);
+	for(int i=7*scale; i>=0; i-=scale, base=base<<1){
+		printScaledPixel((string & base)>0 ? hexCollor : bgColor, x+i, y);
 	}
 }
  
 void printBitMap(uint32_t hexCollor, uint8_t map[], uint64_t x, uint64_t y){
-	for(int i=0; i<16; i++){
-		printByte(hexCollor,map[i],x,y+i);
+	for(int i=0; i<=15*scale; i+=scale){
+		printScaledPixel(hexCollor,map[i],x,y+i);
 	}
 }
 
@@ -72,27 +83,88 @@ void printCharacter(uint32_t hexCollor, char c, uint64_t x, uint64_t y){
 	printBitMap(hexCollor, getFontChar(c), x, y);
 }
 
-void printString(uint32_t hexCollor, char* s){
+uint64_t printString(uint32_t hexCollor, char* s){
+	uint64_t counter=0;
 	while(*s != 0){
-		if(*s == '\n'){
-			newLine();
-		}else{
-			printCharacter(hexCollor, *s, cx, cy);
-			nextBlank();
+		switch(*s){
+			case '\n':
+				newLine();
+				break;
+			case '\t':
+				if(cx+ 4*8 >= VBE_mode_info->width){
+					newLine();
+				}else{
+					for(int i=0; i<4; i++){
+						printCharacter(hexCollor, ' ', cx, cy);
+						nextBlank();
+					}
+				}
+				break;
+			case '\b':
+				if(cx<8*scale){
+					if(cy>=16*scale){
+						cy-=16*scale;
+						cx=VBE_mode_info->width-8*scale;
+						cx-=cx%(8*scale);
+					}
+				}else{
+					cx-=8*scale;
+				}
+				break;
+			default:
+				printCharacter(hexCollor, *s, cx, cy);
+				nextBlank();
+				break;
 		}
 		s++;
+		counter++;
 	}
+	return counter;
 }
 
 void nextBlank(){
-	if(cx+8 >= VBE_mode_info->width){
+	if(cx+8*scale >= VBE_mode_info->width){
 		newLine();
 	}else{
-		cx+=8;
+		cx+=8*scale;
 	}
 }
 
 void newLine(){
-	cy+=16;
+	cy+=16*scale;
 	cx=0;
+}
+
+uint64_t getCoords(){
+	return (cy << 32) | ((uint32_t) cx);
+}
+
+void clearScreen(){
+	for(int i=0; i < VBE_mode_info->height; i++){
+		for(int j=0; j < VBE_mode_info->width; j++){
+			putPixel(bgColor,j,i);
+		}
+	}
+	cx=0;
+	cy=0;
+}
+
+void setBGColor(uint32_t hexCollor){
+	bgColor=hexCollor;
+}
+
+uint64_t getBGcolor(){
+	return (uint32_t) bgColor;
+}
+
+uint8_t setScale(uint8_t newScale){
+	if(newScale>0 && newScale<=3){
+		scale=newScale;
+		return 1;
+	}
+	return 0;
+}
+
+uint8_t getScale(){
+	return scale;
 }

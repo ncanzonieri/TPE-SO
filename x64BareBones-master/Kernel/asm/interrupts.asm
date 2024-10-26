@@ -151,7 +151,7 @@ _irq80Handler
 	push rsi
 	push rdi
 	mov rdi, rax
-	mov rdi, rsp
+	mov rsi, rsp
 	call syscallDispatcher
 	add rsp, 6*8
 	popState
