@@ -1,18 +1,30 @@
-#include <libc.h>
-#include <syscallFunctions.h>
-#include <stdarg.h>
-
-#define BUFFER_DIM 20
-
-int strcmp(const char * s1, const char * s2) {
+#include <stdint.h>
+#include<stdargs.h>
+#define DIM 100
+#define STDOUT 1
+#define BUFFER_DIM 30
+int strcmp(char *s1, char *s2)
+{
     int i = 0;
-    while(s1[i] != 0  && s2[i] != 0){
-        if(s1[i] != s2[i]){
-            return s1[i] - s2[i];
-        }
+    while (s1[i] == s2[i])
+    {
+        if (s1[i] == '\0' && s2[i] == '\0')
+            return 0; 
         i++;
     }
-    return s1[i]-s2[i];
+    return s1[i] - s2[i]; 
+}
+
+void strcpy(char *destination, const char *source)
+{
+    while (*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+    *destination = '\0';
+    return;
 }
 
 int strlen(const char * s) {
@@ -26,21 +38,49 @@ int strlen(const char * s) {
     return i;
 }
 
-int putString(char * c) {
-    uint32_t length;
-    call_write((uint8_t *)c, &length);
-    return length;
-}
-
+//----------------------------------------------------------------------------------------------------
 char getChar(){
     uint8_t c;
-    uint32_t size = 0;
+    int size = 0;
     while(size!=1){
-        call_read(&c, 1, &size);
+        size = sys_read(&c, 1, &size);
     }
     return c;
 }
 
+void swap(char *x, char *y)
+{
+    char t = *x;
+    *x = *y;
+    *y = t;
+}
+
+char toLower(char c) {
+    if(c >= 'A' && c <= 'Z') {
+        return c - 'A' + 'a';
+    }
+    return c;
+}
+//----------------------------------------------------------------------------------------
+/*void putcharColor(char c, uint32_t color) {
+    _sys_write(STDOUT, &c, 1, color);
+}
+
+void printStringColor(const char * str, uint32_t color) {
+    for(int i=0; str[i] != 0; i++) {
+        putcharColor(str[i], color);
+    }
+}
+
+void putchar(char c) {
+    putcharColor(c, WHITE);
+}*/
+int putString(char * c, uint32_t color) {
+    uint32_t length = strlen(c);
+    sys_write(STDOUT,(uint8_t *)c,length,color);
+    return length;
+}
+//----------------------------------------------------------------------------------------
 static int readFromKeyboard(char * buffer) {
     int i=0;
     char c;
@@ -50,72 +90,7 @@ static int readFromKeyboard(char * buffer) {
     }
     return i;
 }
-
-static int intToString(int num, char *str) {
-    int i = 0, j=0;
-    char isNegative = 0;
-    char aux[10]; 
-    // if negative flag to add sign
-    if (num < 0) {
-        isNegative = 1;
-        num = -num;
-    }
-    if (num == 0) {
-        str[i] = '0';
-        i++;
-    } 
-    while (num != 0) {
-        aux[j] = (num % 10) + '0';
-        num = num / 10;
-        j++;
-    }
-    if (isNegative) {
-        str[i] = '-';
-        i++;
-    }
-    for (j = j - 1; j >= 0; j--) {
-        str[i] = aux[j];
-        i++;
-    }
-    str[i] = '\0';
-    return i;
-}
-
-
-static int strConcat(char *str1, char *str2){
-    int i = strlen(str1);
-    int j = 0;
-    while(str2[j] != '\0'){
-        str1[i] = str2[j];
-        i++;
-        j++;
-    }
-    return i;
-}
-
-static int stringToInt(char * num){
-    char isNegative = 0;
-    int i = 0;
-    int res = 0;
-
-    if(num[0] == '-'){
-        isNegative = 1;
-        i++;
-    }
-
-    while(num[i] != '\0'){
-        res = res*10 + num[i] - '0';
-        i++;
-    }
-    
-    if(isNegative){
-        res = -res;
-    }
-    
-    return res;
-}
-
-
+//---------------------------------------------------------------------------------------------
 int printf(const char * format, ...){
     va_list variables;
 
@@ -147,19 +122,7 @@ int printf(const char * format, ...){
     va_end(variables);
     return putString(str);
 }
-
-char readChar(int * readBytes) {
-    uint8_t buffer;
-    call_read(&buffer, 1, (uint32_t *) readBytes);
-    return buffer;
-}
-
-int randNbr(int fromIncluded, int toIncluded) {
-    unsigned long long currentTicks;
-    call_get_ticks(&currentTicks);
-    return (fromIncluded + (currentTicks % (toIncluded)));
-}
-
+//---------------------------------------------------------------------------------------------
 void scanf(const char * format, ...) {
     va_list variables;
 

@@ -15,6 +15,6 @@ void clearScreen();
 void setBGColor(uint32_t hexCollor);
 uint64_t getBGcolor();
 uint8_t setScale(uint8_t newScale);
-uint8_t getScale();
+uint64_t getScale();
 
 #endif

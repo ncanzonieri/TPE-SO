@@ -3,6 +3,8 @@
 
 static unsigned long ticks = 0;
 extern uint8_t rtcDriver(uint8_t opt);
+extern _cli();
+extern _sti();
 typedef struct tm {
     uint8_t sec, min, hour, day, month;
     uint16_t year;
@@ -23,6 +25,21 @@ int ticks_elapsed() {
 
 int seconds_elapsed() {
 	return ticks / 18;
+}
+
+uint64_t ms_elapsed(){
+    return ticks * 55;
+}
+
+uint64_t sleep(uint64_t ms){
+    uint64_t ini = ms_elapsed();
+    uint64_t now = ini;
+    _sti();
+    while(now - ini <= ms){
+        now=ms_elapsed();
+    }
+    _cli();
+    return 1;
 }
 
 static uint8_t reformatToDec(uint8_t value){

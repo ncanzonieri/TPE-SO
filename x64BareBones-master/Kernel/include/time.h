@@ -11,7 +11,9 @@ timeStruct * now();
 void timer_handler();
 int ticks_elapsed();
 int seconds_elapsed();
+uint64_t ms_elapsed();
 char * getDate();
 char * getTime();
+uint64_t sleep(uint64_t ms);
 
 #endif

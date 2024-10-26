@@ -1,12 +1,16 @@
 #include <keyboard2.h>
 #include <stdint.h>
 #include <videodriver.h>
+#include <time.h>
 
 #define STDIN 1  
 #define STDOUT 0  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, GET_COORDS, CLEAR_SCREEN,
- GET_SCREEN_INFO, GET_FONT_INFO, GET_TIME, SET_FONT_SCALE, GET_REGISTERS, SLEEP,
+ GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
  PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR};
+
+extern void loadRegisters();
+extern uint64_t* getRegisters();
 
 uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
     switch(rax){
@@ -63,34 +67,29 @@ uint64_t sys_getScreenInfo() {
     return ((uint64_t) getScreenWidth() << 32) | getScreenHeight();
 }
 
-uint64_t sys_getFontInfo() {
-    // return the width in the high 32 bits and the height in the low 32 bits
-    return ((uint64_t) (getFontWidth() * getScale()) << 32) | (getFontHeight() * getScale());
+uint64_t sys_getScale() {
+    return getScale();
 }
 
 uint64_t sys_getTime(uint64_t arg) {
     return getTime(arg);
 }
 
-uint64_t sys_setFontScale(uint64_t scale) {
-    return (uint64_t) setScale((uint8_t) scale);
+uint64_t sys_setFontScale(uint8_t scale) {
+    return setScale(scale);
 }
 
 uint64_t sys_getRegisters(uint64_t * r) {
-    return getRegisters(r);
+    loadRegisters(); 
+    uint64_t * aux = getRegisters();
+    for( int i=0; i<REGISTERS_DIM; i++){
+        r[i]=aux[i];
+    }
+    return 1;
 }
 
 uint64_t sys_sleep(uint64_t millis) {
-    unsigned long long initial_time = ms_elapsed();
-    unsigned long long currentTime = initial_time;
-    // Activate interrupts
-    _sti();
-    while ((currentTime - initial_time) <= millis) {
-        currentTime = ms_elapsed();
-    }
-    // Deactivate interrupts
-    _cli();
-    return 1;
+    return sleep(millis);
 }
 
 uint64_t sys_playSound(uint64_t f, uint64_t millis) {

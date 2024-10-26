@@ -48,8 +48,6 @@ typedef struct vbe_mode_info_structure * VBEInfoPtr;
 
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
-uint32_t getFontInfo()
-
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
     uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
@@ -165,6 +163,6 @@ uint8_t setScale(uint8_t newScale){
 	return 0;
 }
 
-uint8_t getScale(){
-	return scale;
+uint64_t getScale(){
+	return (uint64_t) scale;
 }

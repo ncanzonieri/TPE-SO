@@ -26,9 +26,10 @@ typedef struct snakeStruct{
 
     direcs head;
     direcs body[MAX];
+    direcs tail; // esta se va 'eliminando'
     int bodyDim; // bodyDim + 1 -> total points
     ColorsStruct color; 
-    direcs tail; // esta se va 'eliminando'
+    int id;
 
 }snakeStruct;
 
@@ -74,7 +75,7 @@ static int getc2(int c1){
 #define COLORS_COUNT 4
 
 const char *colorNames[COLORS_COUNT] = { "GREEN", "RED", "YELLOW","BLUE" };
-const int colorHexa[COLORS_COUNT] = { 0x000080, 0x008000, 0xff0000, 0xffff00 };
+const u_int32_t colorHexa[COLORS_COUNT] = { 0x000080, 0x008000, 0xff0000, 0xffff00 };
 
 
 static int welcomeSnake(){
@@ -87,23 +88,53 @@ static int welcomeSnake(){
     return game - CERO_ASCII; // devuelve en numero en int
 }
 
+static void copyColor(snakeStruct * s, int num){
+    strcpy(s->color.color, colorNames[num-1]);
+    s->color.colorAscii = colorHexa[num-1];
+}
+
 // creo que se puede hacer de mejor manera
 static void chooseColors(snakeStruct * s1, snakeStruct * s2, int * flag){
     printf("Player 1: choose your snake color");
     printf( "GREEN:1, RED:2, YELLOW:3, BLUE:4");
     int color1 = getc1();
-    strcpy(s1->color.color, colorNames[color1-1]);
-    s1->color.colorAscii = colorHexa[color1-1];
+    copyColor(s1, color1);
     if( *flag == PLAYER_2){
+
     printf("Player 2: choose your snake color:");
     printf( "GREEN:1, RED:2, YELLOW:3, BLUE:4");
-    
-    int color2 = getc2(color1);
-    strcpy(s2->color.color, colorNames[color2-1]);
-    s2->color.colorAscii = colorHexa[color2-1];
+    copyColor(s2, getc2(color1));
+
     }
     return;
 }
+// -------------- BOARD --------------
+
+#define X 30
+#define Y 30// dps hay que def esto
+#define CER0 '\0'
+
+static char boardMatrix[X][Y];
+
+static void board(){
+      for(int i = 0; i <  Y; i++){
+        for(int j = 0; j < X; j++){
+            boardMatrix[i][j] = CER0;
+        }
+    }
+    return;
+}
+
+
+
+static void spawnSnake(snakeStruct * s1, snakeStruct * s2, int *flag){
+    makeSnake(s1, s2);
+    if( *flag == 2){
+        makeSnake(s1, s2);
+    }
+return;
+}
+
 
 void start(){
 
@@ -117,7 +148,21 @@ void start(){
     }
     // tendria que hacer una matriz con snake1.color y mandarle el color de la snake
 
-    board(&flag); 
+    board(); // mapa para las snakes
+    spawnSnake(snake1, snake2, &flag);
+
+    clearScreen(); // chequear eso
 
 }
 
+
+
+
+// ----------------------- MAKE SNAKE --------------------------------
+
+#define P1 1
+#define P2 2
+void makeSnake(snakeStruct * s1, snakeStruct * s2, int *flag){
+    s1->id = P1;
+    s1->head.x = 
+}
