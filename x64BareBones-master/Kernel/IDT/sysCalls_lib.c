@@ -3,6 +3,7 @@
 #include <videodriver.h>
 #include <time.h>
 
+#define REGISTERS_DIM 16
 #define STDIN 1  
 #define STDOUT 0  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, GET_COORDS, CLEAR_SCREEN,

@@ -10,7 +10,7 @@ void printCharacter(uint32_t hexCollor, char c, uint64_t x, uint64_t y);
 uint64_t printString(uint32_t hexCollor, char* s);
 void nextBlank();
 void newLine();
-void getCoords(uint64_t* x, uint64_t* y);
+uint64_t getCoords();
 void clearScreen();
 void setBGColor(uint32_t hexCollor);
 uint64_t getBGcolor();
