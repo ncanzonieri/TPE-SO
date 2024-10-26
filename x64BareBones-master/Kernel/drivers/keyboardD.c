@@ -45,9 +45,9 @@ static char isCTRLP = 0; // CTRL pressed
     static char buffer[BUFFER_DIM];
 
 // ---------------- EXTERN FUNCTIONS -------------
-extern uint8_t scanKey();
-extern uint64_t registers();
-
+extern uint8_t getKeyCode();
+extern void loadRegisters();
+extern uint64_t * getRegisters();
 
 
 
@@ -97,21 +97,27 @@ static void checkKeyR(uint8_t key){
 
 static char flagRegister = 0;
 
-void keyboardHanlder(){ // lo llama desde IrqKeyboard (IDT)
-    uint8_t key = ScanKey(); // esta se hace en asm, 
-    checkKeyP(key);
-    checkKeyR(key);
-    if( isCTRLP && ( toAscii(key) == 'p') ){
-        callRegisters(flagRegister); 
-    }
-}
-
 // ----------- PRINT REGISTERS --------------
 // Se deberá disponer de una funcionalidad que permita obtener el valor de los registros
 // del procesador en cualquier momento que se desee.
-static void callRegisters(char flagRegister){
-    registers(); // tenemos ver como vamos a usar los registros en asm para ver dps como usar el for
+uint8_t callRegisters(uint64_t * r){
+    if(!flagRegister)
+        return 0;
+    loadRegisters(); // tenemos ver como vamos a usar los registros en asm para ver dps como usar el for
+    uint64_t * aux = getRegisters();
     for( int i=0; i<REGISTERS_DIM; i++){
+        r[i]=aux[i];
+    }
+    return 1;
+}
 
+void keyboardHanlder(){ // lo llama desde IrqKeyboard (IDT)
+    uint8_t key = getKeyCode(); // esta se hace en asm, 
+    checkKeyP(key);
+    checkKeyR(key);
+    uint64_t * r;
+    if( isCTRLP && ( toAscii(key) == 'p') ){
+        callRegisters(r); 
     }
 }
+

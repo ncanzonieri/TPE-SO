@@ -2,7 +2,7 @@
 #include <sysCalls.h>
 
 extern uint8_t getKeyCode();
-extern void updateRegisters();
+extern void loadRegisters();
 extern uint64_t * getRegisters();
 
 

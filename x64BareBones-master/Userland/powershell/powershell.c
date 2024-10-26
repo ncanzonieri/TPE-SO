@@ -18,11 +18,11 @@
 
 void welcome();
 void getCommands();
-void startShell(char * v);
-int belongs(char * v);
-void runCommands(int index);
+static void startShell(char * v);
+static int belongs(char * v);
+static void runCommands(int index);
 
-void (* runFuncts[])() = {registers, divx0, codOpInvalid, help, snake, time, snake, zoomIn, zoomOut};
+static void (* runFuncts[])() = {registers, divx0, codOpInvalid, help, snake, time, snake, zoomIn, zoomOut};
 
 
 
@@ -69,14 +69,14 @@ void getCommands(){
     }
 }
 
-void startShell(char * v){
+static void startShell(char * v){
     if( v == 0){ // es raro este if
     }
     runCommands( belongs(v));
 }
 
 
-int belongs(char * v){
+static int belongs(char * v){
     char * commands[MAX_COMMANDS] = { "registers", "divx0", "codOpInvalid", "help", "snake", "time", "zoomIn", "zoomOut"};
     for( int i=0; i < MAX_COMMANDS; i++){
         if( strcmp(v, commands[i]) == 0){
@@ -87,7 +87,7 @@ return -1;
 }
 
 
-void runCommands(int index){
+static void runCommands(int index){
     if( index == ERROR){
         call_sysError(); // dps cambiamos las funciones, osea printf("Error not found")
     }
@@ -95,6 +95,6 @@ void runCommands(int index){
 
 }
 
-void putSteve(){
+static void putSteve(){
     printString(GREEN, "steve $");
 }

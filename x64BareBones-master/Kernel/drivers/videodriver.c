@@ -1,4 +1,5 @@
 #include <videodriver.h>
+#include <fontDriver.h>
 #include <stdint.h>
 
 struct vbe_mode_info_structure {

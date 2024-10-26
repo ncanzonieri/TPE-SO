@@ -32,6 +32,6 @@ char kb_getchar();
  * @param r: the array to fill.
  * @return 1 if the registers were filled, 0 otherwise.
  */
-uint64_t getRegisters(uint64_t * r);
+uint64_t putRegisters(uint64_t * r);
 
 #endif

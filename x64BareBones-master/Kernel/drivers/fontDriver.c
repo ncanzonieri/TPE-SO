@@ -1824,6 +1824,8 @@ static uint8_t fontBitmap[] =
 
 
 
+
+
 // ------- chequear estos returns pero si se podian me parece -----------
 uint8_t getWidth() {
     return FONT_WIDTH;

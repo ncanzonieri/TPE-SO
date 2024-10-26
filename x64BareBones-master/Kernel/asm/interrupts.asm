@@ -17,6 +17,7 @@ GLOBAL _exception0Handler
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
+EXTERN syscallDispatcher
 
 SECTION .text
 
@@ -138,10 +139,34 @@ _irq04Handler:
 _irq05Handler:
 	irqHandlerMaster 5
 
+;Syscalls
+_irq80Handler
+	push rbp
+	mov rbp, rsp
+	pushState
+	push r9
+	push r8
+	push r10
+	push rdx
+	push rsi
+	push rdi
+	mov rdi, rax
+	mov rdi, rsp
+	call syscallDispatcher
+	add rsp, 6*8
+	popState
+	mov rsp, rbp
+	pop rbp
+	iretq
+	
 
 ;Zero Division Exception
 _exception0Handler:
 	exceptionHandler 0
+
+;Invalid Opcode exception
+_exception6Handler:
+	exceptionHandler 6
 
 haltcpu:
 	cli
