@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "lib.h": "c"
+        "lib.h": "c",
+        "audiodriver.h": "c",
+        "string.h": "c",
+        "interrupts.h": "c"
     }
 }

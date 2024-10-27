@@ -142,7 +142,7 @@ _irq05Handler:
 	irqHandlerMaster 5
 
 ;Syscalls
-_irq80Handler
+_irq80Handler:
 	push rbp
 	mov rbp, rsp
 	pushState

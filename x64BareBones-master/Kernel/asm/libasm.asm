@@ -4,6 +4,8 @@ GLOBAL getKeyCode
 GLOBAL getRegisters
 GLOBAL loadRegisters
 GLOBAL rtcDriver
+GLOBAL _outb ; CAMBIAR
+GLOBAL _inb
 section .text
 
 cpuVendor:

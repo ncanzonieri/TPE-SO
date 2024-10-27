@@ -1,5 +1,9 @@
 #include <stdint.h>
+#include <stdarg.h>
+#define DIM 256
 #define STDOUT 1
+#define WHITE 0x00FFFFFF
+
 
 int strcmp(char *s1, char *s2)
 {
@@ -183,7 +187,7 @@ int printf(const char * format, ...){
     }
     str[index] = '\0';
     va_end(variables);
-    return putString(str);
+    return putString(str, WHITE);
 }
 
 
