@@ -1,14 +1,9 @@
 #include <time.h>
 #include <stdint.h>
+#include <stdio.h>
 
 static unsigned long ticks = 0;
-extern uint8_t rtcDriver(uint8_t opt);
-extern _cli();
-extern _sti();
-typedef struct tm {
-    uint8_t sec, min, hour, day, month;
-    uint16_t year;
-} timeStruct;
+
 static int dayTab[13]= { 29, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 static int bisiesto(int anio) {
@@ -49,8 +44,7 @@ static uint8_t reformatToDec(uint8_t value){
 	return value%10 + (value/10)*16;
 }
 
-timeStruct * now(){
-	timeStruct * ans;
+void now(timeStruct* ans){
     uint8_t utcHour = reformatToDec(rtcDriver(4));
     uint8_t utcDay = reformatToDec(rtcDriver(7));
     uint8_t utcMonth = reformatToDec(rtcDriver(8));
@@ -83,10 +77,8 @@ timeStruct * now(){
     ans->year=utcYear;
 }
 
-char * getDate(){
+char * getDate(timeStruct * ans){
     int day, month, year;
-
-    timeStruct *ans = now();
 
     day = ans->day;
     month = ans->month;
@@ -97,10 +89,8 @@ char * getDate(){
     return date;
 }
 
-char * getTime(){
+char * getTime(timeStruct* ans){
 	int sec, min, hour;
-
-    timeStruct *ans = now();
 
     sec = ans->sec;
     min = ans->min;

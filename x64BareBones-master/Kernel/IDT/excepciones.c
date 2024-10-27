@@ -15,6 +15,7 @@
 #include <string.h>
 #include <videodriver.h>
 #include <interrupts.h>
+#include <sysCalls.h>
 
 #define EXCEPTION_cero  "ERROR 0x00 Division by zero exception\n\n"
 #define EXCEPTION_invalidOpcode "ERROR 0x06 Invalid Opcode exception\n\n"
@@ -36,49 +37,63 @@ static char * regsNames[] = {  //mismo orden que en FILLSNAPSHOT (interrupts.asm
     "R15   ", "RSP   ", "RIP   "
 };
 
+static void hexaToAscii(uint64_t num, char* buffer){
+    int rest;
+    char aux[66]={'0'};
+    for(int i=0; num>0; i++, num/=16){
+        rest=num%16;
+        aux[i]= (rest < 10 )? (rest + '0') : (rest - 10 + 'A');
+    }
+    aux[64]='x';
+    aux[65]='0';
+    for(int i=0; i<66; i++){
+        buffer[i]=aux[65-i];
+    }
+}
+
 static void dumpRegisters(){
     loadRegisters();
     uint64_t * registers = getRegisters();
-    char buffer[17];
+    char buffer[66];
 
     for(int i = 0; i < regsAmount; i++){
-        itoaHex(registers[i], buffer);
+        hexaToAscii(registers[i], buffer);
         int zeroDigits = 16 - strlen(buffer);
 
-        sys_write(1, regsNames[i], strlen(regsNames[i]), WHITE); 
-        sys_write(1, ": 0x", 4, WHITE);
+        printString(WHITE, regsNames[i]); 
+        printString(WHITE, ": 0x");
         for(int j = 0; j < zeroDigits; j++){
-            sys_write(1, "0", 1, WHITE);
+            printString(WHITE, "0");
         }
-        sys_write(1, itoaHex(registers[i], buffer), strlen(buffer), WHITE);
-        sys_write(1, "\n", 1, WHITE);
+        printString(WHITE, buffer);
+        newLine();
     }
 }
 
 static void launchingException(char * message){
     //en esta funcion tengo que setear la pantalla azul, letras blancas
     //hay que implementar libreria de syscalls 
-    uint64_t oldBgColor = sys_getBgColor();
-    sys_setBgColor(BLUE_SCREEN);
+    uint64_t oldBgColor = getBGcolor();
+    setBGColor(BLUE_SCREEN);
     uint8_t oldScale = getScale();
     setScale(2);
-    sys_clearScreen();
-	sys_write(1, message, strlen(message), WHITE);
+    clearScreen();
+	printString(WHITE, message);
     dumpRegisters();
 
     char * continueMessage = "\nPress any key to relaunch shell...";
-    sys_write(1, continueMessage , strlen(continueMessage), WHITE);
+    printString(WHITE, continueMessage);
 
     int readBytes = 0;
-    char c;
+    uint8_t * c={0};
     _sti();
     while(readBytes == 0){
-        readBytes = sys_read(0, &c, 1);
+        readBytes = sys_read(0, c, 1);
     }
 
     // Old scale and color
-    sys_setBgColor(oldBgColor);
-    sys_clearScreen();
+    setBGColor(oldBgColor);
+    clearScreen();
     setScale(oldScale);
 }
 
@@ -86,8 +101,8 @@ void exceptionDispatcher(int excepcion){
     char * except_message;
     if (excepcion == EXCEPCION_cero_identificador){
         except_message = EXCEPTION_cero;
-    }else if(excepcion == EXCEPTION_invalidOpcode){
-        except_message = EXCEPCION_invalidOpcode_identificador;
+    }else if(excepcion == EXCEPCION_invalidOpcode_identificador){
+        except_message = EXCEPTION_invalidOpcode;
     }
     launchingException(except_message);
 }

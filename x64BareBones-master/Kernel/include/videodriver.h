@@ -16,5 +16,6 @@ void setBGColor(uint32_t hexCollor);
 uint64_t getBGcolor();
 uint8_t setScale(uint8_t newScale);
 uint64_t getScale();
+void drawRectangle(uint32_t hexColor, uint64_t x, uint64_t y, uint64_t width, uint64_t height);
 
 #endif

@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <videodriver.h>
 #include <time.h>
+#include <sysCalls.h>
 
 #define REGISTERS_DIM 16
 #define STDIN 1  
@@ -40,7 +41,7 @@ uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
     return count;
 }
 
-uint64_t sys_write(uint8_t fd, const char * buffer, uint64_t count, uint32_t color) {
+uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color) {
     // STDOUT is the only file descriptor supported so far
     if (fd == STDOUT) {
         return printString(color, buffer);
@@ -49,7 +50,8 @@ uint64_t sys_write(uint8_t fd, const char * buffer, uint64_t count, uint32_t col
 }
 
 uint64_t sys_drawRectangle(uint32_t hexColor, uint64_t x, uint64_t y, uint64_t width, uint64_t height) {
-    return drawRectangle(hexColor, x, y, width, height);
+    drawRectangle(hexColor, x, y, width, height);
+    return 1;
 }
 
 uint64_t sys_getCoords() {
@@ -62,20 +64,20 @@ uint64_t sys_clearScreen() {
     clearScreen();
     return 0;
 }
-
+/*
 uint64_t sys_getScreenInfo() {
     // return the width in the high 32 bits and the height in the low 32 bits
     return ((uint64_t) getScreenWidth() << 32) | getScreenHeight();
 }
-
+*/
 uint64_t sys_getScale() {
     return getScale();
 }
-
+/*
 uint64_t sys_getTime(uint64_t arg) {
     return getTime(arg);
 }
-
+*/
 uint64_t sys_setFontScale(uint8_t scale) {
     return setScale(scale);
 }
@@ -92,14 +94,14 @@ uint64_t sys_getRegisters(uint64_t * r) {
 uint64_t sys_sleep(uint64_t millis) {
     return sleep(millis);
 }
-
+/*
 uint64_t sys_playSound(uint64_t f, uint64_t millis) {
     playSound(f);
     sys_sleep(millis);
     stopSound();
     return 1;
 }
-
+*/
 uint64_t sys_setBgColor(uint32_t color) {
     setBGColor(color);
     return 1;

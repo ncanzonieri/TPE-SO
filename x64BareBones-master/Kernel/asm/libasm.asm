@@ -74,6 +74,28 @@ getRegisters:
     mov rax, BufferRegis
     ret
 
+; void outb(uint16_t port, uint8_t value)
+_outb:
+    push rdx
+
+    mov dx, di
+    mov al, sil
+    out dx, al
+
+    pop rdx
+    ret
+
+; extern uint8_t inb(uint16_t port)
+_inb:
+    push rdx
+
+    mov dx, di
+    in al, dx
+
+    pop rdx
+    ret
+
+
 section .data
 regSize equ 8
 

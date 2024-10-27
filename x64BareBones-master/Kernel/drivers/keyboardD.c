@@ -1,3 +1,4 @@
+/*
 #include <stdint.h>
 
 #define BUFFER_DIM 256 
@@ -121,3 +122,4 @@ void keyboardHanlder(){ // lo llama desde IrqKeyboard (IDT)
     }
 }
 
+*/

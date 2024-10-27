@@ -73,7 +73,7 @@ void printByte(uint32_t hexCollor, uint8_t string, uint64_t x, uint64_t y){
  
 void printBitMap(uint32_t hexCollor, uint8_t map[], uint64_t x, uint64_t y){
 	for(int i=0; i<=15*scale; i+=scale){
-		printScaledPixel(hexCollor,map[i],x,y+i);
+		printByte(hexCollor,map[i],x,y+i);
 	}
 }
 
@@ -137,12 +137,16 @@ uint64_t getCoords(){
 	return (cy << 32) | ((uint32_t) cx);
 }
 
-void clearScreen(){
-	for(int i=0; i < VBE_mode_info->height; i++){
-		for(int j=0; j < VBE_mode_info->width; j++){
-			putPixel(bgColor,j,i);
+void drawRectangle(uint32_t hexColor, uint64_t x, uint64_t y, uint64_t width, uint64_t height){
+	for(int i=0; i<height && y+i < VBE_mode_info->height; i++){
+		for(int j=0; j<width && x+j < VBE_mode_info->width; j++){
+			putPixel(hexColor,j,i);
 		}
 	}
+}
+
+void clearScreen(){
+	drawRectangle(bgColor, 0, 0, VBE_mode_info->width, VBE_mode_info->height );
 	cx=0;
 	cy=0;
 }

@@ -31,7 +31,7 @@ enum registers_idx {
  * @param count: the number of chars to read.
  * @return the number of chars read.
  */
-uint64_t sys_read(int fd, char * buffer, int count);
+uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count);
 
 /**
  * @brief Writes a string to the standard output.
@@ -40,7 +40,7 @@ uint64_t sys_read(int fd, char * buffer, int count);
  * @param color: the color of the string in hexadecimal. Usage: 0x00RRGGBB.
  * @return the number of chars written.
  */
-uint64_t sys_write(int fd, const char * buffer, int count, uint32_t color);
+uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color);
 
 /**
  * @brief Draws a rectangle in the screen on the given coordinates.
@@ -83,7 +83,7 @@ uint64_t sys_getTime(uint64_t rdi);
  * @brief Sets the font scale. Supported values are 1, 2 and 3.
  * @param rdi the scale to set.
  */
-uint64_t sys_setFontScale(uint64_t scale);
+uint64_t sys_setFontScale(uint8_t scale);
 
 /**
  * @brief Fills the registers array with the current values of the registers.
