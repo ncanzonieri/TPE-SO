@@ -1,6 +1,11 @@
 #include <time.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdarg.h>
+#define DIM 400
+#define STDOUT 1
+#define WHITE 0xFFFFFF
+
 /*
 #ifndef MY_TIME_H_
 #define MY_TIME_H_
@@ -128,4 +133,114 @@ char * getTime(timeStruct* ans){
     //sprintf(time, "%02d:%02d:%02d", hour, min, sec);
     printf( "%02d:%02d:%02d", hour, min, sec);
     return time;
+}
+
+static int strConcat(char *str1, char *str2){
+    int i = strlen(str1);
+    int j = 0;
+    while(str2[j] != '\0'){
+        str1[i] = str2[j];
+        i++;
+        j++;
+    }
+    return i;
+}
+static int intToString(int num, char *str) {
+    int i = 0, j=0;
+    char isNegative = 0;
+    char aux[10]; 
+    // if negative flag to add sign
+    if (num < 0) {
+        isNegative = 1;
+        num = -num;
+    }
+    if (num == 0) {
+        str[i] = '0';
+        i++;
+    } 
+    while (num != 0) {
+        aux[j] = (num % 10) + '0';
+        num = num / 10;
+        j++;
+    }
+    if (isNegative) {
+        str[i] = '-';
+        i++;
+    }
+    for (j = j - 1; j >= 0; j--) {
+        str[i] = aux[j];
+        i++;
+    }
+    str[i] = '\0';
+    return i;
+}
+static int stringToInt(char * num){
+    char isNegative = 0;
+    int i = 0;
+    int res = 0;
+
+    if(num[0] == '-'){
+        isNegative = 1;
+        i++;
+    }
+
+    while(num[i] != '\0'){
+        res = res*10 + num[i] - '0';
+        i++;
+    }
+    
+    if(isNegative){
+        res = -res;
+    }
+    
+    return res;
+}
+
+int printf(const char * format, ...){
+    va_list variables;
+
+    va_start(variables, format);
+
+    char str[DIM];
+    int index = 0, fmtPos = 0;
+
+    while(format[fmtPos] != '\0'){
+        if(format[fmtPos] == '%'){
+            fmtPos++;
+            switch(format[fmtPos]){
+                case 'd': //int
+                    index += intToString(va_arg(variables,int),str+index);
+                    break;
+                case 's': //string
+                    index+=strConcat(str,va_arg(variables,char*));
+                    break;
+                default:
+                    break;
+            }
+            fmtPos++;
+        }else{
+            str[index] = format[fmtPos++];
+            index++;
+        }
+    }
+    str[index] = '\0';
+    va_end(variables);
+    return putString(str, WHITE);
+}
+
+int putString(char * c, uint32_t color) {
+    uint32_t length = strlen(c);
+    sys_write(STDOUT,(uint8_t *)c,length,color);
+    return length;
+}
+
+int strlen(const char * s) {
+    int i = 0;
+    while(s[i] != '\0') {
+        if(s[i] == '\t') {
+            i+=4;
+        }
+        i++;
+    }
+    return i;
 }

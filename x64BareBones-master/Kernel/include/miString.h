@@ -33,7 +33,7 @@ char *strchrnul(const char *s, int c);
 char *strnchrnul(const char *s, size_t count, int c);
 char *strrchr(const char *s, int c);
 char *strnchr(const char *s, size_t count, int c);
-size_t strlen(const char *s);
+int strlen(const char *s);
 size_t strnlen(const char *s, size_t count);
 size_t strspn(const char *s, const char *accept);
 size_t strcspn(const char *s, const char *reject);
