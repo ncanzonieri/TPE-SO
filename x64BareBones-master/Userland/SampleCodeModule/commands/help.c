@@ -1,6 +1,5 @@
 #include <commands.h>
-#include <lib.h>
-
+#include <library.h>
 
 void help(){
 

@@ -2,12 +2,12 @@
 
 
 
-typedef enum colorsEnum{
+/* typedef enum colorsEnum{
 
     BLUE = 0x000080, 
     GREEN = 0x008000, 
     RED = 0xff0000, 
     YELLOW = 0xffff00
 
-} colorsEnum;
+} colorsEnum; */
 

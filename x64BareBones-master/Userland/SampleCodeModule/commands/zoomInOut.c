@@ -1,14 +1,11 @@
 #include <commands.h>
-
+#include <library.h>
+#include <stdint.h>
 // char * commands[MAX_COMMANDS] = { "registers", "divx0", "codOpInvalid", "help", "snake", "time", "snake", "zoomIn", "zoomOut"};
 
-
 //  --------------------- ZOOM IN & OUT -------------------------
-
-
 #define MAX_ZOOM 3
 #define MIN_ZOOM 1
-
 
 void zoomIn(){
     int scale;
@@ -17,7 +14,7 @@ void zoomIn(){
         printf("Maximum zoom out level reached.\n");
     }else{
         call_zoomIn();
-        print("Zoomed in to scale: %d\n", scale - 1);
+        printf("Zoomed in to scale: %d\n", scale - 1);
     }
 
 }

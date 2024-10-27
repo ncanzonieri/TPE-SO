@@ -22,7 +22,7 @@ static void startShell(char * v);
 static int belongs(char * v);
 static void runCommands(int index);
 
-static void (* runFuncts[])() = {registers, divx0, codOpInvalid, help, snake, time, snake, zoomIn, zoomOut};
+static void (* runFuncts[])() = {divx0, codOpInvalid, help, snake, time, snake, zoomIn, zoomOut};
 
 
 
@@ -95,6 +95,6 @@ static void runCommands(int index){
 
 }
 
-static void putSteve(){
-    printString(GREEN, "steve $");
-}
+//static void putSteve(){
+//   printString(GREEN, "steve $");
+//}

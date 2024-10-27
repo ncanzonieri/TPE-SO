@@ -3,7 +3,8 @@
 #define DIM 256
 #define STDOUT 1
 #define WHITE 0x00FFFFFF
-
+#define BUFFER_DIM 256
+#define SCANF_BUFFER_SIZE 256
 
 int strcmp(char *s1, char *s2)
 {
@@ -40,7 +41,7 @@ void strcpy(char *destination, const char *source)
     return;
 }
 
-/* int strlen(const char * s) {
+int strlen(const char * s) {
     int i = 0;
     while(s[i] != '\0') {
         if(s[i] == '\t') {
@@ -49,7 +50,7 @@ void strcpy(char *destination, const char *source)
         i++;
     }
     return i;
-} */
+} 
 
 //----------------------------------------------------------------------------------------------------
 char getChar(){
@@ -125,16 +126,6 @@ static int intToString(int num, char *str) {
 }
 
 
-static int strConcat(char *str1, char *str2){
-    int i = strlen(str1);
-    int j = 0;
-    while(str2[j] != '\0'){
-        str1[i] = str2[j];
-        i++;
-        j++;
-    }
-    return i;
-}
 
 static int stringToInt(char * num){
     char isNegative = 0;
