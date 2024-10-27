@@ -106,3 +106,14 @@ void exceptionDispatcher(int excepcion){
     }
     launchingException(except_message);
 }
+
+int strlen(const char * s) {
+    int i = 0;
+    while(s[i] != '\0') {
+        if(s[i] == '\t') {
+            i+=4;
+        }
+        i++;
+    }
+    return i;
+}

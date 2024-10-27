@@ -12,7 +12,7 @@ extern uint8_t rtcDriver(uint8_t opt);
 extern void _cli();
 extern void _sti();
 
-void now(timeStruct* ans);
+void now(timeStruct * ans);
 void timer_handler();
 int ticks_elapsed();
 int seconds_elapsed();

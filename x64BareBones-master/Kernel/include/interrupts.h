@@ -34,4 +34,6 @@ void picSlaveMask(uint8_t mask);
 //Termina la ejecución de la cpu.
 void haltcpu(void);
 
+int strlen(const char * s); // dps cambiarlo de lugar
+
 #endif /* INTERRUPS_H_ */
