@@ -1,3 +1,4 @@
+/*
 #include <audioDriver.h>
 
 extern void _outb(uint16_t port, uint8_t value);
@@ -28,3 +29,4 @@ uint64_t stopSound() {
     _outb(0x61, aux);
     return 1;
 }
+*/
