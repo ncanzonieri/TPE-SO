@@ -1,14 +1,18 @@
-include ../Makefile.inc
+include Makefile.inc
 
-MODULE=0000-sampleCodeModule.bin
-SOURCES=$(wildcard [^_]*.c)
+SAMPLE_DATA=0001-sampleDataModule.bin
 
-all: $(MODULE)
+all: sampleCodeModule sampleDataModule
 
-$(MODULE): $(SOURCES)
-	$(GCC) $(GCCFLAGS) -T sampleCodeModule.ld _loader.c $(SOURCES) -o ../$(MODULE)
+sampleCodeModule:
+	cd SampleCodeModule; make
+
+sampleDataModule:
+	printf "This is sample data." >> $(SAMPLE_DATA) && dd if=/dev/zero bs=1 count=1 >> $(SAMPLE_DATA)
 
 clean:
-	rm -rf *.o
+	cd SampleCodeModule; make clean
+	rm -rf *.bin
 
-.PHONY: all clean print
+
+.PHONY: sampleCodeModule all clean
