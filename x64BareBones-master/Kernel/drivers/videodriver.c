@@ -181,3 +181,7 @@ uint8_t setScale(uint8_t newScale){
 uint64_t getScale(){
 	return (uint64_t) scale;
 }
+
+uint64_t getScreenSize(){
+	return ((uint64_t) (VBE_mode_info->width << 32)) | VBE_mode_info->height;
+}

@@ -20,5 +20,6 @@ uint64_t ms_elapsed();
 char * getDate(char* date);
 char * getTime(char* time);
 uint64_t sleep(uint64_t ms);
+uint8_t rtc(uint8_t timeOption);
 
 #endif

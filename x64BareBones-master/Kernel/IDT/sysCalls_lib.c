@@ -27,11 +27,11 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
         case CLEAR_SCREEN:
             return sys_clearScreen();
         case GET_SCREEN_INFO:
-            return 0; // falta implementar
+            return sys_getScreenInfo();
         case GET_SCALE:
             return sys_getScale();
         case GET_TIME:
-            return 0; // falta implementar
+            return sys_getTime((uint8_t)otherRegs[0]); 
         case SET_SCALE:
             return sys_setFontScale((uint8_t)otherRegs[0]);
         case GET_REGISTERS:
@@ -89,20 +89,20 @@ uint64_t sys_clearScreen() {
     clearScreen();
     return 0;
 }
-/*
+
 uint64_t sys_getScreenInfo() {
     // return the width in the high 32 bits and the height in the low 32 bits
-    return ((uint64_t) getScreenWidth() << 32) | getScreenHeight();
+    return getScreenSize();
 }
-*/
+
 uint64_t sys_getScale() {
     return getScale();
 }
-/*
-uint64_t sys_getTime(uint64_t arg) {
-    return getTime(arg);
+
+uint64_t sys_getTime(uint8_t timeOption) {
+    return rtc(timeOption);
 }
-*/
+
 uint64_t sys_setFontScale(uint8_t scale) {
     return setScale(scale);
 }

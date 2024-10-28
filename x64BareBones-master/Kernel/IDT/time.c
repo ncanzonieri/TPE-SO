@@ -78,11 +78,17 @@ static uint8_t reformatToDec(uint8_t value){
 	return value%16 + (value/16)*10;
 }
 
+uint8_t rtc(uint8_t timeOption){
+    return reformatToDec(rtcDriver(timeOption));
+}
+
 void now(timeStruct * ans){
-    uint8_t utcHour = reformatToDec(rtcDriver(4));
-    uint8_t utcDay = reformatToDec(rtcDriver(7));
-    uint8_t utcMonth = reformatToDec(rtcDriver(8));
-    uint8_t utcYear = reformatToDec(rtcDriver(9));
+    ans->sec=rtc(0);
+	ans->min=rtc(2);
+    uint8_t utcHour = rtc(4);
+    uint8_t utcDay = rtc(7);
+    uint8_t utcMonth = rtc(8);
+    uint8_t utcYear = rtc(9);
     if(utcHour<3){
         utcHour+=21;
         if(utcDay==1){
@@ -103,8 +109,6 @@ void now(timeStruct * ans){
     }else{
         utcHour-=3;
     }
-	ans->sec=reformatToDec(rtcDriver(0));
-	ans->min=reformatToDec(rtcDriver(2));
 	ans->hour=utcHour;
     ans->day=utcDay;
     ans->month=utcMonth;

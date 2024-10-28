@@ -75,13 +75,14 @@ uint64_t sys_getScreenInfo();
 uint64_t sys_getFontInfo();
 
 /**
- * @brief Returns the time data of the current time read from the RTC.
+ * @brief Returns the time data of the current time read from the RTC. Note: time is in UTC
+ * @param rdi: sec=0, min=2, hour=4, day=7, month=8, year=9. Other registers are not implemented.
  */
-uint64_t sys_getTime(uint64_t rdi);
+uint64_t sys_getTime(uint8_t rdi);
 
 /**
  * @brief Sets the font scale. Supported values are 1, 2 and 3.
- * @param rdi the scale to set.
+ * @param scale the scale to set.
  */
 uint64_t sys_setFontScale(uint8_t scale);
 
