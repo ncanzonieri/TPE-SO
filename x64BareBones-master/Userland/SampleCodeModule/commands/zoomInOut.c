@@ -6,7 +6,7 @@
 //  --------------------- ZOOM IN & OUT -------------------------
 #define MAX_ZOOM 3
 #define MIN_ZOOM 1
-
+/*
 void zoomIn(){
     int scale;
     callGetScale(&scale);
@@ -33,3 +33,4 @@ void zoomOut(){
 }
 
 
+*/

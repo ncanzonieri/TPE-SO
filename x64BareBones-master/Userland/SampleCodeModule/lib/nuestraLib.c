@@ -1,5 +1,8 @@
 #include <stdint.h>
 #include <stdarg.h>
+#include <stddef.h>
+#include <library.h>
+
 #define DIM 256
 #define STDOUT 1
 #define WHITE 0x00FFFFFF
@@ -75,6 +78,26 @@ char toLower(char c) {
     }
     return c;
 }
+
+// DEVESA
+char * fgets(char *buffer, size_t size) {
+    int readBytes = 0;
+    char c;
+    while(readBytes < (size-1) && (((c = getChar()) != '\n'))) {
+        buffer[readBytes++] = c;
+    }
+    buffer[size-1] = 0;
+    return buffer;
+}
+
+static int readToBlank(char * str, int index) {
+    int readBytes = 0;
+    for(int i=index; str[i] != 0 && str[i] != '\n' && str[i] != ' ' && str[i] != '\t'; i++) {
+        readBytes++;
+    }
+    return readBytes;
+}
+
 //----------------------------------------------------------------------------------------
 /*void putcharColor(char c, uint32_t color) {
     _sys_write(STDOUT, &c, 1, color);
@@ -212,7 +235,7 @@ int scanf(const char *fmt, ...) {
                     ptr = (void *) va_arg(args, int *);
                     offset = readToBlank(input, index);
                     strncpy(buffer, input + index, offset);
-                    *(int *)ptr = atoi(buffer);
+                    *(int *)ptr = stringToInt(buffer);
                     index += (offset + 1);
                     count++;
                     break;
@@ -238,9 +261,23 @@ int scanf(const char *fmt, ...) {
 static int readFromKeyboard(char * buffer) {
     int i=0;
     char c;
-    while (c != ' ' && c != '\t' && c != '\n' && i < BUFFER_DIM) {
+    do{
         c = getChar();
         buffer[i++] = c;
-    }
+    }while (c != ' ' && c != '\t' && c != '\n' && i < BUFFER_DIM);
     return i;
+}
+
+
+char *strncpy(char *dest, const char *src, int count)
+{
+	char *tmp = dest;
+
+	while (count) {
+		if ((*tmp = *src) != 0)
+			src++;
+		tmp++;
+		count--;
+	}
+	return dest;
 }

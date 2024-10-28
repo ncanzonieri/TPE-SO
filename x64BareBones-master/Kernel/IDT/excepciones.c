@@ -58,13 +58,8 @@ static void dumpRegisters(){
 
     for(int i = 0; i < regsAmount; i++){
         hexaToAscii(registers[i], buffer);
-        int zeroDigits = 16 - strlen(buffer);
-
         printString(WHITE, regsNames[i]); 
-        printString(WHITE, ": 0x");
-        for(int j = 0; j < zeroDigits; j++){
-            printString(WHITE, "0");
-        }
+        printString(WHITE, ": ");
         printString(WHITE, buffer);
         newLine();
     }

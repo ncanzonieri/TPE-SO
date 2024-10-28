@@ -1,7 +1,9 @@
 #include <time.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdarg.h>
+#include <naiveConsole.h>
 #define DIM 400
 #define STDOUT 1
 #define WHITE 0xFFFFFF
@@ -73,14 +75,14 @@ static uint8_t reformatToDec(uint8_t value){
 	// esta funcion local solo tiene sentido en el contexto
 	// de que los formatos en rtc escriben un numero decimal en 1B donde se lee hexadecimal
 	// por eso value son dos digitos y no tiene 'letras'
-	return value%10 + (value/10)*16;
+	return value%16 + (value/16)*10;
 }
 
 void now(timeStruct * ans){
     uint8_t utcHour = reformatToDec(rtcDriver(4));
     uint8_t utcDay = reformatToDec(rtcDriver(7));
     uint8_t utcMonth = reformatToDec(rtcDriver(8));
-    uint8_t utcYear = reformatToDec(rtcDriver(9))+2000;
+    uint8_t utcYear = reformatToDec(rtcDriver(9));
     if(utcHour<3){
         utcHour+=21;
         if(utcDay==1){
@@ -109,32 +111,56 @@ void now(timeStruct * ans){
     ans->year=utcYear;
 }
 
-char * getDate(timeStruct * ans){
+char * getDate(char* date){
+    timeStruct ans;
+    now(&ans);
     int day, month, year;
 
-    day = ans->day;
-    month = ans->month;
-    year = ans->year;
+    day = ans.day;
+    month = ans.month;
+    year = ans.year;
 
-    static char date[20];
-    //sprintf(date, "%02d/%02d/%04d", day, month, year);
-    printf("%02d/%02d/%04d", day, month, year);
+    date[2]='/';
+    date[5]='/';
+    date[6]='2';
+    date[7]='0';
+    date[10]=0;
+    for(int i=0; i<2; i++){
+        date[1-i]=day%10+'0';
+        day/=10;
+        date[4-i]=month%10+'0';
+        month/=10;
+        date[9-i]=year%10+'0';
+        year/=10;
+    }
     return date;
 }
 
-char * getTime(timeStruct* ans){
+char * getTime(char* time){
+    timeStruct ans;
+    now(&ans);
 	int sec, min, hour;
 
-    sec = ans->sec;
-    min = ans->min;
-    hour = ans->hour;
+    sec = ans.sec;
+    min = ans.min;
+    hour = ans.hour;
 
-    static char time[20];
-    //sprintf(time, "%02d:%02d:%02d", hour, min, sec);
-    printf( "%02d:%02d:%02d", hour, min, sec);
+    time[2]=':';
+    time[5]=':';
+    for(int i=0; i<2; i++){
+        time[1-i]=(hour%10)+'0';
+        hour/=10;
+        time[4-i]=(min%10)+'0';
+        min/=10;
+        time[7-i]=(sec%10)+'0';
+        sec/=10;
+    }
+    time[8]=0;
+
     return time;
 }
 
+/*
 static int strConcat(char *str1, char *str2){
     int i = strlen(str1);
     int j = 0;
@@ -244,3 +270,4 @@ int strlen(const char * s) {
     }
     return i;
 }
+*/

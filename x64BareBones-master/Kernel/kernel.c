@@ -4,6 +4,7 @@
 #include <moduleLoader.h>
 #include <videodriver.h>
 #include <idtLoader.h>
+#include <time.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -64,8 +65,12 @@ void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char bac
 // de aca sale todo, se cargan las idts y dps de ahi arranca todo
 int main() 
 {	
-	printString(0x0000FF00,"TIMER TICK");
 	load_idt();
+	while(1);
+	/*
+	printString(0x0000FF00, getTime(buffer));
+	printString(0x00FF0000, getDate(buffer));
+	*/
 	// algo mas
 	return 0;
 }

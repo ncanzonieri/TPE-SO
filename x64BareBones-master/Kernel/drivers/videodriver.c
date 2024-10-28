@@ -40,7 +40,7 @@ struct vbe_mode_info_structure {
 	uint8_t reserved1[206];
 } __attribute__ ((packed));
 static uint64_t cx=0;
-static uint64_t cy=0;
+static uint64_t cy=16;
 static uint32_t bgColor=0x00000000;
 static uint8_t scale=1;
 
@@ -79,6 +79,17 @@ void printBitMap(uint32_t hexCollor, uint8_t map[], uint64_t x, uint64_t y){
 
 void printCharacter(uint32_t hexCollor, char c, uint64_t x, uint64_t y){
 	printBitMap(hexCollor, getFontChar(c), x, y);
+}
+
+uint64_t printStringInCoord(uint32_t hexCollor, char* s, uint64_t x, uint64_t y){
+	uint64_t auxX=cx;
+	uint64_t auxY=cy;
+	cx=0;
+	cy=0;
+	uint64_t ans =printString(hexCollor,s);
+	cx=auxX;
+	cy=auxY;
+	return ans;
 }
 
 uint64_t printString(uint32_t hexCollor, char* s){

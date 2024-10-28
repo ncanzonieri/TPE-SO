@@ -2,7 +2,7 @@
 #include <time.h>
 
 
-void Actualtime(){
-    char * localDate = getDay();
-    printf("Today's date is: %s\n", localDate);
+void actualTime(){
+    //char * localDate = getDate();
+    //printf("Today's date is: %s\n", localDate);
 }

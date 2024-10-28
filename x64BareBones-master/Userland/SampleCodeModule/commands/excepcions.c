@@ -14,7 +14,8 @@ void divx0() {
 
 
 // --------------- 
-
+/*
 void codOpInvalid(){
     codOpInvalidASM(); // se hace en asm
 }
+*/

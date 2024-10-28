@@ -1,4 +1,4 @@
-
+/*
 #include <time.h>
 #include <commands.h>
 #include <string.h>
@@ -22,20 +22,20 @@ static void startShell(char * v);
 static int belongs(char * v);
 static void runCommands(int index);
 
-static void (* runFuncts[])() = {divx0, codOpInvalid, help, snake, time, snake, zoomIn, zoomOut};
+//static void (* runFuncts[])() = {divx0, codOpInvalid, help, time, snake, zoomIn, zoomOut};
 
 
 
 #define DEFAULT_SCALE 1
 
 void welcome(){
-    clear();
-    setFont(DEFAULT_SCALE);
-    char * localDate = getDay();
-    printf("Today's date is: %s\n", localDate);
+    //clear();
+    //setFont(DEFAULT_SCALE);
+    //actualTime();
 }
 
 void getCommands(){
+    
     char v[MAX_DIM] = {0};
     char copy[MAX_DIM] = {0};
     int index = 0; 
@@ -45,28 +45,29 @@ void getCommands(){
 		while(1){
             if( c != ESC){ // 27
 				v[index++] = c;
-				callWrite(c);
+				// callWrite(c);
             }
             else if( c == DELETE ){ // 8
 				if( index > CERO)
 					index--;
-					callDel(); // systemcall a delete 
+					// callDel(); // systemcall a delete 
 			} 
             else if(c == TAB){
                 int tab = 4;
 	            for( int i=0; i <tab; i++){
                     v[index++] = ' ';
-			        callWrite(c);
+			       // callWrite(c);
 		        }
             }else{
                 v[index++] = c;
-                callWrite(c);
+                // callWrite(c);
             }
         }
 		v[index] = 0;
         strcpy(v, copy);
 		startShell(copy);
     }
+    
 }
 
 static void startShell(char * v){
@@ -89,7 +90,7 @@ return -1;
 
 static void runCommands(int index){
     if( index == ERROR){
-        call_sysError(); // dps cambiamos las funciones, osea printf("Error not found")
+       // call_sysError(); // dps cambiamos las funciones, osea printf("Error not found")
     }
     runFuncts[index]; 
 
@@ -97,4 +98,4 @@ static void runCommands(int index){
 
 //static void putSteve(){
 //   printString(GREEN, "steve $");
-//}
+//}*/
