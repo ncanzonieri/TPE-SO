@@ -20,6 +20,30 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_read((uint8_t) otherRegs[0], (uint8_t *) otherRegs[1], otherRegs[2]);
         case WRITE:
             return sys_write((uint8_t) otherRegs[0], (char *) otherRegs[1], otherRegs[2], (uint32_t) otherRegs[3]);
+        case DRAW_RECTANGLE:
+            return sys_drawRectangle((uint32_t)otherRegs[0],otherRegs[1],otherRegs[2],otherRegs[3],otherRegs[4]);
+        case GET_COORDS:
+            return sys_getCoords();
+        case CLEAR_SCREEN:
+            return sys_clearScreen();
+        case GET_SCREEN_INFO:
+            return 0; // falta implementar
+        case GET_SCALE:
+            return sys_getScale();
+        case GET_TIME:
+            return 0; // falta implementar
+        case SET_SCALE:
+            return sys_setFontScale((uint8_t)otherRegs[0]);
+        case GET_REGISTERS:
+            return sys_getRegisters((uint64_t*)otherRegs[0]);
+        case SLEEP:
+            return sys_sleep(otherRegs[0]);
+        case PLAY_SOUND:
+            return 0; // falta implementar
+        case SET_BGCOLOR:
+            return sys_setBgColor((uint32_t) otherRegs[0]);
+        case GET_BGCOLOR:
+            return sys_getBgColor();
         default:
             return 0;
     }
@@ -61,6 +85,7 @@ uint64_t sys_getCoords() {
 }
 
 uint64_t sys_clearScreen() {
+    // limpia la pantalla
     clearScreen();
     return 0;
 }
