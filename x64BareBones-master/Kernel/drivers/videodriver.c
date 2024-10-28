@@ -183,5 +183,5 @@ uint64_t getScale(){
 }
 
 uint64_t getScreenSize(){
-	return ((uint64_t) (VBE_mode_info->width << 32)) | VBE_mode_info->height;
+	return ((uint64_t) VBE_mode_info->width << 32) | VBE_mode_info->height;
 }

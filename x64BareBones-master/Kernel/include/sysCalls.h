@@ -72,7 +72,7 @@ uint64_t sys_getScreenInfo();
 /**
  * @brief Returns the font width in the high 32 bits and the font height in the low 32 bits.
  */
-uint64_t sys_getFontInfo();
+uint64_t sys_getScale();
 
 /**
  * @brief Returns the time data of the current time read from the RTC. Note: time is in UTC
