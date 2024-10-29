@@ -4,6 +4,7 @@
         "audiodriver.h": "c",
         "string.h": "c",
         "interrupts.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "library.h": "c"
     }
 }

@@ -47,7 +47,7 @@ void getCommands(){
     char c;
     int ans;
     while(1) {
-        putUser();
+        // putUser();
         while( (c = getChar()) != '\n'){
             if( c == TAB){
                 for( int i=0; i< 4; i++){
@@ -57,7 +57,7 @@ void getCommands(){
                         buffer[dim++] = ' ';
                     }
                 }
-            }else if( c == DELETE){
+            }if( c == DELETE){
                 if( dim > 0){
                     dim--;
                     putChar(c, WHITE);
@@ -67,6 +67,7 @@ void getCommands(){
                 sys_write(STDOUT_FD,&c,1,GREEN);
             }
         }
+
         putChar('\n',WHITE);
         startShell(buffer);
     }
@@ -74,10 +75,7 @@ void getCommands(){
 }
 
 
-
-
-
-static void startShell(char * v){
+void startShell(char * v){
     if( *v == 0){ 
         return;
     }
@@ -87,7 +85,6 @@ static void startShell(char * v){
     }
     runCommands(flag);
 }
-
 
 static int belongs(char * v){
     char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers"};
