@@ -15,15 +15,15 @@
 #define WHITE 0xffffff
 #define ERROR -1
 #define EXIT 1
+
 void welcome();
 void getCommands();
 static void startShell(char * v);
 static int belongs(char * v);
 static void runCommands(int index);
 
-static void (* runFuncts[])() = {divx0, codOpInvalid, help, time, snake, zoomIn, zoomOut};
+static void (* runFuncts[])() = {divx0, codOpInvalid, help, actualTime, snake, zoomIn, zoomOut, registers};
 
-////////jijijijijj
 static void putUser(){
    sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
 }
@@ -71,7 +71,7 @@ static void startShell(char * v){
 
 
 static int belongs(char * v){
-    char * commands[COMMANDS_COUNT] = { "registers", "divx0", "codOpInvalid", "help", "snake", "time", "zoomIn", "zoomOut"};
+    char * commands[COMMANDS_COUNT] = {"divx0", "codOpInvalid", "help", "snake", "time", "zoomIn", "zoomOut","registers"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;

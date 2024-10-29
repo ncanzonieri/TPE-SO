@@ -1,9 +1,11 @@
 #include <commands.h>
 
-// -------------- EXCEPCIONS --------------
+
+extern void invalidOperation();
 
 
-// ---------- division por CERO -------
+
+
 void divx0() {
     int a, b, c;
     a = 0;
@@ -13,9 +15,7 @@ void divx0() {
 }
 
 
-// --------------- 
-/*
 void codOpInvalid(){
-    codOpInvalidASM(); // se hace en asm
+    invalidOperation();
+    // codOpInvalidASM(); // se hace en asm
 }
-*/

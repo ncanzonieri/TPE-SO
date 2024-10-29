@@ -12,6 +12,6 @@ sampleDataModule:
 
 clean:
 	cd SampleCodeModule; make clean
-	rm -rf *.bin
+#	rm -rf *.bin
 
 .PHONY: sampleCodeModule all clean

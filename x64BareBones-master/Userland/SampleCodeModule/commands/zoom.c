@@ -9,10 +9,8 @@
 
 void zoomIn(){
     return;
-    /*
-    
-    int scale;
-
+   /*
+      int scale;
     callGetScale(&scale);
     if( scale >= MAX_ZOOM){
         printf("Maximum zoom out level reached.\n");
@@ -36,7 +34,7 @@ void zoomOut(){
         call_zoomOut();
         printf("Zoomed out to scale: %d\n", scale - 1);
     }
-    */ 
+    */
 }
 
 
