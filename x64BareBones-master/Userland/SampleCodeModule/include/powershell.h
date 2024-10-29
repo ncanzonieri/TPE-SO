@@ -5,7 +5,7 @@
 
 #include <time.h>
 #include <commands.h>
-#include <string.h>
+#include <library.h>
 
 void welcome();
 

@@ -1,11 +1,13 @@
 #include <time.h>
 #include <commands.h>
-#include <string.h>
+
 #include <syscalls.h>
+#include <library.h>
 
 #define MAX 15
 #define MAX_DIM 256
-
+#define BLACK 0x00000000
+#define WHITE 0x00FFFFFF
 #define DELETE 8
 #define CERO 0
 #define ESC 27
@@ -22,7 +24,7 @@ static void startShell(char * v);
 static int belongs(char * v);
 static void runCommands(int index);
 
-static void (* runFuncts[])() = {divx0, codOpInvalid, help, actualTime, snake, zoomIn, zoomOut, registers};
+static void (* runFuncts[])() = {divx0, invalid, help, actualTime, snake, zoomIn, zoomOut, registers};
 
 static void putUser(){
    sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
@@ -34,29 +36,48 @@ void welcome(){
     sys_clearScreen();
     sys_setFontScale(DEFAULT_SCALE);
     actualTime();
+    putChar("h",GREEN);
 }
 //uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
 //uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color)
 
 void getCommands(){
     
-    char input[MAX_DIM] = {0};
-    char copy[MAX_DIM] = {0};
-    int index = 0; 
+    char buffer[MAX_DIM] = {0};
+    // char copy[MAX_DIM] = {0};
+    int dim = 0; 
     char c;
     int ans;
-    while(ans != EXIT) {
-        //if(noScreenSpace()) {
-        //    parseCommand("clear");
-        //}
+    while(1) {
         putUser();
-        getInputAndPrint(input);
+        while( (c = getChar()) != '\n'){
+            if( c == TAB){
+                for( int i=0; i< 4; i++){
+                    putChar(c,GREEN);
+                    dim++;
+                    if( dim < MAX_DIM){
+                        buffer[dim++] = ' ';
+                    }
+                }
+            }else if( c == DELETE){
+                if( dim > 0){
+                    dim--;
+                    putChar(c, WHITE);
+                }
+            }else if( c != ESC){
+                buffer[dim++] = c;
+                sys_write(STDOUT_FD,&c,1,GREEN);
+            }
+        }
         putChar('\n',WHITE);
-        strcpy(copy, input);
-        startShell(copy);
+        startShell(buffer);
     }
     
 }
+
+
+
+
 
 static void startShell(char * v){
     if( *v == 0){ 
@@ -71,7 +92,7 @@ static void startShell(char * v){
 
 
 static int belongs(char * v){
-    char * commands[COMMANDS_COUNT] = {"divx0", "codOpInvalid", "help", "snake", "time", "zoomIn", "zoomOut","registers"};
+    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;
@@ -83,7 +104,7 @@ return ERROR;
 
 static void runCommands(int index){
     if( index == ERROR){
-           help();
+        help();
 // call_sysError(); // dps cambiamos las funciones, osea printf("Error not found")
     }
     runFuncts[index](); 

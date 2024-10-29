@@ -1,11 +1,13 @@
-#include <commmands.h>
-
+#include <commands.h>
+#include <sysCalls.h>
+#include <library.h>
+#define REGS_AMOUNT 17 
 static char * regsNames[] = {  
     "RAX   ", "RBX   ", "RCX   ", "RDX   ", "RSI   ", "RDI   ", "RBP   ",
     "R8    ", "R9    ", "R10   ", "R11   ", "R12   ", "R13   ", "R14   ",
     "R15   ", "RSP   ", "RIP   "
 };
-
+/*
 static int inforegCommand(int argc, char * argv[]) {
     uint64_t regs[REGS_AMOUNT];
     int ok = _sys_getRegisters(regs);
@@ -34,22 +36,20 @@ static int inforegCommand(int argc, char * argv[]) {
     return OK;
 }
 
+*/
 
-
-static void printError(char * command, char * message, char * usage) {
-    printf("%s: ", command);
-    printStringColor("error: ", ERROR_SECONDARY_COLOR);
-    printStringColor(message, ERROR_PRIMARY_COLOR);
-    if(usage != NULL)
-        printf("\nUsage: %s\n", usage);
-    else
-        putchar('\n');
-}
+// ---------------- NUESTRO REGIS -------------------
+// sys_getRegisters: syscall 0x09
 
 void registers(){
-    int 
-    for( int i=0; i<REGS_AMOUNT; i++ ){
-    
+    uint64_t r[REGS_AMOUNT];
+    int flag = sys_getRegisters(r);
+    if( flag != 1 ){
+        printf("error: wrong registers upload");
+        return;
     }
-
+    for( int i=0; i<REGS_AMOUNT && flag; i++ ){
+        printf("%s: %s\n", regsNames[i], r[i]);
+    }
+return;
 }

@@ -1,11 +1,5 @@
 #include <commands.h>
 
-
-extern void invalidOperation();
-
-
-
-
 void divx0() {
     int a, b, c;
     a = 0;
@@ -15,7 +9,7 @@ void divx0() {
 }
 
 
-void codOpInvalid(){
+void invalid(){
     invalidOperation();
     // codOpInvalidASM(); // se hace en asm
 }

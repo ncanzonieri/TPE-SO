@@ -6,10 +6,10 @@
 void help();          // Muestra la ayuda sobre los comandos disponibles
 void snake();         // Ejecuta el juego de la serpiente
 void registers();     // Muestra el estado de los registros
-void codOpInvalid();  // Maneja el caso de operación inválida
+void invalid();  // Maneja el caso de operación inválida
 void divx0();        // Maneja la excepción de división por cero
 void zoomIn();       // Realiza el acercamiento
 void zoomOut();      // Realiza el alejamiento
 void actualTime();         // Muestra el tiempo actual
-
+extern void invalidOperation();
 #endif // COMMANDS_H

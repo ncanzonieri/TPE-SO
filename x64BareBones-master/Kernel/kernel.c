@@ -38,16 +38,8 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
-	
-	ncPrint("[Loading modules]");
-	ncNewline();
-	void * moduleAddresses[] = {
-		sampleCodeModuleAddress,
-		sampleDataModuleAddress
-	};
-
+	void * moduleAddresses[] = { sampleCodeModuleAddress, sampleDataModuleAddress };
 	loadModules(&endOfKernelBinary, moduleAddresses);
-	
 	clearBSS(&bss, &endOfKernel - &bss);	
 	return getStackBase();
 	
@@ -65,13 +57,6 @@ void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char bac
 // de aca sale todo, se cargan las idts y dps de ahi arranca todo
 int main() 
 {	
-	printString("HOLA\b ",0x00FF00FF);
 	load_idt();
-	while(1);
-	/*
-	printString(0x0000FF00, getTime(buffer));
-	printString(0x00FF0000, getDate(buffer));
-	*/
-	// algo mas
-	return 0;
+	return ((EntryPoint)sampleCodeModuleAddress)();
 }
