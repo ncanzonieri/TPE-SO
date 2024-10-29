@@ -65,6 +65,10 @@ char getChar(){
     return c;
 }
 
+void putChar(char c, uint32_t hexColor){
+    sys_write(STDOUT, &c, 1, hexColor);
+}
+
 void swap(char *x, char *y)
 {
     char t = *x;

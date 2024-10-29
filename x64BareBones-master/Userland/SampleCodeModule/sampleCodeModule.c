@@ -12,7 +12,7 @@ static int var2 = 0;
 
 int main(){
     
-    //welcome();
+    welcome();
     
     //getCommands();
 

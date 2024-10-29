@@ -20,6 +20,8 @@ char *strncpy(char *dest, const char *src, int count);
 } */
 
 //----------------------------------------------------------------------------------------------------
+void putChar(char c, uint32_t hexColor);
+
 char getChar();
 
 void swap(char *x, char *y);
