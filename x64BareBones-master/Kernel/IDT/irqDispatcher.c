@@ -15,14 +15,15 @@ void irqDispatcher(uint64_t irq) {
 			break;
 		case KEYBOARD: 
 			int_21();
+			break;
 	}
 	return;
 }
 
 void int_20() {
 	timer_handler();
-	char buffer[20]={0};
-	printStringInCoord(0x00FFFFFF, getTime(buffer),0,0);
+	//char buffer[20]={0};
+	//printStringInCoord(0x00CCCCCC, getTime(buffer),0,0);
 }
 
 void int_21(){

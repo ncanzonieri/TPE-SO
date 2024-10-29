@@ -1,6 +1,7 @@
 #include <commands.h>
 #include <time.h>
 #include <syscalls.h>
+#include <library.h>
 #define HOUR 4
 #define DAY 7
 #define MONTH 8
@@ -43,5 +44,5 @@ void actualTime(){
         date[9-i]=year%10+'0';
         year/=10;
     }
-    printf("Today's date is: %s\n", date);
+    printf("Welcome! Today's date is: %s\n", date);
 }

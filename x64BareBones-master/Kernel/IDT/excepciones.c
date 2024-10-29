@@ -15,7 +15,7 @@
 #include <miString.h>
 #include <videodriver.h>
 #include <interrupts.h>
-#include <sysCalls.h>
+#include <syscalls.h>
 
 #define EXCEPTION_cero  "ERROR 0x00 Division by zero exception\n\n"
 #define EXCEPTION_invalidOpcode "ERROR 0x06 Invalid Opcode exception\n\n"

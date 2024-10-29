@@ -46,3 +46,17 @@ cd ..
 make clean
 make all
 exit
+cd root
+ls
+cd x64BareBones-master/
+ls
+make all
+exit
+cd root 
+ls 
+cd x64BareBones-master/
+ls
+make clean
+make all
+exi
+exit
