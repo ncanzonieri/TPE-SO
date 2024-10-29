@@ -27,7 +27,7 @@ static void runCommands(int index);
 static void (* runFuncts[])() = {divx0, invalid, help, actualTime, snake, zoomIn, zoomOut, registers};
 
 static void putUser(){
-   sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
+  sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
 }
 
 #define DEFAULT_SCALE 1
@@ -36,13 +36,11 @@ void welcome(){
     sys_clearScreen();
     sys_setFontScale(DEFAULT_SCALE);
     actualTime();
-    putChar("h",GREEN);
 }
 //uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
 //uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color)
 
 void getCommands(){
-    
     char buffer[MAX_DIM] = {0};
     // char copy[MAX_DIM] = {0};
     int dim = 0; 

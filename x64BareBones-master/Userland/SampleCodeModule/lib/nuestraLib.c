@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <library.h>
+#include <syscalls.h>
 
 #define DIM 256
 #define STDOUT 1

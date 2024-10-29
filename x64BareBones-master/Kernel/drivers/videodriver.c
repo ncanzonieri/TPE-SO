@@ -1,6 +1,7 @@
 #include <videodriver.h>
 #include <fontDriver.h>
 #include <stdint.h>
+#include <stdint.h>
 
 struct vbe_mode_info_structure {
 	uint16_t attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.

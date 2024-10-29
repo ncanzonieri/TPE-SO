@@ -21,6 +21,8 @@ section .text
     ret
 %endmacro
 
+;sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
+
 sys_read: syscall 0x00
 sys_write: syscall 0x01
 sys_drawRectangle: syscall 0x02

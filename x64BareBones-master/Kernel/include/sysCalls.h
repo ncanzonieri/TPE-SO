@@ -40,7 +40,7 @@ uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count);
  * @param color: the color of the string in hexadecimal. Usage: 0x00RRGGBB.
  * @return the number of chars written.
  */
-uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color);
+uint64_t _sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color);
 
 /**
  * @brief Draws a rectangle in the screen on the given coordinates.

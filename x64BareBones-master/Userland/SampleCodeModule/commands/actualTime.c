@@ -44,5 +44,5 @@ void actualTime(){
         date[9-i]=year%10+'0';
         year/=10;
     }
-    printf("Welcome! Today's date is: %s\n", date);
+    printf("Today's date is: %s\n", date);
 }

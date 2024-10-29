@@ -19,7 +19,9 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
         case READ:
             return sys_read((uint8_t) otherRegs[0], (uint8_t *) otherRegs[1], otherRegs[2]);
         case WRITE:
-            return sys_write((uint8_t) otherRegs[0], (char *) otherRegs[1], otherRegs[2], (uint32_t) otherRegs[3]);
+            //sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
+            // printStringInCoord(0x00FFFFFF,"la-maquina 999999999 $>",3,3);
+            return _sys_write((uint8_t) otherRegs[0], (char *) otherRegs[1], otherRegs[2], (uint32_t) otherRegs[3]);
         case DRAW_RECTANGLE:
             return sys_drawRectangle((uint32_t)otherRegs[0],otherRegs[1],otherRegs[2],otherRegs[3],otherRegs[4]);
         case GET_COORDS:
@@ -49,6 +51,19 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
     }
 }
 
+/*
+uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax) {
+    // rax contains the syscall id
+    switch (rax) {
+        case READ: return sys_read(rdi, (char *) rsi, rdx);
+        case WRITE: 
+        printStringInCoord(0x00FFFFFF,"la-maquina 999999999 $>",3,3);
+        return _sys_write(rdi, (char *) rsi, rdx, rcx);
+        default: return 0;
+    }
+}
+*/
+
 //USO BUFFER DE KEYBOARD2.C SE LO PASO COMO PARAMETRO
 uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
     if(fd != STDIN)
@@ -65,8 +80,9 @@ uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
     return count;
 }
 
-uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color) {
+uint64_t _sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color) {
     // STDOUT is the only file descriptor supported so far
+    printStringInCoord(0x00FFFFFF,buffer,0,0);
     if (fd == STDOUT) {
         return printString(color, buffer);
     }
