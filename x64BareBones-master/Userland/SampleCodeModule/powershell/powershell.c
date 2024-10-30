@@ -47,7 +47,7 @@ void getCommands(){
     char c;
     int ans;
     while(1) {
-        // putUser();
+        putUser();
         while( (c = getChar()) != '\n'){
             if( c == TAB){
                 for( int i=0; i< 4; i++){

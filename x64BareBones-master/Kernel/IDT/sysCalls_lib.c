@@ -5,8 +5,8 @@
 #include <sysCalls.h>
 
 #define REGISTERS_DIM 16
-#define STDIN 1  
-#define STDOUT 0  
+#define STDIN 0  
+#define STDOUT 1  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
  PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR};
@@ -82,7 +82,6 @@ uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
 
 uint64_t _sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color) {
     // STDOUT is the only file descriptor supported so far
-    printStringInCoord(0x00FFFFFF,buffer,0,0);
     if (fd == STDOUT) {
         return printString(color, buffer);
     }
@@ -116,7 +115,7 @@ uint64_t sys_getScale() {
 }
 
 uint64_t sys_getTime(uint8_t timeOption) {
-    return rtc(timeOption);
+    return (uint64_t) rtc(timeOption);
 }
 
 uint64_t sys_setFontScale(uint8_t scale) {

@@ -23,8 +23,10 @@ EXTERN syscallDispatcher
 
 SECTION .text
 
-%macro pushState 0
-	push rax
+%macro pushState 1
+	%if %1
+        push rax
+    %endif
 	push rbx
 	push rcx
 	push rdx
@@ -41,7 +43,7 @@ SECTION .text
 	push r15
 %endmacro
 
-%macro popState 0
+%macro popState 1
 	pop r15
 	pop r14
 	pop r13
@@ -56,11 +58,13 @@ SECTION .text
 	pop rdx
 	pop rcx
 	pop rbx
-	pop rax
+	%if %1
+	    pop rax
+	%endif
 %endmacro
 
 %macro irqHandlerMaster 1
-	pushState
+	pushState 1
 
 	mov rdi, %1 ; pasaje de parametro
 	call irqDispatcher
@@ -69,19 +73,19 @@ SECTION .text
 	mov al, 20h
 	out 20h, al
 
-	popState
+	popState 1
 	iretq
 %endmacro
 
 
 
 %macro exceptionHandler 1
-	pushState
+	pushState 1
 
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	popState
+	popState 1
 	iretq
 %endmacro
 
@@ -143,12 +147,10 @@ _irq05Handler:
 
 ;Syscalls
 _irq80Handler:
-	push rbp
-	mov rbp, rsp
-	pushState
+	pushState 0
 	push r9
 	push r8
-	push r10
+	push rcx
 	push rdx
 	push rsi
 	push rdi
@@ -156,9 +158,7 @@ _irq80Handler:
 	mov rsi, rsp
 	call syscallDispatcher
 	add rsp, 6*8
-	popState
-	mov rsp, rbp
-	pop rbp
+	popState 0
 	iretq
 	
 

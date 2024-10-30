@@ -35,7 +35,7 @@ void actualTime(){
             day--;
         }
     }
-    char date[]="00/00/2000";
+    char date[]="00/00/2000\n";
     for(int i=0; i<2; i++){
         date[1-i]=day%10+'0';
         day/=10;
@@ -44,7 +44,8 @@ void actualTime(){
         date[9-i]=year%10+'0';
         year/=10;
     }
-    printf("Today's date is: %s\n", date);
+    sys_write(STDOUT_FD,"Today's date is: ",18,0x00ffffff);
+    sys_write(STDOUT_FD, date,12, 0x00ffffff);
 }
 
 

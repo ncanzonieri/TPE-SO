@@ -16,8 +16,8 @@
 /*
  * File descriptors.
  */
-#define STDIN_FD 0x00
-#define STDOUT_FD 0x01
+#define STDIN_FD 0
+#define STDOUT_FD 1
 
 /*
  * getRegisters data

@@ -1,5 +1,5 @@
 #include <commands.h>
-#include <sysCalls.h>
+#include <syscalls.h>
 #include <library.h>
 #define REGS_AMOUNT 17 
 static char * regsNames[] = {  
