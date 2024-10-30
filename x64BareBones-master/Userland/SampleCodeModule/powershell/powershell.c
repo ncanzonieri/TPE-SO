@@ -88,7 +88,7 @@ static void startShell(char * v){
 }
 
 static int belongs(char * v){
-    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers", "agro", "actualDate"};
+    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers", "agro"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;

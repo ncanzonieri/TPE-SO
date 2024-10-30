@@ -12,14 +12,14 @@ void help(){
     "\tsnake\t\t\tPlay the snake game.\n",
     "\tzoomIn\t\t\tZoom in the game view.\n",
     "\tzoomOut\t\t\tZoom out the game view.\n",
-    "\tactualTime\t\t\tActual time in Buenos Aires",
-    "\tactualDate\t\t\tActual date in Buenos Aires"
+    "\tactualTime\t\t\tActual time in Buenos Aires\n",
+    "\tactualDate\t\t\tActual date in Buenos Aires\n"
     "\tagro\t\t\tAgropecuario Carlos Casares\n",
     "EXCEPTIONS:\n",
     "\tdivx0\t\t\tHandles division by zero exception.\n",
     "\tinvalid\t\t\tHandles invalid operation codes.\n",
     "----------------------------------------------\n"
-     };
+    };
 
     for(int i = 0; i<INSTRUCTIONS; i++){
         sys_write(STDOUT_FD,helpingInstructions[i],strlen(helpingInstructions[i])+1, WHITE);

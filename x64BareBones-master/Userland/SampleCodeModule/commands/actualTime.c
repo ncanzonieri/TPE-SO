@@ -30,6 +30,7 @@ void actualTime(){
         sec/=10;
     }
     sys_write(STDOUT_FD, time,10, 0x00ffffff);
+    
 }
 
 void actualDate(){
@@ -65,5 +66,3 @@ void actualDate(){
     }
     sys_write(STDOUT_FD, date,12, 0x00ffffff);
 }
-
-
