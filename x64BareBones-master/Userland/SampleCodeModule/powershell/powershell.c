@@ -77,7 +77,8 @@ static void startShell(char * v){
     }
     int flag = belongs(v);
     if( flag == ERROR ){
-        sys_write(STDOUT_FD, "command not found, type 'help'\n",31, GREEN);
+        sys_write(STDOUT_FD, "command not found, type 'help'\n",31, WHITE);
+        sys_write(STDOUT_FD,v,75,GREEN);
     }else{
         runFuncts[flag]();
     }

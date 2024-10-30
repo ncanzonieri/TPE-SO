@@ -69,7 +69,8 @@ uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
     if(fd != STDIN)
         return 0;
 
-    for(int i = 0; i < count;i++){
+    int i = 0;
+    for(; i < count;i++){
         char c = kb_getchar();
         if(c == 0){
             return i; //cuantos caracteres fueron leidos
@@ -77,6 +78,7 @@ uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
         //sino cargo en mi buffer 
         buffer[i] = c;
     }
+    buffer[i+1] = "0";
     return count;
 }
 
