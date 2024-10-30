@@ -12,8 +12,7 @@
 //poder recuperarse posteriormente de la excepción, regresando a la Shell. 
 
 #include <stdint.h>
-#include <miString.h>
-#include <videodriver.h>
+#include <videoDriver.h>
 #include <interrupts.h>
 #include <sysCalls.h>
 

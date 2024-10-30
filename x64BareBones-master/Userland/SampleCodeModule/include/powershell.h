@@ -8,7 +8,7 @@
 #include <library.h>
 
 void welcome();
-void startShell(char * v);
+
 void getCommands();
 
 #endif // SHELL_H

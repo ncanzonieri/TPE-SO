@@ -8,27 +8,22 @@
 #define MAX_ZOOM 3
 #define MIN_ZOOM 1
 
-void zoomIn(){
-    int scale;
-    sys_setFontScale(scale);
-    if( scale >= MAX_ZOOM){
-        printf("Maximum zoom out level reached.\n");
+static void zoomAux(int inc){
+    uint64_t scale=sys_getFontInfo()+inc;
+    if(scale > MAX_ZOOM || scale < MIN_ZOOM){
+        printf("Already at the scale limit.\n");
     }else{
-        sys_setFontScale(scale+1); // tendria aumentar
-        printf("Zoomed in to scale: %d\n", scale - 1);
+        sys_setFontScale(scale);
+        printf("Now set to scale: %d\n", scale);
     }
+    
+}
 
+void zoomIn(){
+    zoomAux(1);
 }
 
 void zoomOut(){
-    return;
-    int scale;
-    sys_setFontScale(scale);
-    if (scale <= MIN_ZOOM) {
-        printf("Maximum zoom out level reached.\n");
-    } else {
-        sys_setFontScale(scale-1);
-        printf("Zoomed out to scale: %d\n", scale - 1);
-    }
+    zoomAux(-1);
 }
 

@@ -1,4 +1,4 @@
-#include <keyboard2.h>
+#include <keyboardDriver.h>
 #include <sysCalls.h>
 
 extern uint8_t getKeyCode();

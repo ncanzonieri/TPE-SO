@@ -1,3 +1,6 @@
+#ifndef LIBRARY_USER_H
+#define LIBRARY_USER_H
+
 #include <stdint.h>
 
 int strcmp(char *s1, char *s2);
@@ -54,3 +57,5 @@ int printf(const char * format, ...);
 int scanf(const char *fmt, ...);
 
 static int readFromKeyboard(char * buffer);
+
+#endif

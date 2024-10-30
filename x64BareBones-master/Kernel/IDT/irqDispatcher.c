@@ -1,7 +1,8 @@
 #include <time.h>
 #include <stdint.h>
-#include <keyboard2.h>
-#include <videodriver.h>
+#include <keyboardDriver.h>
+#include <videoDriver.h>
+#include <sysCalls.h>
 #define TIMERTICK 0
 #define KEYBOARD 1
 
@@ -22,8 +23,9 @@ void irqDispatcher(uint64_t irq) {
 
 void int_20() {
 	timer_handler();
-	//char buffer[20]={0};
-	//printStringInCoord(0x00CCCCCC, getTime(buffer),0,0);
+	//char buffer[10]={0};
+	//sys_read(0,buffer,10);
+	//printString(0x00cccccc,buffer);
 }
 
 void int_21(){

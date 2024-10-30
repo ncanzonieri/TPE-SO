@@ -61,7 +61,7 @@ char getChar(){
     uint8_t c;
     int size = 0;
     while(size!=1){
-        size = sys_read(&c, 1, &size);
+        size = sys_read(STDIN_FD,&c, 1);
     }
     return c;
 }

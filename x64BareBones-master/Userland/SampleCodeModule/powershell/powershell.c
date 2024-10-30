@@ -24,7 +24,7 @@ static void startShell(char * v);
 static int belongs(char * v);
 static void runCommands(int index);
 
-static void (* runFuncts[])() = {divx0, invalid, help, actualTime, snake, zoomIn, zoomOut, registers};
+static void (* runFuncts[])() = {divx0, invalid, help, actualTime, snake, zoomIn, zoomOut, registers, agro};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
@@ -43,28 +43,24 @@ void welcome(){
 void getCommands(){
     char buffer[MAX_DIM] = {0};
     // char copy[MAX_DIM] = {0};
-    int dim = 0; 
-    char c;
+    int dim; 
+    char* c[2]={0};
     int ans;
     while(1) {
+        dim=0;
+        buffer[0]=0;
         putUser();
-        while( (c = getChar()) != '\n'){
-            if( c == TAB){
-                for( int i=0; i< 4; i++){
-                    putChar(c,GREEN);
-                    dim++;
-                    if( dim < MAX_DIM){
-                        buffer[dim++] = ' ';
-                    }
-                }
-            }if( c == DELETE){
+        while( (c[0] = getChar()) != '\n'){
+            if(c[0]!=0){
+            if( c[0] == DELETE){
                 if( dim > 0){
                     dim--;
-                    putChar(c, WHITE);
+                    putChar(c[0], WHITE);
                 }
-            }else if( c != ESC){
-                buffer[dim++] = c;
-                sys_write(STDOUT_FD,&c,1,GREEN);
+            }else if( c[0] != ESC){
+                buffer[dim++] = c[0];
+                sys_write(STDOUT_FD,c,1,GREEN);
+            }
             }
         }
 
@@ -75,19 +71,21 @@ void getCommands(){
 }
 
 
-void startShell(char * v){
+static void startShell(char * v){
     if( *v == 0){ 
         return;
     }
     int flag = belongs(v);
     if( flag == ERROR ){
-        sys_write(STDOUT_FD, "command not found, type 'help'",31, GREEN);
+        sys_write(STDOUT_FD, "command not found, type 'help'\n",31, GREEN);
+    }else{
+        runFuncts[flag]();
     }
-    runCommands(flag);
+    
 }
 
 static int belongs(char * v){
-    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers"};
+    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers", "agro"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;
@@ -95,13 +93,4 @@ static int belongs(char * v){
     }
     //sys_write(STDOUT_FD,,,WHITE);
 return ERROR;
-}
-
-static void runCommands(int index){
-    if( index == ERROR){
-        help();
-// call_sysError(); // dps cambiamos las funciones, osea printf("Error not found")
-    }
-    runFuncts[index](); 
-
 }

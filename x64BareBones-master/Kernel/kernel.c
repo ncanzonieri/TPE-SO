@@ -2,7 +2,7 @@
 #include <string.h>
 #include <lib.h>
 #include <moduleLoader.h>
-#include <videodriver.h>
+#include <videoDriver.h>
 #include <idtLoader.h>
 #include <time.h>
 

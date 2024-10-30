@@ -1,6 +1,6 @@
 
 #include <fontDriver.h>
-#include <videodriver.h>
+#include <videoDriver.h>
 #include <stddef.h>
 
 #define ASCII_MIN ' '

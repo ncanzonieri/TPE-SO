@@ -1,6 +1,6 @@
-#include <keyboard2.h>
+#include <keyboardDriver.h>
 #include <stdint.h>
-#include <videodriver.h>
+#include <videoDriver.h>
 #include <time.h>
 #include <sysCalls.h>
 

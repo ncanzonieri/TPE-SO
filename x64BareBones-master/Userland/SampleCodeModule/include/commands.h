@@ -12,4 +12,5 @@ void zoomIn();       // Realiza el acercamiento
 void zoomOut();      // Realiza el alejamiento
 void actualTime();         // Muestra el tiempo actual
 extern void invalidOperation();
+void agro();
 #endif // COMMANDS_H
