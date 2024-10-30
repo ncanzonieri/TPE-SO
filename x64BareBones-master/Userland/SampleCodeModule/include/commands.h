@@ -11,6 +11,7 @@ void divx0();        // Maneja la excepción de división por cero
 void zoomIn();       // Realiza el acercamiento
 void zoomOut();      // Realiza el alejamiento
 void actualTime();         // Muestra el tiempo actual
+void actualDate();         // Muestra la fecha de hoy
 extern void invalidOperation();
 void agro();
 #endif // COMMANDS_H

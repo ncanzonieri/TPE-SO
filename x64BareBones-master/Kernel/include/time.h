@@ -12,13 +12,10 @@ extern uint8_t rtcDriver(uint8_t opt);
 extern void _cli();
 extern void _sti();
 
-void now(timeStruct * ans);
 void timer_handler();
 int ticks_elapsed();
 int seconds_elapsed();
 uint64_t ms_elapsed();
-char * getDate(char* date);
-char * getTime(char* time);
 uint64_t sleep(uint64_t ms);
 uint8_t rtc(uint8_t timeOption);
 

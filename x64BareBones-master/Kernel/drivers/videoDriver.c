@@ -75,7 +75,7 @@ void printByte(uint32_t hexCollor, uint8_t string, uint64_t x, uint64_t y){
  
 void printBitMap(uint32_t hexCollor, uint8_t map[], uint64_t x, uint64_t y){
 	for(int i=0; i<=15*scale; i+=scale){
-		printByte(hexCollor,map[i],x,y+i);
+		printByte(hexCollor,map[i/scale],x,y+i);
 	}
 }
 
@@ -92,6 +92,44 @@ uint64_t printStringInCoord(uint32_t hexCollor, char* s, uint64_t x, uint64_t y)
 	cx=auxX;
 	cy=auxY;
 	return ans;
+}
+
+uint64_t printStringLength(uint32_t hexCollor, char* s, uint64_t count){
+	uint64_t counter=0;
+	for(;*s != 0 && counter<count; s++, counter++){
+		switch(*s){
+			case '\n':
+				newLine();
+				break;
+			case '\t':
+				if(cx+ 4*8 >= VBE_mode_info->width){
+					newLine();
+				}else{
+					for(int i=0; i<4; i++){
+						printCharacter(hexCollor, ' ', cx, cy);
+						nextBlank();
+					}
+				}
+				break;
+			case '\b':
+				if(cx<8*scale){
+					if(cy>=16*scale){
+						cy-=16*scale;
+						cx=VBE_mode_info->width-8*scale;
+						cx-=cx%(8*scale);
+					}
+				}else{
+					cx-=8*scale;
+				}
+				printCharacter(hexCollor, ' ', cx, cy);
+				break;
+			default:
+				printCharacter(hexCollor, *s, cx, cy);
+				nextBlank();
+				break;
+		}
+	}
+	return counter;
 }
 
 uint64_t printString(uint32_t hexCollor, char* s){
@@ -121,6 +159,7 @@ uint64_t printString(uint32_t hexCollor, char* s){
 				}else{
 					cx-=8*scale;
 				}
+				printCharacter(hexCollor, ' ', cx, cy);
 				break;
 			default:
 				printCharacter(hexCollor, *s, cx, cy);

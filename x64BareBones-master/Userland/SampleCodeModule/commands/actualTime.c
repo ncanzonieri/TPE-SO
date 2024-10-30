@@ -2,6 +2,8 @@
 #include <time.h>
 #include <syscalls.h>
 #include <library.h>
+#define SEC 0
+#define MIN 2
 #define HOUR 4
 #define DAY 7
 #define MONTH 8
@@ -14,6 +16,23 @@ static int bisiesto(int anio) {
 }
 
 void actualTime(){
+    uint64_t sec=sys_getTime(SEC);
+    uint64_t min=sys_getTime(MIN);
+    uint64_t hour=sys_getTime(HOUR);
+    hour+= (hour<3)?21:(-3);
+    char time[]="00:00:00\n";
+    for(int i=0; i<2; i++){
+        time[1-i]=hour%10+'0';
+        hour/=10;
+        time[4-i]=min%10+'0';
+        min/=10;
+        time[7-i]=sec%10+'0';
+        sec/=10;
+    }
+    sys_write(STDOUT_FD, time,10, 0x00ffffff);
+}
+
+void actualDate(){
     uint64_t year=sys_getTime(YEAR);
     uint64_t month=sys_getTime(MONTH);
     uint64_t day=sys_getTime(DAY);
@@ -44,7 +63,6 @@ void actualTime(){
         date[9-i]=year%10+'0';
         year/=10;
     }
-    sys_write(STDOUT_FD,"Today's date is: ",18,0x00ffffff);
     sys_write(STDOUT_FD, date,12, 0x00ffffff);
 }
 

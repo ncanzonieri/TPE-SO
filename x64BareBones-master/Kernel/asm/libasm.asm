@@ -4,8 +4,8 @@ GLOBAL getKeyCode
 GLOBAL getRegisters
 GLOBAL loadRegisters
 GLOBAL rtcDriver
-GLOBAL _outb ; CAMBIAR
-GLOBAL _inb
+GLOBAL outb
+GLOBAL inb
 section .text
 
 cpuVendor:
@@ -76,8 +76,11 @@ getRegisters:
     mov rax, BufferRegis
     ret
 
+audioDriver:
+
+
 ; void outb(uint16_t port, uint8_t value)
-_outb:
+outb:
     push rdx
 
     mov dx, di
@@ -88,7 +91,7 @@ _outb:
     ret
 
 ; extern uint8_t inb(uint16_t port)
-_inb:
+inb:
     push rdx
 
     mov dx, di

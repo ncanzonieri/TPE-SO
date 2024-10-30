@@ -12,7 +12,7 @@
 #define CERO 0
 #define ESC 27
 #define TAB 9
-#define COMMANDS_COUNT 9
+#define COMMANDS_COUNT 10
 #define GREEN 0x66FF66 // Font Scale
 #define WHITE 0xffffff
 #define ERROR -1
@@ -24,7 +24,7 @@ static void startShell(char * v);
 static int belongs(char * v);
 static void runCommands(int index);
 
-static void (* runFuncts[])() = {divx0, invalid, help, actualTime, snake, zoomIn, zoomOut, registers, agro};
+static void (* runFuncts[])() = {divx0, invalid, help, actualTime, snake, zoomIn, zoomOut, registers, agro, actualDate};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
@@ -35,7 +35,8 @@ static void putUser(){
 void welcome(){
     sys_clearScreen();
     sys_setFontScale(DEFAULT_SCALE);
-    actualTime();
+    sys_write(STDOUT_FD,"Today's date is: ",18,0x00ffffff);
+    actualDate();
 }
 //uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
 //uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color)
@@ -63,6 +64,7 @@ void getCommands(){
             }
             }
         }
+        buffer[dim]=0;
 
         putChar('\n',WHITE);
         startShell(buffer);
@@ -78,7 +80,7 @@ static void startShell(char * v){
     int flag = belongs(v);
     if( flag == ERROR ){
         sys_write(STDOUT_FD, "command not found, type 'help'\n",31, WHITE);
-        sys_write(STDOUT_FD,v,75,GREEN);
+        //sys_write(STDOUT_FD,v,75,GREEN);
     }else{
         runFuncts[flag]();
     }
@@ -86,7 +88,7 @@ static void startShell(char * v){
 }
 
 static int belongs(char * v){
-    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers", "agro"};
+    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers", "agro", "actualDate"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;

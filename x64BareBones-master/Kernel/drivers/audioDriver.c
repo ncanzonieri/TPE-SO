@@ -1,8 +1,7 @@
-/*
 #include <audioDriver.h>
 
-extern void _outb(uint16_t port, uint8_t value);
-extern uint8_t _inb(uint16_t port);
+extern void outb(uint16_t port, uint8_t value);
+extern uint8_t inb(uint16_t port);
 
 // Standard IBM PIT
 #define PIT_FREQUENCY 1193182
@@ -29,4 +28,3 @@ uint64_t stopSound() {
     _outb(0x61, aux);
     return 1;
 }
-*/

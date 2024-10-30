@@ -23,9 +23,6 @@ void irqDispatcher(uint64_t irq) {
 
 void int_20() {
 	timer_handler();
-	//char buffer[10]={0};
-	//sys_read(0,buffer,10);
-	//printString(0x00cccccc,buffer);
 }
 
 void int_21(){

@@ -20,6 +20,8 @@ GLOBAL _exception6Handler
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN syscallDispatcher
+EXTERN getStackBase
+EXTERN loadRegisters
 
 SECTION .text
 
@@ -80,13 +82,16 @@ SECTION .text
 
 
 %macro exceptionHandler 1
-	pushState 1
 
+	call loadRegisters
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
-
-	popState 1
+	call getStackBase
+	mov [rsp+24], rax
+	mov rax, 0x400000
+	mov [rsp], rax
 	iretq
+
 %endmacro
 
 

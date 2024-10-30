@@ -84,7 +84,6 @@ static void launchingException(char * message){
     while(readBytes == 0){
         readBytes = sys_read(0, c, 1);
     }
-
     // Old scale and color
     setBGColor(oldBgColor);
     clearScreen();
