@@ -5,6 +5,7 @@
 #include <videoDriver.h>
 #include <idtLoader.h>
 #include <time.h>
+#include <audioDriver.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -58,5 +59,8 @@ void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char bac
 int main() 
 {	
 	load_idt();
+	playSound(500);
+	sleep(1000);
+	stopSound();
 	return ((EntryPoint)sampleCodeModuleAddress)();
 }

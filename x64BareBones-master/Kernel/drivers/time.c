@@ -5,8 +5,6 @@
 #include <stdarg.h>
 #include <naiveConsole.h>
 #define DIM 400
-#define STDOUT 1
-#define WHITE 0xFFFFFF
 
 static unsigned long ticks = 0;
 
