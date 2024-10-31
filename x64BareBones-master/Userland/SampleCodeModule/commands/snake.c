@@ -1,7 +1,8 @@
 #include <commands.h>
 
 #include <snake.h>
-#include <string.h>
+#include <syscalls.h>
+#include <library.h>
 
 
 typedef struct direcs{
@@ -17,7 +18,7 @@ typedef struct direcs{
 //typedef enum Colors {  colorsEnum.GREEN = 1, GREEN=1, RED, YELLOW, BLUE };
 //#define COLORS 5
 
-
+// --------------- SNAKE STRUCT ------------------------
 
 typedef struct ColorsStruct{
     int colorAscii;
@@ -57,7 +58,7 @@ void snake(){
 static int getc1(){
     char c1;
     while (c1 != '1' && c1 != '2' && c1 != '3' && c1 != '4') {
-        c1 = getchar();
+        c1 = getChar();
     }
 }
 
@@ -83,7 +84,7 @@ static int welcomeSnake(){
     printf("Number of players: 1 o 2");
     char game;
     while (game != '1' && game != '2') {
-        game = getchar();
+        game = getChar();
     }
     return game - CERO_ASCII; // devuelve en numero en int
 }
@@ -125,17 +126,6 @@ static void board(){
     return;
 }
 
-
-
-static void spawnSnake(snakeStruct * s1, snakeStruct * s2, int *flag){
-    makeSnake(s1, s2);
-    if( *flag == 2){
-        makeSnake(s1, s2);
-    }
-return;
-}
-
-
 void start(){
 
     int flag = welcomeSnake();
@@ -165,3 +155,12 @@ void start(){
     s1->id = P1;
     s1->head.x = 
 }*/
+
+
+static void spawnSnake(snakeStruct * s1, snakeStruct * s2, int *flag){
+    makeSnake(s1, s2);
+    if( *flag == 2){
+        makeSnake(s1, s2);
+    }
+return;
+}
