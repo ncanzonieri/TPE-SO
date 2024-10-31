@@ -37,17 +37,13 @@ static char * regsNames[] = {  //mismo orden que en FILLSNAPSHOT (interrupts.asm
 };
 
 static void hexaToAscii(uint64_t num, char* buffer){
-    int rest;
-    char aux[66]={'0'};
-    for(int i=0; num>0; i++, num/=16){
+    char rest;
+    for(int i=0; num<64; i++, num/=16){
         rest=num%16;
-        aux[i]= (rest < 10 )? (rest + '0') : (rest - 10 + 'A');
+        buffer[65-i]= (rest < 10 )? (rest + '0') : (rest - 10 + 'A');
     }
-    aux[64]='x';
-    aux[65]='0';
-    for(int i=0; i<66; i++){
-        buffer[i]=aux[65-i];
-    }
+    buffer[1]='x';
+    buffer[0]='0';
 }
 
 static void dumpRegisters(){
@@ -59,7 +55,7 @@ static void dumpRegisters(){
         hexaToAscii(registers[i], buffer);
         printString(WHITE, regsNames[i]); 
         printString(WHITE, ": ");
-        printString(WHITE, buffer);
+        printStringLength(WHITE, buffer,66);
         newLine();
     }
 }
