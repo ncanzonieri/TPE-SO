@@ -14,7 +14,7 @@
 #define TAB 9
 #define COMMANDS_COUNT 10
 #define GREEN 0x66FF66 // Font Scale
-#define WHITE 0xffffff
+#define WHITE 0xFFFFFF
 #define ERROR -1
 #define EXIT 1
 
@@ -24,7 +24,8 @@ static void startShell(char * v);
 static int belongs(char * v);
 static void runCommands(int index);
 
-static void (* runFuncts[])() = {divx0, invalid, help, actualTime, snake, zoomIn, zoomOut, registers, agro, actualDate};
+////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
+static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
@@ -65,13 +66,11 @@ void getCommands(){
             }
         }
         buffer[dim]=0;
-
         putChar('\n',WHITE);
         startShell(buffer);
     }
     
 }
-
 
 static void startShell(char * v){
     if( *v == 0){ 
@@ -84,11 +83,10 @@ static void startShell(char * v){
     }else{
         runFuncts[flag]();
     }
-    
 }
 
-static int belongs(char * v){
-    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "snake", "zoomIn", "zoomOut", "registers", "agro"};
+static int belongs(char * v){ //FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
+    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "zoomIn", "zoomOut", "registers", "agro","actualDate"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;

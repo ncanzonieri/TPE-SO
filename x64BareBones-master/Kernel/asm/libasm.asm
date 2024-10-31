@@ -51,25 +51,25 @@ getKeyCode:
 	ret
 
 loadRegisters: 
-    mov [BufferRegis], rax
-    mov [BufferRegis + 1*regSize], rbx
-    mov [BufferRegis + 2*regSize], rcx
-    mov [BufferRegis + 3*regSize], rdx
-    mov [BufferRegis + 4*regSize], rsi
-    mov [BufferRegis + 5*regSize], rdi
-    mov [BufferRegis + 6*regSize], rbp
-    mov [BufferRegis + 7*regSize], r8
-    mov [BufferRegis + 8*regSize], r9
-    mov [BufferRegis + 9*regSize], r10
-    mov [BufferRegis + 10*regSize], r11
-    mov [BufferRegis + 11*regSize], r12
-    mov [BufferRegis + 12*regSize], r13
-    mov [BufferRegis + 13*regSize], r14
-    mov [BufferRegis + 14*regSize], r15
+    mov [BufferRegis], rax   ; regSize
+    mov [BufferRegis + 1*8], rbx
+    mov [BufferRegis + 2*8], rcx
+    mov [BufferRegis + 3*8], rdx
+    mov [BufferRegis + 4*8], rsi
+    mov [BufferRegis + 5*8], rdi
+    mov [BufferRegis + 6*8], rbp
+    mov [BufferRegis + 7*8], r8
+    mov [BufferRegis + 8*8], r9
+    mov [BufferRegis + 9*8], r10
+    mov [BufferRegis + 10*8], r11
+    mov [BufferRegis + 11*8], r12
+    mov [BufferRegis + 12*8], r13
+    mov [BufferRegis + 13*8], r14
+    mov [BufferRegis + 14*8], r15
     mov rax, [rsp]
-    mov [BufferRegis + 15*regSize], rax ; instruction pointer
+    mov [BufferRegis + 15*8], rax ; instruction pointer
     mov rax, rsp
-    mov [BufferRegis + 16*regSize], rax
+    mov [BufferRegis + 16*8], rax
     ret
 
 getRegisters:
