@@ -156,7 +156,9 @@ void start(){
     s1->head.x = 
 }*/
 
-
+// crea la snake y la posiciona en una zona del tablero
+// el cual seria p1 medio a la izq
+// p2 medio a la derecha
 static void spawnSnake(snakeStruct * s1, snakeStruct * s2, int *flag){
     makeSnake(s1, s2);
     if( *flag == 2){
