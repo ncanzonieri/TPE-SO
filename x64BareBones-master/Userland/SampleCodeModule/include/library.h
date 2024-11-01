@@ -13,16 +13,7 @@ void strcpy(char *destination, const char *source);
 
 char *strncpy(char *dest, const char *src, int count);
 
-/* int strlen(const char * s) {
-    int i = 0;
-    while(s[i] != '\0') {
-        if(s[i] == '\t') {
-            i+=4;
-        }
-        i++;
-    }
-    return i;
-} */
+int strlen(const char * s);
 
 //----------------------------------------------------------------------------------------------------
 void putChar(char c, uint32_t hexColor);
