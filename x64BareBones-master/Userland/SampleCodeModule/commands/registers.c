@@ -24,11 +24,13 @@ void registers(){
     uint64_t r[REGS_AMOUNT];
     int flag = sys_getRegisters(r);
     if( flag != 1 ){
+        clearIfNotEnoughSpace(1);
         sys_write(STDOUT_FD,"error: wrong registers upload",14,0xFFFFFF);
 
         return;
     }
     char buffer[66];
+    clearIfNotEnoughSpace(REGS_AMOUNT);
     for( int i=0; i<REGS_AMOUNT && flag; i++ ){
         //printf("%s: %s\n", regsNames[i], r[i]);
         sys_write(STDOUT_FD,regsNames[i],14,0xFFFFFF);
@@ -38,35 +40,3 @@ void registers(){
     }
 return;
 }
-
-/*static int inforegCommand(int argc, char * argv[]) {
-    uint64_t regs[REGS_AMOUNT];
-    int ok = _sys_getRegisters(regs);
-    if(!ok) {
-        printError("inforeg", "Registers are not updated. Use CTRL + R to update.", NULL);
-        return ERROR;
-    }
-    char changed = 0;
-    if(scale == 3) {
-        changed = 1;
-        setFontScale(2);
-    }
-    for(int i=0; i<REGS_AMOUNT; i += 2) {
-        printStringColor(regNames[i], COMMAND_SECONDARY_COLOR);
-        printf(": %x\t", regs[i]);
-        if(i < (REGS_AMOUNT - 1)) {
-            printStringColor(regNames[i + 1], COMMAND_SECONDARY_COLOR);
-            printf(": %x\n", regs[i + 1]);
-        }
-        else
-            putchar('\n');
-    }
-    if(changed) {
-        setFontScale(3);
-    }
-    return OK;
-}*/
-
-
-// ---------------- NUESTRO REGIS -------------------
-// sys_getRegisters: syscall 0x09

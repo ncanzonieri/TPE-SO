@@ -29,6 +29,7 @@ void actualTime(){
         time[7-i]=sec%10+'0';
         sec/=10;
     }
+    clearIfNotEnoughSpace(1);
     sys_write(STDOUT_FD, time,10, 0x00ffffff);
     
 }
@@ -64,5 +65,6 @@ void actualDate(){
         date[9-i]=year%10+'0';
         year/=10;
     }
+    clearIfNotEnoughSpace(1);
     sys_write(STDOUT_FD, date,12, 0x00ffffff);
 }

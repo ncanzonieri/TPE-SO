@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+void clearIfNotEnoughSpace(int linesItNeeds);
+
 int strcmp(char *s1, char *s2);
 
 static int strConcat(char *str1, char *str2);

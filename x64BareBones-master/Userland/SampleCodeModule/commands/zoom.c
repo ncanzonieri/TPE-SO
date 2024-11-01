@@ -11,9 +11,11 @@
 static void zoomAux(int inc){
     uint64_t scale=sys_getFontInfo()+inc;
     if(scale > MAX_ZOOM || scale < MIN_ZOOM){
+        clearIfNotEnoughSpace(1);
         printf("Already at the scale limit.\n");
     }else{
         sys_setFontScale(scale);
+        clearIfNotEnoughSpace(1);
         printf("Now set to scale: %d\n", scale);
     }
     

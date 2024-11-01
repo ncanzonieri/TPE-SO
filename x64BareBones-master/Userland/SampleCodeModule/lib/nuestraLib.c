@@ -10,6 +10,14 @@
 #define BUFFER_DIM 256
 #define SCANF_BUFFER_SIZE 256
 
+void clearIfNotEnoughSpace(int linesItNeeds){
+    uint32_t y=(uint32_t)(sys_getCoords()>>32);
+    uint32_t height=(uint32_t)(sys_getScreenInfo() & 0xffffffff);
+    if(y+linesItNeeds*16*sys_getFontInfo()>=height){
+        sys_clearScreen();
+    }
+}
+
 int strcmp(char *s1, char *s2)
 {
     int i = 0;
