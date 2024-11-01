@@ -32,7 +32,6 @@ void registers(){
     for( int i=0; i<REGS_AMOUNT && flag; i++ ){
         //printf("%s: %s\n", regsNames[i], r[i]);
         sys_write(STDOUT_FD,regsNames[i],14,0xFFFFFF);
-        sys_write(STDOUT_FD,": ",3,0xffffff);
         hexaToAscii(r[i],buffer);
         sys_write(STDOUT_FD,buffer,66,0xFFFFFF);
         sys_write(STDOUT_FD,"\n",2,0xffffff);

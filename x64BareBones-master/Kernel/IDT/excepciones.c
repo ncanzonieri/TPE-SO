@@ -16,8 +16,8 @@
 #include <interrupts.h>
 #include <sysCalls.h>
 
-#define EXCEPTION_cero  "ERROR 0x00 Division by zero exception\n\n"
-#define EXCEPTION_invalidOpcode "ERROR 0x06 Invalid Opcode exception\n\n"
+#define EXCEPTION_cero  "ERROR 0x00 Division by zero exception\n\n\n"
+#define EXCEPTION_invalidOpcode "ERROR 0x06 Invalid Opcode exception\n\n\n"
 #define EXCEPCION_cero_identificador 0
 #define EXCEPCION_invalidOpcode_identificador 6
 #define WHITE 0x00FFFFFF
@@ -69,7 +69,9 @@ static void launchingException(char * message){
     setScale(2);
     clearScreen();
 	printString(WHITE, message);
+    setScale(1);
     dumpRegisters();
+    setScale(2);
 
     char * continueMessage = "\nPress any key to relaunch shell...";
     printString(WHITE, continueMessage);

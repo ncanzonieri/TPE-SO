@@ -10,11 +10,12 @@ void help(){
     "COMMANDS:\n",
     "\tregisters\t\t\tDisplay the current register values.\n",
     "\tsnake\t\t\tPlay the snake game.\n",
-    "\tzoomIn\t\t\tZoom in the game view.\n",
-    "\tzoomOut\t\t\tZoom out the game view.\n",
+    "\tzoomIn\t\t\tScales up.\n",
+    "\tzoomOut\t\t\tScales down.\n",
     "\tactualTime\t\t\tActual time in Buenos Aires\n",
     "\tactualDate\t\t\tActual date in Buenos Aires\n"
     "\tagro\t\t\tAgropecuario Carlos Casares\n",
+    "\tclear\t\t\tClears the screen\n"
     "EXCEPTIONS:\n",
     "\tdivx0\t\t\tHandles division by zero exception.\n",
     "\tinvalid\t\t\tHandles invalid operation codes.\n",
