@@ -61,7 +61,7 @@ void getCommands(){
                 }
             }else if( c[0] != ESC){
                 buffer[dim++] = c[0];
-                sys_write(STDOUT_FD,c,1,GREEN);
+                sys_write(STDOUT_FD,c,1,WHITE);
             }
             }
         }
