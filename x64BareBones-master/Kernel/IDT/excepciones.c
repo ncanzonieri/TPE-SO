@@ -38,7 +38,7 @@ static char * regsNames[] = {  //mismo orden que en FILLSNAPSHOT (interrupts.asm
 
 static void hexaToAscii(uint64_t num, char* buffer){
     char rest;
-    for(int i=0; num<64; i++, num/=16){
+    for(int i=0; i<64; i++, num/=16){
         rest=num%16;
         buffer[65-i]= (rest < 10 )? (rest + '0') : (rest - 10 + 'A');
     }
