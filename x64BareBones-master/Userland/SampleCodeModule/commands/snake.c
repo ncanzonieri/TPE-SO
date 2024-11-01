@@ -175,7 +175,9 @@ static char finish = 0;
 #define EXIT 1
 
 
-static void handlePlayerInput
+static void handlePlayerInput(){
+
+}
 
 // --------------- CONTROLS -----------------------
 // PLAYER UNO FLECHITAS
@@ -195,8 +197,9 @@ static void handlePlayerInput
 #define KEY_RIGHT '\033[C' // Flecha derecha
 #define APPLE '*' // CHEQUEAR
 
+#  define NULL ((void*)0) 
 
-static int checkSnake(struct snake * s1){
+static int checkSnake(struct snakeStruct * s){
     int flag=1;
     if (s->head.x < 0 || s->head.x >= X_SQUARES || s->head.y < 0 || s->head.y >= Y_SQUARES) {
     //call_beep(2000); 
@@ -216,7 +219,7 @@ return !flag;
 }
 
 
-static int snakeEnDir(struct snake * s1, lastMoveEnum move){
+static int snakeEnDir(struct snakeStruct * s1, lastMoveEnum move){
     static int dir[2][8] = {{-1, -1, -1, 0, 1, 1, 1, 0},
                             {-1, 0, 1, 1, 1, 0, -1, -1}};
     int flag=1;
@@ -244,7 +247,7 @@ static int snakeEnDir(struct snake * s1, lastMoveEnum move){
             break;
         case LEFT:
             s1->head.x = dir[0][6];
-            s2->head.y = dir[1][6];
+            s1->head.y = dir[1][6];
             if( checkSnake(s1)){
                 return flag;
             }
@@ -254,7 +257,7 @@ static int snakeEnDir(struct snake * s1, lastMoveEnum move){
     }if( )
 }
 
-void keyInput(struct snake * s1, struct snake * s2){
+int keyInput(struct snakeStruct * s1, struct snakeStruct * s2){
     char flag=0;
     if( s2 == NULL){
         flag=1; // one player
@@ -262,48 +265,50 @@ void keyInput(struct snake * s1, struct snake * s2){
     if( s2 != NULL)
         flag = 2; // two player
     char c = getChar();
-    char moveS1, moveS2;
+    char snake1, snake2;
      if (flag == 2) { // Usar todas las teclas (W, A, S, D y flechas)
         switch (c) {
             case KEY_ESC:
-                finish = 1
+                finish = 1;
                 return; 
-        // ---------------------------- P1 ->  PLAYER 2 MOVEMENTS -----------------------------
+        // ---------------------------- TWO PLAYERS -> P2 -----------------------------
             case KEY_W:
-                if (s1->lastMove != DOWN) {
-                    moveS1 = snakeEnDir(s1, UP); 
+                if (s2->lastMove != DOWN) {
+                    snake1 = snakeEnDir(s1, UP); 
+                    snake2 = snakeEnDir(s2, s2->lastMove);
+                    
                 }
                 break;
 
             case KEY_A:
                 if (s1->lastMove != RIGHT) {
-                    l_move = snakeEnDir(s1, LEFT); 
+                    moveS1 = snakeEnDir(s1, LEFT); 
                 }
                 break;
 
             case KEY_S:
-                if (s1->lastMove != UP) {
-                    l_move = snakeEnDir(s1, DOWN); 
-                    
+                if (s1->lastMove != UP ) {
+                    snake1 = snakeEnDir(s1, DOWN); 
+                    snake2 = snakeEnDir(s2, s2->lastMove); 
                 }
                 break;
 
             case KEY_D:
                 if (s1->lastMove != LEFT) {
-                    l_move = snakeEnDir(s1, RIGHT); 
+                    moveS1 = snakeEnDir(s1, RIGHT); 
             // ---------------------------- P2 ->  PLAYER 1 MOVEMENTS -----------------------------
                 }
                 break;
 
             case KEY_UP:
                 if (s1->lastMove != DOWN) {
-                    l_move = snakeEnDir(s1, UP); 
+                    moveS1 = snakeEnDir(s1, UP); 
                 }
                 break;
 
             case KEY_DOWN:
                 if (s1->lastMove != UP) {
-                    l_move = snakeEnDir(s1, DOWN); 
+                    moveS1 = snakeEnDir(s1, DOWN); 
                    
                 }
                 break;
@@ -329,7 +334,7 @@ void keyInput(struct snake * s1, struct snake * s2){
     } else if( flag == 1) { // Solo usar las teclas de flecha
         switch (c) {
             case KEY_ESC:
-                finish = 1
+                finish = 1;
                 return;
             case KEY_UP:
                 if (s1->lastMove != DOWN) {
@@ -375,10 +380,10 @@ if( flag == 1){
     
 
 
-static void playersKeyboard(int *flag,struct snake * s1,struct snake * s2, int *w1, int *w2){
+static void playersKeyboard(int *flag,struct snakeStruct * s1,struct snakeStruct * s2, int *w1, int *w2){
     if(*flag == 1){
         *w1 = keyInput(&s1,NULL);
-        status(&s1, NULL)
+        status(&s1, NULL);
     }else{
         *w2 = keyInput(&s1,&s2);
         status(&s1, &s2);
@@ -387,20 +392,20 @@ return;
 }
 
 
-void checkGameLost(int *flag,int * w1, int *w2,struct snake * s1,struct snake * s2 ){
+void winnerLoser(int *flag,int * w1, int *w2,struct snakeStruct * s1,struct snakeStruct * s2 ){
     
 }
 
-static void game(struct snake * s1, struct snake * s2, struct snake * apple, int * flag){
+static void game(struct snakeStruct * s1, struct snakeStruct * s2, struct appleStruct * apple, int * flag){
     int w1, w2;
     while( finish != EXIT){
         playersKeyboard(&flag, &s1, &s2, &w1, &w2);
     
-        updateBoard(&snakeP1, &snakeP2);
-        printBoard(&snakeP1, &snakeP2);   // FUNCION IMPORTANT  
-        call_sleep(100);
+        updateBoard(&s1, &s2);
+        printBoard(&s1, &s2);   // FUNCION IMPORTANT  
+        // call_sleep(100);
     
-        checkGameLost(&flag, &w1, &w2, &snakeP1, &snakeP2);
+        winnerLoser(&flag, &w1, &w2, &s1, &s2);
     }
 }
 
@@ -425,9 +430,9 @@ void srand(unsigned int seed)
 void get_apple(appleStruct * apple){
     apple->color = 0xaf0000; // APPLE RED COLOR
     direcs direc;
-    direc.x = rand() // insert number
-    direc.y = rand();
-    while( board[direc.x][direc.y] != CER0){
+    direc.x = rand() % 32;  // insert number
+    direc.y = rand() % 24;
+    while( boardMatrix[direc.x][direc.y] != CER0){
         direc.x = rand() % 32; // insert number
         direc.y = rand() % 24; // chequear
     }
@@ -438,7 +443,7 @@ void get_apple(appleStruct * apple){
 }
 
 
-void putApple(appleStruct * snake){
+void putApple(appleStruct * apple){
     sys_drawRectangle(apple->color,(uint64_t)apple->cord.x, (uint64_t)apple->cord.y,  , );
 }
 // ----------------------- STARTER ---------------------------- 
