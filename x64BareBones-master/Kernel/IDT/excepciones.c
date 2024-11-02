@@ -22,8 +22,8 @@
 #define EXCEPCION_invalidOpcode_identificador 6
 #define WHITE 0x00FFFFFF
 #define BLUE_SCREEN 0x0000007B //color de background 
-
-static int regsAmount = 17;
+static char* errorMessages[2]={"ERROR 0x00 Division by zero exception\n\n\n","ERROR 0x06 Invalid Opcode exception\n\n\n"};
+static int regsAmount = 20;
 static void dumpRegisters();
 static void launchingException(char * msg);
 
@@ -33,7 +33,7 @@ extern uint64_t * getRegisters();
 static char * regsNames[] = {  //mismo orden que en FILLSNAPSHOT (interrupts.asm)
     "RAX   ", "RBX   ", "RCX   ", "RDX   ", "RSI   ", "RDI   ", "RBP   ",
     "R8    ", "R9    ", "R10   ", "R11   ", "R12   ", "R13   ", "R14   ",
-    "R15   ", "RSP   ", "RIP   "
+    "R15   ", "RSP   ", "RIP   ", "SS    ", "CS    ", "RFLAGS"
 };
 
 static void hexaToAscii(uint64_t num, char* buffer){
@@ -47,7 +47,6 @@ static void hexaToAscii(uint64_t num, char* buffer){
 }
 
 static void dumpRegisters(){
-    loadRegisters();
     uint64_t * registers = getRegisters();
     char buffer[66];
 
@@ -89,12 +88,7 @@ static void launchingException(char * message){
 }
 
 void exceptionDispatcher(int excepcion){
-    char * except_message;
-    if (excepcion == EXCEPCION_cero_identificador){
-        except_message = EXCEPTION_cero;
-    }else if(excepcion == EXCEPCION_invalidOpcode_identificador){
-        except_message = EXCEPTION_invalidOpcode;
-    }
+    char * except_message=errorMessages[excepcion/6];
     launchingException(except_message);
 }
 

@@ -59,8 +59,5 @@ void WriteCharacter(unsigned char c, unsigned char forecolour, unsigned char bac
 int main() 
 {	
 	load_idt();
-	playSound(500);
-	sleep(100);
-	stopSound();
 	return ((EntryPoint)sampleCodeModuleAddress)();
 }

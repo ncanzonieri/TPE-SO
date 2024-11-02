@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define REGS_AMOUNT 17
+#define REGS_AMOUNT 20
 
 enum registers_idx {
     RAX_IDX = 0,

@@ -1,13 +1,13 @@
 #include <commands.h>
 #include <syscalls.h>
 #include <library.h>
-#define REGS_AMOUNT 17 
+#define REGS_AMOUNT 20 
 #define ERROR 
 
 static char * regsNames[] = {  
     "RAX   ", "RBX   ", "RCX   ", "RDX   ", "RSI   ", "RDI   ", "RBP   ",
     "R8    ", "R9    ", "R10   ", "R11   ", "R12   ", "R13   ", "R14   ",
-    "R15   ", "RSP   ", "RIP   "
+    "R15   ", "RSP   ", "RIP   ", "SS    ", "CS    ", "RFLAGS"
 };
 
 static void hexaToAscii(uint64_t num, char* buffer){
@@ -25,7 +25,7 @@ void registers(){
     int flag = sys_getRegisters(r);
     if( flag != 1 ){
         clearIfNotEnoughSpace(1);
-        sys_write(STDOUT_FD,"error: wrong registers upload",14,0xFFFFFF);
+        sys_write(STDOUT_FD,"error: wrong registers upload\n",31,0xFFFFFF);
 
         return;
     }

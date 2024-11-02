@@ -6,6 +6,7 @@ void divx0() {
     b = 1;
     c = b / a;
     a = c;
+
 }
 
 

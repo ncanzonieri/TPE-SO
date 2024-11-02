@@ -15,6 +15,24 @@
 
 #define COLORS_COUNT 4
 
+
+// --------------- DEFINE LETRAS ---------------------------
+// Define para las teclas
+#define END 1
+#define KEY_ESC 27        
+#define KEY_W   'w'      
+#define KEY_A   'a'      
+#define KEY_S   's'       
+#define KEY_D   'd'       
+// P2
+#define KEY_H 'h' 
+#define KEY_J 'j' 
+#define KEY_K 'k' 
+#define KEY_U 'u' 
+#define KEY_L 'l'
+#define KEY_I 'i
+
+
 const char *colorNames[COLORS_COUNT] = { "GREEN", "RED", "YELLOW","BLUE" };
 const uint32_t colorHexa[COLORS_COUNT] = { 0x000080, 0x008000, 0xFF0000, 0xFFFF00 };
 

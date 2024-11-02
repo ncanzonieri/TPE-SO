@@ -66,11 +66,16 @@ loadRegisters:
     mov [BufferRegis + 12*8], r13
     mov [BufferRegis + 13*8], r14
     mov [BufferRegis + 14*8], r15
-    mov rax, [rsp]
-    mov [BufferRegis + 15*8], rax ; instruction pointer
-    mov rax, rsp
-    mov [BufferRegis + 16*8], rax
-    ret
+    mov rax, [rsp + 24] ;rsp
+    mov [BufferRegis+120], rax
+    mov rax, [rsp] ;rip
+    mov [BufferRegis+128], rax
+    mov rax, [rsp+16] ;rflags
+    mov [BufferRegis+136], rax
+    mov rax, [rsp+8] ;cs
+    mov [BufferRegis+144], rax
+    mov rax, [rsp+32] ;ss
+    mov [BufferRegis+152], rax
 
 getRegisters:
     mov rax, BufferRegis
@@ -105,4 +110,4 @@ section .data
 regSize equ 8
 
 section .bss 
-BufferRegis resq 17 ; reserve qword, 
+BufferRegis resq 20 ; reserve qword, 

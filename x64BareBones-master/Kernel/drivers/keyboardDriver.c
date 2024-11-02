@@ -61,7 +61,7 @@ void keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
     char ascii = scancodeToAscii(scancode); // convierte a ascii
     if(activeCtrl && (ascii == 'r' || ascii == 'R')) { // comando para printear 
         registersFilled = 1;
-        updateRegisters(); // esto de asm
+        loadRegisters(); // esto de asm
     }
     else if (ascii != 0) {
         cb_push(ascii);
@@ -74,7 +74,7 @@ char kb_getchar() {
 
 static char scancodeToAscii(uint8_t scancode) {
     char ascii = 0;
-    if (scancode < KEYS_AMOUNT) {
+    if (scancode < KEYS_AMOUNT && scancode>=0) {
         ascii = keycodeMatrix[scancode][activeShift];
         if (activeCapsLock && ascii >= 'a' && ascii <= 'z') {
             ascii -= 32;
@@ -145,20 +145,20 @@ static char cb_pop() {
     return c;
 }
 
-void updateRegisters() {
-    loadRegisters(); // esta es de asm
-    uint64_t * r = getRegisters();
-    for(int i = 0; i < REGS_AMOUNT; i++) {
-        registers[i] = r[i];
-    }
-}
+//void updateRegisters() {
+//    uint64_t * r = getRegisters();
+//    for(int i = 0; i < REGS_AMOUNT; i++) {
+//        registers[i] = r[i];
+//    }
+//}
 
 uint64_t putRegisters(uint64_t * r) {
     if(!registersFilled) {
         return 0;
     }
+    uint64_t* aux=getRegisters();
     for(int i = 0; i < REGS_AMOUNT; i++) {
-        r[i] = registers[i];
+        r[i] = aux[i];
     }
     return 1;
 }

@@ -28,12 +28,18 @@ static void runCommands(int index);
 static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, sys_clearScreen};
 
 static void putUser(){
-  sys_write(STDOUT_FD, "la-maquina $>",14,GREEN);
+  sys_write(STDOUT_FD, "la-maquina$>",14,GREEN);
 }
 
 #define DEFAULT_SCALE 1
 
 void welcome(){
+    //sys_playSound(262,100);
+    //sys_playSound(262,100);
+    //sys_playSound(293,100);
+    //sys_playSound(262,100);
+    //sys_playSound(349,100);
+    //sys_playSound(330,100);
     sys_clearScreen();
     sys_setFontScale(DEFAULT_SCALE);
     sys_write(STDOUT_FD,"Today's date is: ",18,0x00ffffff);

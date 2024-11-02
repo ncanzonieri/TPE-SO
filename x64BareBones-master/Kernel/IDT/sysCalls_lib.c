@@ -41,7 +41,7 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
         case SLEEP:
             return sys_sleep(otherRegs[0]);
         case PLAY_SOUND:
-            return sys_playSound(otherRegs[0], otherRegs[1]); // falta implementar
+            return sys_playSound(otherRegs[0], otherRegs[1]);
         case SET_BGCOLOR:
             return sys_setBgColor((uint32_t) otherRegs[0]);
         case GET_BGCOLOR:
@@ -111,12 +111,8 @@ uint64_t sys_setFontScale(uint8_t scale) {
 }
 
 uint64_t sys_getRegisters(uint64_t * r) {
-    loadRegisters(); 
-    uint64_t * aux = getRegisters();
-    for( int i=0; i<REGISTERS_DIM; i++){
-        r[i]=aux[i];
-    }
-    return 1;
+    //loadRegisters(); 
+    return putRegisters(r);
 }
 
 uint64_t sys_sleep(uint64_t millis) {
