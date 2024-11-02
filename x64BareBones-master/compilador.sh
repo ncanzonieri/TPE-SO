@@ -12,5 +12,6 @@ then
 fi
 docker exec -w"/root/Toolchain" -it $nombre make clean all
 docker exec -w"/root" -it $nombre make clean all
+docker exec -w"/root" -it $nombre chmod 777 /root/Image/x64BareBonesImage.qcow2
 docker stop $nombre &> /dev/null
 exit 0
