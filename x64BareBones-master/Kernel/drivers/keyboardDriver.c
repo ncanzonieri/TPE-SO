@@ -82,7 +82,20 @@ static char scancodeToAscii(uint8_t scancode) {
     }
     return ascii;
 }
+/*
+#define ASCII 32
 
+static char scancodeToAscii(uint8_t key){
+    if( key > KEYS_AMOUNT || key < 0){
+        return;
+    }
+    char c = keycodeMatrix[key][activeShift];
+    if( activeCapsLock && (c >= 'a') && (c <= 'z')){
+        c -= ASCII;
+    }
+return c;
+}
+*/
 static void updateFlags(uint8_t scancode) {
     if (scancode == LCTRL) {
         activeCtrl = 1;
