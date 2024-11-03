@@ -25,7 +25,7 @@ static int belongs(char * v);
 static void runCommands(int index);
 
 ////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
-static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, sys_clearScreen};
+static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake ,sys_clearScreen};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina$>",14,GREEN);
@@ -92,7 +92,7 @@ static void startShell(char * v){
 }
 
 static int belongs(char * v){ //FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
-    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "zoomIn", "zoomOut", "registers", "agro","actualDate", "clear"};
+    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "actualTime", "zoomIn", "zoomOut", "registers", "agro","actualDate","snake", "clear"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;

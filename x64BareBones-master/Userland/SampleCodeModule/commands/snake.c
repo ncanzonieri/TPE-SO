@@ -1,4 +1,4 @@
-/*
+
 #include <commands.h>
 #include <snake.h>
 #include <syscalls.h>
@@ -14,6 +14,19 @@
 // https://hexdocs.pm/color_palette/ansi_color_codes.html
 //typedef enum Colors {  colorsEnum.GREEN = 1, GREEN=1, RED, YELLOW, BLUE };
 //#define COLORS 5
+
+// --------------------- chequear
+// chequear //pixel positions
+#define Y_MAX 768
+#define X_MAX 1024
+#define PIXEL_POS_X(i) (i) * SQUARE_SIZE
+#define PIXEL_POS_Y(i) (i + 1) * SQUARE_SIZE
+
+//board positions
+#define SQUARE_SIZE 32
+#define X_SQUARES (X_MAX / SQUARE_SIZE) // 32
+#define Y_SQUARES 23 // 24
+//------------------------------
 // -------------- FUCIONES ---------------
 // -------------- GETTERS ---------------
 
@@ -25,8 +38,8 @@ static int getc2(int c1);
 
 static void copyColor(snakeStruct * s, int num);
 static void chooseColors(snakeStruct * s1, snakeStruct * s2, int * flag);
+static void checkstartSnake(int * flag);
 static void spawnSnake(snakeStruct * s1, snakeStruct * s2, int *flag);
-
 // -------------- APPLE -------------
 
 static appleStruct * apple;
@@ -38,11 +51,11 @@ static void get_apple();
 
 static int checkSnake(struct snakeStruct * s);
 static int snakeEnDir(struct snakeStruct * s1, lastMoveEnum move);
-static int keyInput(struct snakeStruct * s1, struct snakeStruct * s2);
-static void playersKeyboard(int *flag,struct snakeStruct * s1,struct snakeStruct * s2, int *w1, int *w2);
 static void winner(int *flag,int * w1, int *w2,struct snakeStruct * s1,struct snakeStruct * s2 );
 static void game(struct snakeStruct * s1, struct snakeStruct * s2, int * flag);
-
+static void keyPlayerOne(snakeStruct *s, int *w1);
+static void keyPlayerTwo(snakeStruct * s1,snakeStruct * s2, int *w2);
+static void deleteTail(struct snakeStruct * s);
 
 // ----------- BOARD ------------------
 #define APPLE_GREEN 0x87af00
@@ -58,16 +71,10 @@ static void tablero(int * flag, int start);
 
 
 void snake(){
-    
     start(); 
     sys_clearScreen(); // finish = 1 y sale de start();
     return;
 }
-
-// ----------------- MENU & THEME -----------------
-
-
-
 
 // ----------------- GETTERS -------------------
 
@@ -107,9 +114,48 @@ int welcomeSnake(){
 // crea la snake y la posiciona en una zona del tablero
 // el cual seria p1 medio a la izq
 // p2 medio a la derecha
-static void spawnSnake(snakeStruct * s1, snakeStruct * s2, int *flag){
+
+#define MIN_DIM 5
+#define P1 '$'
+#define P2 '*'
 
 
+static void spawnSnake(snakeStruct *s, snakeStruct *s2, int *player) {
+    // Inicialización para el Jugador 1
+    if (player == 1) {
+        s->id = P1;
+        s->head.x = MIN_DIM- 1;
+        s->head.y = Y_SQUARES / 2 + 1;
+        for (int i = 0; i <= s->head.x; i++) { // La cola (x, y) es el primer elemento del array "body".
+            s->body[i].x = i;
+            s->body[i].y = s->head.y;
+            boardMatrix[s->head.y][i] = s->id;
+        }
+        s->bodyDim = MIN_DIM;
+        s->lastMove = RIGHT;
+        s->points = 0;
+        boardMatrix[s->head.y][s->head.x] = s->id;
+        return;
+    }
+
+    // Inicialización para el Jugador 2
+    s2->id = P2;
+    s2->head.x = X_SQUARES - MIN_DIM;
+    s2->head.y = Y_SQUARES / 2 - 1;
+    // Primer bucle para inicializar la posición x de cada segmento del cuerpo
+    for (int i = X_SQUARES - 1; i >= s2->head.x; i--) {
+        for (int j = 0; j < MIN_DIM; j++) {
+        s2->body[j].x = i;
+        s2->body[j].y = s->head.y;
+        boardMatrix[s2->head.y][s2->body[j].x] = s->id;
+        }
+    }
+
+    s2->bodyDim = MIN_DIM;
+    s2->lastMove = LEFT;
+    s2->points = 0;
+    boardMatrix[s2->head.y][s2->head.x] = s2->id;
+    
 }
 
 static void copyColor(snakeStruct * s, int num){
@@ -132,6 +178,7 @@ static void chooseColors(snakeStruct * s1, snakeStruct * s2, int * flag){
     }
 return;
 }
+
 // -------------- BOARD --------------
 
 #define X 30
@@ -152,7 +199,7 @@ return;
 
 // --------------------------- START SNAKE MAIN ----------------------
 
-void startSnake(){
+void start(){
 
     int flag = welcomeSnake();
     snakeStruct * snake1, * snake2; // snake2 asi me tiraba error ---- CHEQUEAR
@@ -280,12 +327,11 @@ static void playersKeyboard(int *flag,struct snakeStruct * s1,struct snakeStruct
         keyPlayerOne(&s1,&w1); // arranque haciendola toda junta pero me termine mareando y no llegue a nada
         status(&s1, NULL);
     }else{
-        keyPlayerTwo(&s1,&s2,&w2); // podria volver que si w2 -> gano p2 y w2=1 -> gano p1
+        keyPlayerTwo(&s1, &s2, &w2); // podria volver que si w2 -> gano p2 y w2=1 -> gano p1
         status(&s1, &s2);
     }
 return;
 }
-
 
 // osea si retorna 1 sigue estando 
 static void keyPlayerOne(snakeStruct *s, int *w1){
@@ -328,7 +374,7 @@ return;
 
 // CONTROLES DE TECLADO
 // CHEQUEARRRRRRRRRRRR  linea 320
-static void keyPlayerTwo(snakeStruct * s1,snakeStruct * s2, int flag *w2){
+static void keyPlayerTwo(snakeStruct * s1,snakeStruct * s2, int *w2){
     int flagS1=0, flagS2=0;
     char c= getChar();
     if( checkChar(c)){
@@ -343,12 +389,12 @@ static void keyPlayerTwo(snakeStruct * s1,snakeStruct * s2, int flag *w2){
         break;
     case KEY_S: // Move down
         if(s1->lastMove != UP) {
-            flagS1 = (snakeEnDir(s1, DOWN) || snakeEnDir(s2, s2->lastMove))
+            flagS1 = (snakeEnDir(s1, DOWN) || snakeEnDir(s2, s2->lastMove));
         }
         break;
     case KEY_A: // Move left
         if(s1->lastMove != RIGHT && s1->lastMove != LEFT) {
-            flagS1 = ( snakeEnDir(s1, LEFT); || snakeEnDir(s2, s2->lastMove));
+            flagS1 = ( snakeEnDir(s1, LEFT) || snakeEnDir(s2, s2->lastMove));
 
         }
         break;
@@ -371,7 +417,7 @@ static void keyPlayerTwo(snakeStruct * s1,snakeStruct * s2, int flag *w2){
         if(s2->lastMove != UP && s2->lastMove != DOWN) {
             if(snakeEnDir(s2, DOWN ))
             flagS2 = snakeEnDir(s1, s1->lastMove);
-            flagS1 = 
+            flagS1;
         }
         break;
     case KEY_J: // Move left for second player
@@ -457,8 +503,10 @@ static void get_apple(){
 }
 
 
+
+
 static void putApple(){
-    sys_drawRectangle(apple->color,(uint64_t)apple->cord.x, (uint64_t)apple->cord.y,  , );
+    sys_drawRectangle(apple->color, PIXEL_POS_X((uint64_t)apple->cord.x), PIXEL_POS_Y((uint64_t)apple->cord.y), 32, 32);
 }
 
 // ----------------------- STARTER ---------------------------- 
@@ -480,7 +528,7 @@ static void check(int *flag){
     return;
 }
 
-static void startGame(int * flag){
+static void checkstartSnake(int * flag){
     printf("turn off CAPS-LOCK\n");
     char c;
     check(&flag);
@@ -493,11 +541,11 @@ static void startGame(int * flag){
     if( *flag == 2){
         printf("Players, are you ready?\n");
         printf("Player 1 keys: WASD\n");
-        printf("Player 2 keys: IJKL")
+        printf("Player 2 keys: IJKL");
     }
     for( int i=5; i > 0; i--)
         printf("Game starts in %d", i);
-    sys_sleep(); // chequear
+    sys_sleep(300); // chequear
     sys_clearScreen(); // chequear
 }
 
@@ -514,4 +562,3 @@ static void tablero(int * flag, int start){
     }
 }
 
-*/

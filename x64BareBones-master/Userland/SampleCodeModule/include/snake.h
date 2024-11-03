@@ -30,7 +30,7 @@
 #define KEY_K 'k' 
 #define KEY_U 'u' 
 #define KEY_L 'l'
-#define KEY_I 'i
+#define KEY_I 'i'
 
 
 const char *colorNames[COLORS_COUNT] = { "GREEN", "RED", "YELLOW","BLUE" };
@@ -73,7 +73,7 @@ typedef struct appleStruct{
 // Funciones del  Snake
 void snake();
 int welcomeSnake();
-void startSnake();
+void start();
 void exitSnake();
 
 
