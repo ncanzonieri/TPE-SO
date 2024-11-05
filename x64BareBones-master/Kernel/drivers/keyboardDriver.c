@@ -37,14 +37,14 @@ static char keycodeMap[KEYS_AMOUNT][2] = {
 // Circular buffer for keyboard input
 #define BUFFER_SIZE 256
 
-typedef struct CircularBuffer {
+typedef struct TBuffer {
     char data[BUFFER_SIZE];
     int readIndex;
     int writeIndex;
     int count;
-} TCircularBuffer;
+} TBuffer;
 
-static TCircularBuffer buffer = { .readIndex = 0, .writeIndex = 0, .count = 0 };
+static TBuffer buffer = { .readIndex = 0, .writeIndex = 0, .count = 0 };
 
 static struct {
     uint8_t shift : 1;
