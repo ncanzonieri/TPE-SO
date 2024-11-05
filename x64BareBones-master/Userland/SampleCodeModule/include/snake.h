@@ -1,3 +1,4 @@
+
 #ifndef SNAKE_H
 #define SNAKE_H
 
@@ -33,6 +34,8 @@
 #define KEY_I 'i'
 
 
+#define APPLE_GREEN 0x87af00
+
 const char *colorNames[COLORS_COUNT] = { "GREEN", "RED", "YELLOW","BLUE" };
 const uint32_t colorHexa[COLORS_COUNT] = { 0x000080, 0x008000, 0xFF0000, 0xFFFF00 };
 
@@ -59,7 +62,7 @@ typedef struct snakeStruct{
     direcs body[MAX_SNAKE_LENGTH];
     lastMoveEnum lastMove;
     int bodyDim; // bodyDim + 1 -> total points
-    int id;
+    char id;
     int points;
     ColorsStruct color; 
 
@@ -67,7 +70,8 @@ typedef struct snakeStruct{
 
 typedef struct appleStruct{
     direcs cord;
-    char * color; // roja por defecto
+    ColorsStruct color; // roja por defecto
+    char id;
 }appleStruct;
 
 // Funciones del  Snake
@@ -78,3 +82,4 @@ void exitSnake();
 
 
 #endif // SNAKE_H
+

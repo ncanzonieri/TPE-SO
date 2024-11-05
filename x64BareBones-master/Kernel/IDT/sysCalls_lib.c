@@ -58,7 +58,7 @@ uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
 
     int i = 0;
     for(; i < count;i++){
-        char c = kb_getchar();
+        char c = getKeyboardChar();
         if(c == 0){
             return i; //cuantos caracteres fueron leidos
         }

@@ -19,7 +19,7 @@ static int isBufferFull();
  * in index zero the char without shift, in index 1 the char with shift
  * 0 if the key doesn't have a char representation
  */
-static char keycodeMatrix[KEYS_AMOUNT][2] = {
+static char keycodeMap[KEYS_AMOUNT][2] = {
         {0, 0}, {ESC, ESC}, {'1', '!'}, {'2', '@'}, {'3', '#'},
         {'4', '$'}, {'5', '%'}, {'6', '^'}, {'7', '&'}, {'8', '*'},
         {'9', '('}, {'0', ')'}, {'-', '_'}, {'=', '+'}, {'\b', '\b'},

@@ -25,7 +25,7 @@ static int belongs(char * v);
 static void runCommands(int index);
 
 ////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
-static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake ,sys_clearScreen};
+static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake, sys_clearScreen};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina$>",14,GREEN);

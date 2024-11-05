@@ -60,3 +60,62 @@ make clean
 make all
 exi
 exit
+cd root
+ls 
+cd x64BareBones-master/
+ls
+c Toolchain/
+cd Toolchain/
+ls 
+make all
+cd ..
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+cd ..
+ls 
+cd x64BareBones-master/
+ls 
+make clean
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
