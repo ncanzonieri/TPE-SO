@@ -75,19 +75,24 @@ void start(){
     //char *c2= getChar();
     // sys_write(1,&c2,1,0x00ffd7);
 
-    int w1,w2;
+    int w1=0,w2=0;
     sys_write(1,"fran",5,0x00ffd7);
     makeApple();
     sys_write(1,"hola",5,0x00ffd7);
     putAppleInBoard();
     sys_write(1,"chau",5,0x00ffd7);
-    // printSnakeInBoard(&snake1, &snake2);
-    printAppleInBoard();
+    //printSnakeInBoard(&snake1, &snake2);
+    sys_write(1,"eeeeeee",8,0x00ffd7);
     sys_sleep(1000);
 
 
 while (1){
+        printAppleInBoard();
+        int i=0;
+        while(i<20){
         sys_write(1,"hodjfoewfopwef",15,0x00ffd7);
+        i++;
+        }
         if( flagPlayers == 1){
             w1 = keyPlayerOne(&snake1); 
         }else{
@@ -205,7 +210,7 @@ void putAppleInBoard(){
             else if( boardMatrix[i][j] == APPLE){
                 printAppleInBoard();
             }else{
-                reset(j,i);
+                // reset(j,i);
             }
         }
     }
