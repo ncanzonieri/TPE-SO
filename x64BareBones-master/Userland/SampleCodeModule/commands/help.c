@@ -10,7 +10,7 @@ void help(){
     char * helpingInstructions [INSTRUCTIONS] ={"------------------- Help -------------------\n", 
     "COMMANDS:\n",
     "\tregisters\t\t\tDisplay the current register values.\n",
-    "\tsnake\t\t\tPlay the snake game.\n",
+    "\tsnake2\t\t\tPlay the snake game.\n",
     "\tzoomIn\t\t\tScales up.\n",
     "\tzoomOut\t\t\tScales down.\n",
     "\tactualTime\t\t\tActual time in Buenos Aires\n",

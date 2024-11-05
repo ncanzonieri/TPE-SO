@@ -296,11 +296,15 @@ char *strncpy(char *dest, const char *src, int count)
 
 static unsigned long int next = 1;
 
-int rand(void) {
-    next = next * 1103515245 + 12345;
-    return (unsigned int)(next / 65536) % 32768;
+
+int ownRand(int from, int to) {
+  unsigned long long ticks = (unsigned long long) sys_ticks();
+    return (from + (ticks % to));
 }
 
-void srand(unsigned int seed){
-    next = seed;
-}
+//void srand(unsigned int seed){
+//    next = seed;
+//}
+
+//int ownRand2(int from, int to){
+//}

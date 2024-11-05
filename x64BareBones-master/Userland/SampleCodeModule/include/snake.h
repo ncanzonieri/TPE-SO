@@ -1,3 +1,4 @@
+
 #ifndef SNAKE_H
 #define SNAKE_H
 
@@ -8,8 +9,8 @@
 // --------- DEFINES -------------
 #define BOARD_WIDTH 32
 #define BOARD_HEIGHT 24
-#define INITIAL_SNAKE_LENGTH 3
-#define MAX_SNAKE_LENGTH 30
+#define MIN_SNAKE_LENGTH 5
+#define MAX_SNAKE_LENGTH 100
 
 //--------------- Paleta de colores ------------------
 
@@ -30,8 +31,10 @@
 #define KEY_K 'k' 
 #define KEY_U 'u' 
 #define KEY_L 'l'
-#define KEY_I 'i
+#define KEY_I 'i'
 
+
+#define APPLE_GREEN 0x87af00
 
 const char *colorNames[COLORS_COUNT] = { "GREEN", "RED", "YELLOW","BLUE" };
 const uint32_t colorHexa[COLORS_COUNT] = { 0x000080, 0x008000, 0xFF0000, 0xFFFF00 };
@@ -49,7 +52,7 @@ typedef struct direcs{
 
 
 typedef struct ColorsStruct{
-    int colorAscii;
+    uint32_t colorAscii;
     char * color;
 }ColorsStruct;
 
@@ -59,7 +62,7 @@ typedef struct snakeStruct{
     direcs body[MAX_SNAKE_LENGTH];
     lastMoveEnum lastMove;
     int bodyDim; // bodyDim + 1 -> total points
-    int id;
+    char id;
     int points;
     ColorsStruct color; 
 
@@ -67,14 +70,40 @@ typedef struct snakeStruct{
 
 typedef struct appleStruct{
     direcs cord;
-    char * color; // roja por defecto
+    ColorsStruct color; // roja por defecto
+    char id;
 }appleStruct;
 
 // Funciones del  Snake
-void snake();
+void snake2();
+void start();
 int welcomeSnake();
-void startSnake();
-void exitSnake();
+
+void board();
+void spawnSnake(snakeStruct *s, int playerDim);
+void makeApple();
+void printAppleInBoard();
+
+void printSnakeInBoard(snakeStruct *s1, snakeStruct *s2);
+void printAppleInBoard();
+
+int keyPlayerOne(snakeStruct *snake1);
+int keyPlayerTwo(snakeStruct *snake1, snakeStruct *snake2);
+
+
+int snakeEnDir(snakeStruct *s, lastMoveEnum move);
+int crash(snakeStruct *s);
+int snakeEatsApple(snakeStruct *s);
+void deleteTail(snakeStruct *s);
+void refreshSnakesInBoard( snakeStruct * s1, snakeStruct * s2);
+void refreshSnakeInBoard(snakeStruct *s);
+
+
+void winner(int *w1, int *w2, snakeStruct *s1, snakeStruct *s2);
+
+// Funciones del jugador
+
 
 
 #endif // SNAKE_H
+

@@ -51,4 +51,6 @@ int scanf(const char *fmt, ...);
 
 static int readFromKeyboard(char * buffer);
 
+int ownRand(int from, int to);
+
 #endif
