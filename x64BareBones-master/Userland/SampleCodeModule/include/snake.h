@@ -9,8 +9,8 @@
 // --------- DEFINES -------------
 #define BOARD_WIDTH 32
 #define BOARD_HEIGHT 24
-#define INITIAL_SNAKE_LENGTH 3
-#define MAX_SNAKE_LENGTH 30
+#define MIN_SNAKE_LENGTH 5
+#define MAX_SNAKE_LENGTH 100
 
 //--------------- Paleta de colores ------------------
 
@@ -52,7 +52,7 @@ typedef struct direcs{
 
 
 typedef struct ColorsStruct{
-    int colorAscii;
+    uint32_t colorAscii;
     char * color;
 }ColorsStruct;
 
@@ -75,10 +75,34 @@ typedef struct appleStruct{
 }appleStruct;
 
 // Funciones del  Snake
-void snake();
-int welcomeSnake();
+void snake2();
 void start();
-void exitSnake();
+int welcomeSnake();
+
+void board();
+void spawnSnake(snakeStruct *s, int playerDim);
+void makeApple();
+void printAppleInBoard();
+
+void printSnakeInBoard(snakeStruct *s1, snakeStruct *s2);
+void printAppleInBoard();
+
+int keyPlayerOne(snakeStruct *snake1);
+int keyPlayerTwo(snakeStruct *snake1, snakeStruct *snake2);
+
+
+int snakeEnDir(snakeStruct *s, lastMoveEnum move);
+int crash(snakeStruct *s);
+int snakeEatsApple(snakeStruct *s);
+void deleteTail(snakeStruct *s);
+void refreshSnakesInBoard( snakeStruct * s1, snakeStruct * s2);
+void refreshSnakeInBoard(snakeStruct *s);
+
+
+void winner(int *w1, int *w2, snakeStruct *s1, snakeStruct *s2);
+
+// Funciones del jugador
+
 
 
 #endif // SNAKE_H

@@ -11,7 +11,7 @@ GLOBAL sys_setFontScale
 GLOBAL sys_getRegisters
 GLOBAL sys_sleep
 GLOBAL sys_playSound
-
+GLOBAL sys_ticks
 
 section .text
 
@@ -35,4 +35,4 @@ sys_setFontScale: syscall 0x08
 sys_getRegisters: syscall 0x09
 sys_sleep: syscall 0x0A
 sys_playSound: syscall 0x0B
-
+sys_ticks: syscall 0x0E

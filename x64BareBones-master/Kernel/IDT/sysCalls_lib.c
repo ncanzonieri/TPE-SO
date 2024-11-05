@@ -9,7 +9,7 @@
 #define STDOUT 1  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
- PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR};
+ PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS};
 
 extern void loadRegisters();
 extern uint64_t* getRegisters();
@@ -46,6 +46,8 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_setBgColor((uint32_t) otherRegs[0]);
         case GET_BGCOLOR:
             return sys_getBgColor();
+        case TICKS: 
+            return sys_ticks();
         default:
             return 0;
     }
@@ -133,4 +135,8 @@ uint64_t sys_setBgColor(uint32_t color) {
 
 uint64_t sys_getBgColor() {
     return getBGcolor();
+}
+
+int sys_ticks() {
+    return ticks_elapsed();
 }

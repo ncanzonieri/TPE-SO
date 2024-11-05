@@ -1,4 +1,4 @@
-
+/*
 #include <commands.h>
 #include <snake.h>
 #include <syscalls.h>
@@ -337,7 +337,7 @@ static void deleteTail(struct snakeStruct * s){
         s->body[i - 1] = s->body[i];
         i++;
     }
-    s->body[i - 1] = s->head;;
+    s->body[i - 1] = s->head;
 }
 
 
@@ -469,9 +469,11 @@ static int keyPlayerTwo(snakeStruct * s1, snakeStruct * s2) {
 static void get_apple(){
     apple->color.colorAscii = 0xaf0000; // APPLE RED COLOR
     apple->id = APPLE;
+
+
     direcs direc;
-    direc.x = rand() % 32;  // insert number
-    direc.y = rand() % 24;
+    direc.x = rand() % (X_SQUARES-1);  // insert number
+    direc.y = rand() % (Y_SQUARES-1);
     while( boardMatrix[direc.x][direc.y] != CER0){
         direc.x = rand() % 32; // insert number
         direc.y = rand() % 24; // chequear
@@ -511,3 +513,4 @@ return;
 
 }
 
+*/
