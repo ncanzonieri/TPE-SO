@@ -64,7 +64,7 @@ int strlen(const char * s) {
     return i;
 } 
 
-//----------------------------------------------------------------------------------------------------
+
 char getChar(){
     uint8_t c;
     int size = 0;
@@ -92,7 +92,6 @@ char toLower(char c) {
     return c;
 }
 
-// DEVESA
 char * fgets(char *buffer, size_t size) {
     int readBytes = 0;
     char c;
@@ -302,9 +301,3 @@ int ownRand(int from, int to) {
     return (from + (ticks % to));
 }
 
-//void srand(unsigned int seed){
-//    next = seed;
-//}
-
-//int ownRand2(int from, int to){
-//}

@@ -31,7 +31,6 @@ void actualTime(){
     }
     clearIfNotEnoughSpace(1);
     sys_write(STDOUT_FD, time,10, 0x00ffffff);
-    
 }
 
 void actualDate(){

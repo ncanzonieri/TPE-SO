@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <syscalls.h>
 #include <library.h>
+#include <stdin.h>
 
 // --------- DEFINES -------------
 #define BOARD_WIDTH 32
@@ -63,8 +64,9 @@ typedef struct snakeStruct{
     lastMoveEnum lastMove;
     int bodyDim; // bodyDim + 1 -> total points
     char id;
+    int player;
     int points;
-    ColorsStruct color; 
+    uint32_t color; 
 
 }snakeStruct;
 
@@ -80,9 +82,10 @@ void start();
 int welcomeSnake();
 
 void board();
-void spawnSnake(snakeStruct *s, int playerDim);
+void spawnSnake(snakeStruct *s);
 void makeApple();
 void printAppleInBoard();
+void putAppleInBoard();
 
 void printSnakeInBoard(snakeStruct *s1, snakeStruct *s2);
 void printAppleInBoard();

@@ -12,7 +12,7 @@
 #define CERO 0
 #define ESC 27
 #define TAB 9
-#define COMMANDS_COUNT 10
+#define COMMANDS_COUNT 11
 #define GREEN 0x66FF66 // Font Scale
 #define WHITE 0xFFFFFF
 #define ERROR -1

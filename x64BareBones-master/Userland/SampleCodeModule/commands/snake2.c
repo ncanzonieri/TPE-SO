@@ -24,7 +24,7 @@
 //board positions
 #define SQUARE_SIZE 32
 #define X_SQUARES (X_MAX / SQUARE_SIZE) // 32
-#define Y_SQUARES 23 // 24
+#define Y_SQUARES (Y_MAX / SQUARE_SIZE) // 24
 
 static char boardMatrix[X_SQUARES][Y_SQUARES];
 static int flagPlayers=1;
@@ -36,6 +36,8 @@ static appleStruct * apple;
 
 // chequear chiche 
 static void reset(int xPos, int yPos);
+static void startTitle();
+
 
 void snake2(){
     // sys_clearScreen();
@@ -48,53 +50,61 @@ void snake2(){
 #define P2_DIM 2
 #define EXIT 1
 
+static void startTitle(){
+    starterTitle();        
+    printf("\t\t\t\tSnake game starts in 3...");
+    sys_sleep(1000);
+    printf("\t2...");
+    sys_sleep(1000);
+    printf("\t1...");
+    sys_sleep(1000);
+    sys_clearScreen();
+
+}
 
 void start(){
     exit = 0; // cada vez que arranco se reinicia 
     sys_clearScreen();
     flagPlayers = welcomeSnake();
+    snakeStruct * snakes[flagPlayers];
+    snakeStruct snake1,snake2; 
+    snake1.player = 1;
+    snake2.player = 2;
+    snakes[0]=&snake1;
+    snakes[1]=&snake2;
 
-    printf("\t\t\t\tSnake game starts in 2 seconds\n");
-    sys_sleep(2000);
-    sys_clearScreen();
+
+    starterTitle();        
     
     board();
-    snakeStruct snake1,snake2; 
-
-    spawnSnake(&snake1,P1_DIM); // hasta aca funciona bien
-    if( flagPlayers == 2){
-        spawnSnake(&snake2, P2_DIM);
+    for(int i=0; i<flagPlayers; i++){
+        spawnSnake(snakes[i]);
     }
-
+    
     makeApple();
     putAppleInBoard();
+   // printSnakeInBoard(&snake1, &snake2);
+
+
+   
+   
     printSnakeInBoard(&snake1, &snake2);
-
-
-    sys_write(1,"--------------------------",27,0x00ffd7);
-    sys_sleep(1000);
-
-    
-    refreshSnakeInBoard(&snake1);
-    refreshSnakeInBoard(&snake2);
     printAppleInBoard();
 
-    sys_clearScreen();
+    sys_clearScreen(1000);
 
-int w1=0,w2=0;
-sys_write(1,"lets goooo",11,0x00ffd7);
+    int w1=0,w2=0;
     while (exit != EXIT){
         if( flagPlayers == 1){
             w1 = keyPlayerOne(&snake1); 
-        }
-        if( flagPlayers == 2){
+        }else{
             w2 = keyPlayerTwo(&snake1,&snake2); 
         }   
-        refreshSnakeInBoard(&snake1);
-        refreshSnakeInBoard(&snake2);
+        refreshSnakesInBoard(&snake1,&snake2);
         printSnakeInBoard(&snake1, &snake2);
+        
+        
         winner(&w1,&w2,&snake1, &snake2);
-    
     
     }   
 
@@ -106,20 +116,24 @@ void board(){
             boardMatrix[i][j] = CERO;
         }
     }
-return;
+}
+
+void refreshSnakesInBoard( snakeStruct * s1, snakeStruct * s2){
+    refreshSnakeInBoard(s1);
+    refreshSnakeInBoard(s2);
 }
 
 // snake Funcs 
-void spawnSnake(snakeStruct * s, int playerDim){
-    if( playerDim == P1_DIM){
+void spawnSnake(snakeStruct * s){
+    if( s->player == P1_DIM){
         s->id = P1_ID;
-        s->color.colorAscii = 0x00ff00;
+        s->color = 0x00ff00; // define del color
         s->head.x = MIN_SNAKE_LENGTH - 1;
         s->head.y = Y_SQUARES/2 +1;
         for(int i = 0; i <= s->head.x; i++){ // Tail (x,y) is the first element of "body" array.
             s->body[i].x = i;
             s->body[i].y = s->head.y;
-            boardMatrix[s->head.y][i] = s->id;
+            boardMatrix[i][s->head.y] = s->id;
         }
         s->bodyDim = MIN_SNAKE_LENGTH;
         s->lastMove = RIGHT;
@@ -128,9 +142,9 @@ void spawnSnake(snakeStruct * s, int playerDim){
         return;
     }
     // p2 snake
-    if( playerDim == 2){
+    if( s->player == P2_DIM){
         s->id = P2_ID;
-        s->color.colorAscii = 0x00afff;
+        s->color = 0x00afff;
         s->head.x = X_SQUARES-MIN_SNAKE_LENGTH;
         s->head.y = Y_SQUARES/2 - 1;
         for(int i = X_SQUARES-1, j=0; i >= s->head.x && j < MIN_SNAKE_LENGTH;j++, i--){ // Tail (x,y) is the first element of "body" array.
@@ -191,26 +205,23 @@ void putAppleInBoard(){
 
  void printSnakeInBoard(snakeStruct * s1, snakeStruct * s2){
     for(int i=0; i < Y_SQUARES; i++){
-        for( int j=0; X_SQUARES; j++){
+        for( int j=0; j < X_SQUARES; j++){
             if( boardMatrix[i][j] == P1_ID){
                 sys_drawRectangle(s1->color.colorAscii, PIXEL_POS_X(j), PIXEL_POS_Y(i), SQUARE_SIZE, SQUARE_SIZE);
                 
             }
             else if( boardMatrix[i][j] == P2_ID){
-                    sys_drawRectangle(s2->color.colorAscii, PIXEL_POS_X(j), PIXEL_POS_Y(i), SQUARE_SIZE, SQUARE_SIZE);
+                sys_drawRectangle(s2->color.colorAscii, PIXEL_POS_X(j), PIXEL_POS_Y(i), SQUARE_SIZE, SQUARE_SIZE);
+            }
+            else if( boardMatrix[i][j] == APPLE){
+                printAppleInBoard();
             }
             else{
+                //sys_write(1,"bocaaaaa\n",10,0x00ffd7);
                 reset(j,i);
             }
-           // else if( boardMatrix[i][j] == APPLE){
-             //   printAppleInBoard();
         }
-           // }else{
-            //    sys_write(1,"bocaaaaa\n",10,0x00ffd7);
-           //     reset(j,i);
-           // }
-        }
-    
+    }
     //sys_write(1,"printSnake\n",12,0x00ffd7);
 }
 
@@ -347,7 +358,6 @@ int checkChar(char c){
 
  int keyPlayerOne(snakeStruct * s){
     int flag =0;
-    while(exit != EXIT){
     char c = getChar();
     if( checkChar(c)){
             switch (c){
@@ -377,8 +387,6 @@ int checkChar(char c){
     return flag;
 
     }   
-}
-
 
  int keyPlayerTwo(snakeStruct *s1, snakeStruct *s2){
     int flagS1 = 0, aux = 0;
