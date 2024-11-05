@@ -5,6 +5,8 @@
 
 #define REGS_AMOUNT 20
 
+static volatile uint8_t registersFilled = 0;
+
 enum registers_idx {
     RAX_IDX = 0,
     RBX_IDX,

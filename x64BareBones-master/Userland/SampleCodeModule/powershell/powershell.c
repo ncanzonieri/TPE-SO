@@ -28,7 +28,7 @@ static void runCommands(int index);
 static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, sys_clearScreen};
 
 static void putUser(){
-  sys_write(STDOUT_FD, "la-maquina$>",14,GREEN);
+  sys_write(STDOUT_FD, "la-maquina$>",13,GREEN);
 }
 
 #define DEFAULT_SCALE 1
@@ -50,25 +50,24 @@ void welcome(){
 
 void getCommands(){
     char buffer[MAX_DIM] = {0};
-    // char copy[MAX_DIM] = {0};
     int dim; 
-    char* c[2]={0};
+    char c=0;
     int ans;
     while(1) {
         dim=0;
         buffer[0]=0;
         putUser();
-        while( (c[0] = getChar()) != '\n'){
-            if(c[0]!=0){
-            if( c[0] == DELETE){
-                if( dim > 0){
-                    dim--;
-                    putChar(c[0], WHITE);
+        while( (c = getChar()) != '\n'){
+            if(c!=0){
+                if( c == DELETE){
+                    if( dim > 0){
+                        dim--;
+                        putChar(c, WHITE);
+                    }
+                }else if( c != ESC){
+                    buffer[dim++] = c;
+                    sys_write(STDOUT_FD,&c,1,WHITE);
                 }
-            }else if( c[0] != ESC){
-                buffer[dim++] = c[0];
-                sys_write(STDOUT_FD,c,1,WHITE);
-            }
             }
         }
         buffer[dim]=0;

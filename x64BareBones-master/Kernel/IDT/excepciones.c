@@ -16,8 +16,6 @@
 #include <interrupts.h>
 #include <sysCalls.h>
 
-#define EXCEPTION_cero  "ERROR 0x00 Division by zero exception\n\n\n"
-#define EXCEPTION_invalidOpcode "ERROR 0x06 Invalid Opcode exception\n\n\n"
 #define EXCEPCION_cero_identificador 0
 #define EXCEPCION_invalidOpcode_identificador 6
 #define WHITE 0x00FFFFFF
@@ -30,7 +28,7 @@ static void launchingException(char * msg);
 extern void loadRegisters();
 extern uint64_t * getRegisters();
 
-static char * regsNames[] = {  //mismo orden que en FILLSNAPSHOT (interrupts.asm)
+static char * regsNames[] = {  
     "RAX   ", "RBX   ", "RCX   ", "RDX   ", "RSI   ", "RDI   ", "RBP   ",
     "R8    ", "R9    ", "R10   ", "R11   ", "R12   ", "R13   ", "R14   ",
     "R15   ", "RSP   ", "RIP   ", "SS    ", "CS    ", "RFLAGS"
@@ -38,9 +36,9 @@ static char * regsNames[] = {  //mismo orden que en FILLSNAPSHOT (interrupts.asm
 
 static void hexaToAscii(uint64_t num, char* buffer){
     char rest;
-    for(int i=0; i<64; i++, num/=16){
+    for(int i=0; i<16; i++, num/=16){
         rest=num%16;
-        buffer[65-i]= (rest < 10 )? (rest + '0') : (rest - 10 + 'A');
+        buffer[17-i]= (rest < 10 )? (rest + '0') : (rest - 10 + 'A');
     }
     buffer[1]='x';
     buffer[0]='0';
@@ -48,13 +46,13 @@ static void hexaToAscii(uint64_t num, char* buffer){
 
 static void dumpRegisters(){
     uint64_t * registers = getRegisters();
-    char buffer[66];
+    char buffer[18];
 
     for(int i = 0; i < regsAmount; i++){
         hexaToAscii(registers[i], buffer);
         printString(WHITE, regsNames[i]); 
         printString(WHITE, ": ");
-        printStringLength(WHITE, buffer,66);
+        printStringLength(WHITE, buffer,18);
         newLine();
     }
 }
@@ -68,12 +66,12 @@ static void launchingException(char * message){
     setScale(2);
     clearScreen();
 	printString(WHITE, message);
+    registersFilled=1;
     setScale(1);
     dumpRegisters();
     setScale(2);
 
-    char * continueMessage = "\nPress any key to relaunch shell...";
-    printString(WHITE, continueMessage);
+    printString(WHITE, "\nPress any key to relaunch shell...");
 
     int readBytes = 0;
     uint8_t * c={0};

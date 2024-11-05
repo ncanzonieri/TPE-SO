@@ -51,7 +51,7 @@ getKeyCode:
 	ret
 
 loadRegisters: 
-    mov [BufferRegis], rax   ; regSize
+    mov [BufferRegis], rax
     mov [BufferRegis + 1*8], rbx
     mov [BufferRegis + 2*8], rcx
     mov [BufferRegis + 3*8], rdx
@@ -66,16 +66,17 @@ loadRegisters:
     mov [BufferRegis + 12*8], r13
     mov [BufferRegis + 13*8], r14
     mov [BufferRegis + 14*8], r15
-    mov rax, [rsp + 24] ;rsp
+    mov rax, [rsp + 32] ;rsp
     mov [BufferRegis+120], rax
-    mov rax, [rsp] ;rip
+    mov rax, [rsp+8] ;rip
     mov [BufferRegis+128], rax
-    mov rax, [rsp+16] ;rflags
+    mov rax, [rsp+24] ;rflags
     mov [BufferRegis+136], rax
-    mov rax, [rsp+8] ;cs
+    mov rax, [rsp+16] ;cs
     mov [BufferRegis+144], rax
-    mov rax, [rsp+32] ;ss
+    mov rax, [rsp+40] ;ss
     mov [BufferRegis+152], rax
+    ret
 
 getRegisters:
     mov rax, BufferRegis

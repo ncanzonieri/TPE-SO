@@ -83,11 +83,9 @@ SECTION .text
 
 %macro exceptionHandler 1
 
-	pushState 0
 	call loadRegisters
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
-	popState 0
 
 	call getStackBase
 	sub rax,20h
