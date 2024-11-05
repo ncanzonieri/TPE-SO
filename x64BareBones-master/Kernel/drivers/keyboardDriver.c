@@ -6,13 +6,13 @@ extern void loadRegisters();
 extern uint64_t * getRegisters();
 
 
-static char scancodeToAscii(uint8_t scancode);
-static void updateFlags(uint8_t scancode);
-static int cb_isEmpty();
-static char cb_push(char c);
-static char cb_pop();
-static int cb_isfull();
-static void updateRegisters();
+static char convertScancode(uint8_t scancode);
+static void handleSpecialKeys(uint8_t scancode);
+static int isBufferEmpty();
+static char insertCharIntoBuffer(char c);
+static char removeCharFromBuffer();
+static int isBufferFull();
+//static void updateRegisters();
 
 /*
  * Keycode matrix:
@@ -38,110 +38,97 @@ static char keycodeMatrix[KEYS_AMOUNT][2] = {
 #define BUFFER_SIZE 256
 
 typedef struct CircularBuffer {
-    char v[BUFFER_SIZE];
+    char data[BUFFER_SIZE];
     int readIndex;
     int writeIndex;
-    int size;
+    int count;
 } TCircularBuffer;
 
-static TCircularBuffer buffer = { .readIndex = 0, .writeIndex = 0, .size = 0 };
+static TCircularBuffer buffer = { .readIndex = 0, .writeIndex = 0, .count = 0 };
 
-// Special keys flags
-static volatile uint8_t activeShift = 0;
-static volatile uint8_t activeCapsLock = 0;
-static volatile uint8_t activeCtrl = 0;
+static struct {
+    uint8_t shift : 1;
+    uint8_t capsLock : 1;
+    uint8_t ctrl : 1;
+} keyFlags = {0, 0, 0};
 
-static volatile uint64_t registers[REGS_AMOUNT];
+static volatile uint64_t cpuRegisters[REGS_AMOUNT];
 
-static volatile uint8_t registersFilled = 0;
+static volatile uint8_t registersAvailable = 0;
 
 void keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
-    uint8_t scancode = getKeyCode(); // esta se hace en asm, la llama desde Kernel/asm/libasm.asm
-    updateFlags(scancode); // chequea flags
-    char ascii = scancodeToAscii(scancode); // convierte a ascii
-    if(activeCtrl && (ascii == 'r' || ascii == 'R')) { // comando para printear 
-        registersFilled = 1;
-        loadRegisters(); // esto de asm
-    }
-    else if (ascii != 0) {
-        cb_push(ascii);
+      uint8_t scancode = getKeyCode();
+    handleSpecialKeys(scancode);
+    char asciiChar = convertScancode(scancode);
+
+    if(keyFlags.ctrl && (asciiChar == 'r' || asciiChar == 'R')) {
+        registersAvailable = 1;
+        loadRegisters();
+    } else if (asciiChar) {
+        insertCharIntoBuffer(asciiChar);
     }
 }
 
-char kb_getchar() {
-    return cb_pop();
+// Obtiene un carácter del buffer del teclado
+char getKeyboardChar() {
+    return removeCharFromBuffer();
 }
 
-static char scancodeToAscii(uint8_t scancode) {
-    char ascii = 0;
-    if (scancode < KEYS_AMOUNT && scancode>=0) {
-        ascii = keycodeMatrix[scancode][activeShift];
-        if (activeCapsLock && ascii >= 'a' && ascii <= 'z') {
-            ascii -= 32;
-        }
-    }
-    return ascii;
-}
-/*
-#define ASCII 32
-
-static char scancodeToAscii(uint8_t key){
-    if( key > KEYS_AMOUNT || key < 0){
-        return;
-    }
-    char c = keycodeMatrix[key][activeShift];
-    if( activeCapsLock && (c >= 'a') && (c <= 'z')){
-        c -= ASCII;
-    }
-return c;
-}
-*/
-static void updateFlags(uint8_t scancode) {
-    if (scancode == LCTRL) {
-        activeCtrl = 1;
-    }
-    else if (scancode == LCTRL_RELEASE) {
-        activeCtrl = 0;
-    }
-    else if (scancode == LSHIFT || scancode == RSHIFT) {
-        activeShift = 1;
-    }
-    else if (scancode == (LSHIFT + RELEASE_OFFSET) || scancode == (RSHIFT + RELEASE_OFFSET)) {
-        activeShift = 0;
-    }
-    else if (scancode == CAPSLOCK) {
-        activeCapsLock = !activeCapsLock;
+// Maneja el estado de las teclas especiales
+static void handleSpecialKeys(uint8_t scancode) {
+    switch(scancode) {
+        case LCTRL:
+            keyFlags.ctrl = 1;
+            break;
+        case LCTRL_RELEASE:
+            keyFlags.ctrl = 0;
+            break;
+        case LSHIFT: case RSHIFT:
+            keyFlags.shift = 1;
+            break;
+        case LSHIFT + RELEASE_OFFSET: case RSHIFT + RELEASE_OFFSET:
+            keyFlags.shift = 0;
+            break;
+        case CAPSLOCK:
+            keyFlags.capsLock ^= 1; // Alterna el estado de Caps Lock
+            break;
+        default:
+            break;
     }
 }
 
-static int cb_isEmpty() {
+static char convertScancode(uint8_t scancode) {
+    if (scancode >= KEYS_AMOUNT) return 0;
+
+    char asciiChar = keycodeMap[scancode][keyFlags.shift];
+    
+    if (keyFlags.capsLock && asciiChar >= 'a' && asciiChar <= 'z') {
+        asciiChar -= 32; // Convierte a mayúscula si Caps Lock está activo
+    }
+    return asciiChar;
+}
+
+static int isBufferFull() {
+    return buffer.count == BUFFER_SIZE;
+}
+
+static int isBufferEmpty() {
     return buffer.readIndex == buffer.writeIndex;
 }
 
-static char cb_push(char c) {
-    // If the buffer is full, don't push anything
-    if (cb_isfull()) {
-        return 0;
-    }
-    buffer.v[buffer.writeIndex] = c;
+static char insertCharIntoBuffer(char c) {
+    if (isBufferFull()) return 0;
+    buffer.data[buffer.writeIndex] = c;
     buffer.writeIndex = (buffer.writeIndex + 1) % BUFFER_SIZE;
-    buffer.size++;
+    buffer.count++;
     return 1;
 }
 
-static int cb_isfull() {
-    return buffer.size == BUFFER_SIZE;
-}
-
-static char cb_pop() {
-    // If the buffer is empty, don't pop anything
-    if (cb_isEmpty()) {
-        return 0;
-    }
-
-    char c = buffer.v[buffer.readIndex];
+static char removeCharFromBuffer() {
+    if (isBufferEmpty()) return 0;
+    char c = buffer.data[buffer.readIndex];
     buffer.readIndex = (buffer.readIndex + 1) % BUFFER_SIZE;
-    buffer.size--;
+    buffer.count--;
     return c;
 }
 
@@ -152,13 +139,11 @@ static char cb_pop() {
 //    }
 //}
 
-uint64_t putRegisters(uint64_t * r) {
-    if(!registersFilled) {
-        return 0;
-    }
-    uint64_t* aux=getRegisters();
+uint64_t putRegisters(uint64_t * destination) {
+      if(!registersAvailable) return 0;
+    uint64_t* srcRegisters = getRegisters();
     for(int i = 0; i < REGS_AMOUNT; i++) {
-        r[i] = aux[i];
+        destination[i] = srcRegisters[i];
     }
     return 1;
 }
