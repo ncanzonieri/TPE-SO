@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <syscalls.h>
 #include <library.h>
-#include <stdin.h>
+
 
 // --------- DEFINES -------------
 #define BOARD_WIDTH 32
@@ -72,12 +72,12 @@ typedef struct snakeStruct{
 
 typedef struct appleStruct{
     direcs cord;
-    ColorsStruct color; // roja por defecto
+    uint32_t color; // roja por defecto
     char id;
 }appleStruct;
 
 // Funciones del  Snake
-void snake2();
+void snake();
 void start();
 int welcomeSnake();
 
@@ -85,10 +85,8 @@ void board();
 void spawnSnake(snakeStruct *s);
 void makeApple();
 void printAppleInBoard();
-void putAppleInBoard();
 
-void printSnakeInBoard(snakeStruct *s1, snakeStruct *s2);
-void printAppleInBoard();
+void printSnakeInBoard(snakeStruct *s[]);
 
 int keyPlayerOne(snakeStruct *snake1);
 int keyPlayerTwo(snakeStruct *snake1, snakeStruct *snake2);
@@ -98,11 +96,10 @@ int snakeEnDir(snakeStruct *s, lastMoveEnum move);
 int crash(snakeStruct *s);
 int snakeEatsApple(snakeStruct *s);
 void deleteTail(snakeStruct *s);
-void refreshSnakesInBoard( snakeStruct * s1, snakeStruct * s2);
-void refreshSnakeInBoard(snakeStruct *s);
+void refreshSnakesInBoard( snakeStruct * s[]);
 
 
-void winner(int *w1, int *w2, snakeStruct *s1, snakeStruct *s2);
+void winner(int *w, snakeStruct *s1, snakeStruct *s2);
 
 // Funciones del jugador
 

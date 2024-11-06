@@ -74,10 +74,10 @@ static void launchingException(char * message){
     printString(WHITE, "\nPress any key to relaunch shell...");
 
     int readBytes = 0;
-    uint8_t * c={0};
+    uint8_t c=0;
     _sti();
     while(readBytes == 0){
-        readBytes = sys_read(0, c, 1);
+        readBytes = sys_read(0, &c, 1);
     }
     // Old scale and color
     setBGColor(oldBgColor);

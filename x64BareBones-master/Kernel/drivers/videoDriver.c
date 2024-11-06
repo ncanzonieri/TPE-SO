@@ -192,7 +192,7 @@ uint64_t getCoords(){
 void drawRectangle(uint32_t hexColor, uint64_t x, uint64_t y, uint64_t width, uint64_t height){
 	for(int i=0; i<height && y+i < VBE_mode_info->height; i++){
 		for(int j=0; j<width && x+j < VBE_mode_info->width; j++){
-			putPixel(hexColor,j,i);
+			putPixel(hexColor,x+j,y+i);
 		}
 	}
 }

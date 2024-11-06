@@ -2,7 +2,7 @@
 #include <library.h>
 #include <stdint.h>
 #include <syscalls.h>
-// char * commands[MAX_COMMANDS] = { "registers", "divx0", "codOpInvalid", "help", "snake", "time", "snake", "zoomIn", "zoomOut"};
+
 
 //  --------------------- ZOOM IN & OUT -------------------------
 #define MAX_ZOOM 3

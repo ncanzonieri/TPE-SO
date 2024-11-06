@@ -7,14 +7,14 @@
 
 #define INSTRUCTIONS 14
 void help(){
-    char * helpingInstructions [INSTRUCTIONS] ={"------------------- Help -------------------\n", 
+    char * helpingInstructions [] ={"------------------- Help -------------------\n", 
     "COMMANDS:\n",
     "\tregisters\t\t\tDisplay the current register values.\n",
-    "\tsnake2\t\t\tPlay the snake game.\n",
+    "\tsnake\t\t\tPlay the snake game.\n",
     "\tzoomIn\t\t\tScales up.\n",
     "\tzoomOut\t\t\tScales down.\n",
-    "\tactualTime\t\t\tActual time in Buenos Aires\n",
-    "\tactualDate\t\t\tActual date in Buenos Aires\n",
+    "\ttime\t\t\tActual time in Buenos Aires\n",
+    "\tdate\t\t\tActual date in Buenos Aires\n",
     "\tagro\t\t\tAgropecuario Carlos Casares\n",
     "\tclear\t\t\tClears the screen\n",
     "EXCEPTIONS:\n",
