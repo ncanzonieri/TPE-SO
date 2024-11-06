@@ -101,7 +101,7 @@ void refreshSnakesInBoard( snakeStruct * s[]);
 
 void winner(int *w, snakeStruct *s1, snakeStruct *s2);
 
-// Funciones del jugador
+
 
 
 
