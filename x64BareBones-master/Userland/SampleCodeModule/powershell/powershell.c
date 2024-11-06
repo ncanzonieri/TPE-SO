@@ -89,19 +89,17 @@ static void startShell(char * v){
     int flag = belongs(v);
     if( flag == ERROR ){
         sys_write(STDOUT_FD, "command not found, type 'help'\n",31, WHITE);
-        //sys_write(STDOUT_FD,v,75,GREEN);
     }else{
         runFuncts[flag]();
     }
 }
 
-static int belongs(char * v){ //FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
+static int belongs(char * v){ 
     char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "time", "zoomIn", "zoomOut", "registers", "agro","date","snake", "clear"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;
         }
     }
-    //sys_write(STDOUT_FD,,,WHITE);
 return ERROR;
 }
