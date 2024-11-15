@@ -70,11 +70,11 @@ loadRegisters:
     mov [BufferRegis+120], rax
     mov rax, [rsp+8] ;rip
     mov [BufferRegis+128], rax
-    mov rax, [rsp+24] ;rflags
+    mov rax, [rsp+40] ;rflags
     mov [BufferRegis+136], rax
     mov rax, [rsp+16] ;cs
     mov [BufferRegis+144], rax
-    mov rax, [rsp+40] ;ss
+    mov rax, [rsp+24] ;ss
     mov [BufferRegis+152], rax
     ret
 

@@ -53,20 +53,22 @@ static struct {
 } keyFlags = {0, 0, 0};
 
 static volatile uint64_t cpuRegisters[REGS_AMOUNT];
+static uint64_t registersAvailable = 0;
 
-static volatile uint8_t registersAvailable = 0;
-
-void keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
+int64_t keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
       uint8_t scancode = getKeyCode();
     handleSpecialKeys(scancode);
     char asciiChar = convertScancode(scancode);
 
-    if(keyFlags.ctrl && (asciiChar == 'r' || asciiChar == 'R')) {
+    if(keyFlags.ctrl /*&& (asciiChar == 'r' || asciiChar == 'R')*/) {
         registersAvailable = 1;
-        loadRegisters();
+        return registersAvailable;
+        //loadRegisters();
     } else if (asciiChar) {
         insertCharIntoBuffer(asciiChar);
     }
+    return 0;
+    
 }
 
 // Obtiene un carácter del buffer del teclado

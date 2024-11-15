@@ -18,6 +18,7 @@ GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 
 EXTERN irqDispatcher
+EXTERN keyboard_handler
 EXTERN exceptionDispatcher
 EXTERN syscallDispatcher
 EXTERN getStackBase
@@ -134,7 +135,28 @@ _irq00Handler:
 
 ;Keyboard
 _irq01Handler:
-	irqHandlerMaster 1
+	; push rax
+	pushState 1
+
+	call keyboard_handler
+
+	; signal pic EOI (End of Interrupt)
+	push rax
+	mov al, 20h
+	out 20h, al
+	pop rax
+
+	popState 0
+	cmp rax, 1
+	jne .fin_pop_rax
+	pop rax
+	call loadRegisters
+	jmp .fin
+.fin_pop_rax:
+	pop rax
+.fin:
+	iretq
+	
 
 ;Cascade pic never called
 _irq02Handler:

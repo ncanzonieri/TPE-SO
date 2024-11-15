@@ -18,7 +18,7 @@
  * @brief Hardware interrupt handler for the keyboard.
  *
  */
-void keyboard_handler();
+int64_t keyboard_handler();
 
 /**
  * @brief Returns a character from the keyboard buffer
