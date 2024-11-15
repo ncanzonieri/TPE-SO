@@ -19,7 +19,7 @@ Tener instalado los siguientes programas:
 ### Shell
 ### Comandos 
 
-- ```Registers: ```Imprime en la pantalla todos los registros con sus respectivos valores al momento de ejecutar el comando. 
+- ```Registers: ```Imprime en la pantalla todos los registros con los valores de la última vez que se cargaron (se cargan con Ctrl). 
 - ```help: ```Al ejecutar este comando, se despliega una lista con todos los comandos de la shell y una breve descripción de cada uno.
 - ```snake:```Inicia una versión implementada del clásico juego Snake en nuestro sistema operativo.
 - ```ZoomIn:```: Aumenta la escala de las palabras en la pantalla.  
