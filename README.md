@@ -1,7 +1,7 @@
-# Trabajo Practico - Arquitectura de Computadoras
+# Trabajo Practico - Sístemas Operativos
 
 ### Integrantes:
-- Juan Francisco Palermo - 63014
+- Revale Nicolás Ezequiel - 64227
 - Canzonieri Nicolas - 63501
 - Mangiaterra Francisco Tomas - 64544 
 
