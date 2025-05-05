@@ -2,6 +2,7 @@
 #define MEMORY_MANAGER_H
 
 #include <stdlib.h>
+#define MEM_FOR_MM 0x1000
 
 typedef struct MemoryManagerCDT *MemoryManagerADT;
 
