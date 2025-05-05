@@ -6,6 +6,7 @@
 #include <idtLoader.h>
 #include <time.h>
 #include <audioDriver.h>
+#include "MemoryManagerADT.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -49,6 +50,7 @@ void * initializeKernelBinary()
 
 int main() 
 {	
+	MemoryManagerADT memoryManager = createMemoryManager(&endOfKernel, &endOfKernelBinary);
 	load_idt();
 	return ((EntryPoint)sampleCodeModuleAddress)();
 }
