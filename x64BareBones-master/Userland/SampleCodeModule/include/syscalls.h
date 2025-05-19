@@ -70,8 +70,4 @@ uint64_t sys_sleep(uint64_t millis);
 
 uint64_t sys_playSound(uint64_t f, uint64_t millis);
 
-uint64_t sys_malloc(uint64_t size);
-uint64_t sys_free(uint64_t ptr);
-
-
 #endif

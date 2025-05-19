@@ -1,148 +1,154 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "MemoryManagerADT.h"
-#include <stddef.h>
-//#ifndef BUDDY_MM
 
-#include <stdint.h>
+typedef struct MemoryManagerCDT {
+    char* startingAddress;
+    char *nextAddress;
+} MemoryManagerCDT;
 
-#define BLOCK_SIZE 4096
-#define MAX_BLOCKS 1024
-
-static void *start;
-static int current;
-static uint64_t used_mem;
-static void *freeBlocks[MAX_BLOCKS];
-static mem_info_t mem_info;
-
-void mm_init(void *m, uint32_t s) {
-	start = m;
-	current = 0;
-	used_mem = 0;
-
-	for (int i = 0; i < MAX_BLOCKS; i++) {
-		freeBlocks[i] = start + (i * BLOCK_SIZE);
-	}
+MemoryManagerADT createMemoryManager(void *const restrict memoryForMemoryManager, void *const restrict managedMemory) {
+    MemoryManagerADT memoryManager = (MemoryManagerADT) memoryForMemoryManager;
+    memoryManager->nextAddress = managedMemory;
+    memoryManager->startingAddress = managedMemory;
+    return memoryManager;
 }
 
-void *mm_alloc(uint32_t blockSize) {
-	if (blockSize > BLOCK_SIZE)
-		return NULL;
-	if (current < MAX_BLOCKS) {
-		used_mem += BLOCK_SIZE;
-		return freeBlocks[current++];
-	}
-	return NULL;
-}
+void *allocMemory(MemoryManagerADT const restrict memoryManager, const size_t memoryToAllocate) {
+    if(memoryToAllocate + (const size_t) memoryManager->nextAddress > MEM_FOR_MM + (const size_t) memoryManager->startingAddress){
+        return 0;
+    }
+    char *allocation = memoryManager->nextAddress;
 
-void mm_free(void *ptr) {
-	used_mem -= BLOCK_SIZE;
-	freeBlocks[--current] = ptr;
-}
+    memoryManager->nextAddress += memoryToAllocate;
 
-
-mem_info_t *mem_dump() {
-	mem_info.total_mem = MAX_BLOCKS * BLOCK_SIZE;
-	mem_info.used_mem = used_mem;
-	mem_info.free_mem = (MAX_BLOCKS * BLOCK_SIZE) - used_mem;
-	return &mem_info;
-}
-
+    return (void *) allocation;
+} 
 
 /*
-#include "MemoryManagerADT.h"
+#ifndef BUDDY_SYSTEM
+
+#include "memory_manager.h"
 #include <stddef.h>
+#include <stdint.h>
 
-static void* memory_start = NULL;
-static size_t memory_size = 0;
-static MemoryBlockHeader* free_list = NULL;
+#define MEMORY_START 0x600000 // Después de SampleDataModule.bin
+#define MEMORY_SIZE (0x100000) //
+#define HEADER_SIZE sizeof(BlockHeader) // Tamaño del encabezado
 
-#define MIN_BLOCK_SIZE (sizeof(MemoryBlockHeader))
+// Encabezado de cada bloque de memoria
+typedef struct BlockHeader {
+    uint64_t size;      // Tamaño del bloque (sin incluir el encabezado)
+    int is_free;        // 1 = libre, 0 = ocupado
+    struct BlockHeader *next; // Puntero al siguiente bloque
+} BlockHeader;
 
+// Estructura del memory manager
+typedef struct MemoryManagerCDT {
+    void *start_address;    // Inicio de la memoria gestionada
+    uint64_t total_memory;  // Tamaño total
+    uint64_t used_memory;   // Memoria usada
+    BlockHeader *first_block; // Primer bloque de la lista
+} MemoryManagerCDT;
 
-int64_t mm_init(void* start_addr, size_t size) {
-    if (start_addr == NULL || size <= sizeof(MemoryBlockHeader)) {
-        return -1;
-    }
-    memory_start = start_addr;
-    memory_size = size;
-    free_list = (MemoryBlockHeader*)start_addr;
-    free_list->size = size - sizeof(MemoryBlockHeader);
-    free_list->is_free = 1;
-    free_list->next = NULL;
-    return 0;
+// Funciones internas
+static void merge_free_blocks(MemoryManagerADT mm);
+
+// Inicializa el memory manager
+MemoryManagerADT createMemoryManager(void *const restrict memoryForMemoryManager, void *const restrict managedMemory) {
+    MemoryManagerADT mm = (MemoryManagerADT)memoryForMemoryManager;
+    mm->start_address = (void *)MEMORY_START;
+    mm->total_memory = MEMORY_SIZE;
+    mm->used_memory = 0;
+
+    // Inicializa el primer bloque (toda la memoria está libre)
+    BlockHeader *initial_block = (BlockHeader *)MEMORY_START;
+    initial_block->size = MEMORY_SIZE - HEADER_SIZE;
+    initial_block->is_free = 1;
+    initial_block->next = NULL;
+    mm->first_block = initial_block;
+
+    return mm;
 }
 
-void* mm_alloc(size_t size) {
-    if (size == 0 || free_list == NULL) {
-        return NULL;
-    }
-    if (size % 8 != 0) {
-        size = (size / 8 + 1) * 8;
-    }
-    if (size < MIN_BLOCK_SIZE) {
-        size = MIN_BLOCK_SIZE;
-    }
-    MemoryBlockHeader* current = free_list;
-    MemoryBlockHeader* prev = NULL;
-    while (current != NULL) {
-        if (current->is_free && current->size >= size) {
-            if (current->size >= size + sizeof(MemoryBlockHeader) + MIN_BLOCK_SIZE) {
-                MemoryBlockHeader* new_block = (MemoryBlockHeader*)((char*)current + sizeof(MemoryBlockHeader) + size);
-                new_block->size = current->size - size - sizeof(MemoryBlockHeader);
-                new_block->is_free = 1;
-                new_block->next = current->next;
-                current->size = size;
-                current->next = new_block;
-            }
+// Aloca memoria
+void *allocMemory(MemoryManagerADT const restrict mm, const size_t memoryToAllocate) {
+    // Buscar el primer bloque libre que sea lo suficientemente grande
+    BlockHeader *current = mm->first_block;
+
+    while (!current) {
+        if (current->is_free && current->size >= memoryToAllocate) {
+            // Marcar como ocupado
             current->is_free = 0;
-            return (void*)((char*)current + sizeof(MemoryBlockHeader));
+            mm->used_memory += memoryToAllocate;
+            size_t oldSize = current->size;
+            current->size = memoryToAllocate;
+            size_t offset = HEADER_SIZE + memoryToAllocate;
+            if(!current->next && current + offset < MEMORY_START + MEMORY_SIZE){
+                current->next = current + offset;
+                current->next->is_free = 1;
+                current->next->size = oldSize - offset;
+            }
+            // Devolver la dirección después del encabezado
+            return (void *)(current + 1);
         }
-        prev = current;
         current = current->next;
     }
-    return NULL;
+
+    return NULL; // No hay bloques libres
 }
 
-int64_t mm_free(void* ptr) {
-    if (ptr == NULL || memory_start == NULL) {
-        return -1;
+if (current->size > memoryToAllocate + HEADER_SIZE) {
+                BlockHeader *new_block = (BlockHeader *)((char *)current + HEADER_SIZE + memoryToAllocate);
+                new_block->size = current->size - memoryToAllocate - HEADER_SIZE;
+                new_block->is_free = 1;
+                new_block->next = current->next;
+                current->next = new_block;
+                current->size = memoryToAllocate;
+            }
+
+// Libera memoria
+void freeMemory(MemoryManagerADT const restrict mm, void *ptr) {
+    if (ptr == NULL || ptr < mm->start_address || ptr >= (mm->start_address + mm->total_memory)) {
+        return; // Puntero inválido
     }
-    MemoryBlockHeader* block = (MemoryBlockHeader*)((char*)ptr - sizeof(MemoryBlockHeader));
-    if ((void*)block < memory_start || (void*)block >= (void*)((char*)memory_start + memory_size)) {
-        return -1;
+
+    // Encontrar el encabezado (antes del puntero)
+    BlockHeader *block = (BlockHeader *)ptr - 1;
+
+    // Validar que sea un bloque válido
+    if (block->is_free) {
+        return; // Double-free
     }
+
+    // Marcar como libre
     block->is_free = 1;
-    MemoryBlockHeader* current = free_list;
+    mm->used_memory -= block->size;
+
+    // Combinar bloques libres adyacentes
+    merge_free_blocks(mm);
+}
+
+// Obtiene el estado de la memoria
+void getMemoryStatus(MemoryManagerADT const restrict mm, memory_status_t *status) {
+    status->total_memory = mm->total_memory;
+    status->used_memory = mm->used_memory;
+    status->free_memory = mm->total_memory - mm->used_memory;
+}
+
+// Combina bloques libres adyacentes
+static void merge_free_blocks(MemoryManagerADT mm) {
+    BlockHeader *current = mm->first_block;
+
     while (current != NULL && current->next != NULL) {
         if (current->is_free && current->next->is_free) {
-            current->size += sizeof(MemoryBlockHeader) + current->next->size;
+            // Combinar bloques
+            current->size += current->next->size + HEADER_SIZE;
             current->next = current->next->next;
         } else {
             current = current->next;
         }
     }
-    return 0;
 }
 
-MemoryInfo mm_info(void) {
-    MemoryInfo info = {0};
-    if (memory_start == NULL) {
-        return info;
-    }
-    info.total = memory_size;
-    info.free = 0;
-    info.blocks = 0;
-    MemoryBlockHeader* current = free_list;
-    while (current != NULL) {
-        info.blocks++;
-        if (current->is_free) {
-            info.free += current->size;
-        }
-        current = current->next;
-    }
-    info.used = info.total - info.free - info.blocks * sizeof(MemoryBlockHeader);
-    return info;
-}
+#endif
 
 */

@@ -301,11 +301,3 @@ int ownRand(int from, int to) {
     return (from + (ticks % to));
 }
 
-void * myMalloc(size_t size) {
-    return sys_malloc(size);
-}
-
-void myFree(void *ptr) {
-    sys_free(ptr);
-}
-

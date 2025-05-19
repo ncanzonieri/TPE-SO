@@ -3,14 +3,13 @@
 #include <videoDriver.h>
 #include <time.h>
 #include <sysCalls.h>
-#include <MemoryManagerADT.h>
 
 #define REGISTERS_DIM 16
 #define STDIN 0  
 #define STDOUT 1  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
- PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, MALLOC, FREE, TICKS};
+ PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS};
 
 extern void loadRegisters();
 extern uint64_t* getRegisters();
@@ -49,16 +48,6 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_getBgColor();
         case TICKS: 
             return sys_ticks();
-
-///////////////////////////////////////////////////////////////////////////////
-        case MALLOC:
-            return sys_malloc(otherRegs[0]);
-        case FREE:
-            return sys_free(otherRegs[0]);
-//        case DUMP:
-  //          return sys_dump(otherRegs[0], otherRegs[1]);
-
-
         default:
             return 0;
     }
@@ -151,14 +140,3 @@ uint64_t sys_getBgColor() {
 int sys_ticks() {
     return ticks_elapsed();
 }
-
-
-int64_t sys_malloc(uint64_t size) {
-    return (uint64_t) mm_alloc(size);
-}
-
-int64_t sys_free(uint64_t ptr) {
-    mm_free((void*)ptr);
-    return 1;
-}
-

@@ -12,8 +12,6 @@ GLOBAL sys_getRegisters
 GLOBAL sys_sleep
 GLOBAL sys_playSound
 GLOBAL sys_ticks
-GLOBAL sys_malloc
-GLOBAL sys_free
 
 section .text
 
@@ -37,7 +35,4 @@ sys_setFontScale: syscall 0x08
 sys_getRegisters: syscall 0x09
 sys_sleep: syscall 0x0A
 sys_playSound: syscall 0x0B
-sys_ticks: syscall 0x10
-
-sys_malloc: syscall 0x0E
-sys_free: syscall 0x0F
+sys_ticks: syscall 0x0E

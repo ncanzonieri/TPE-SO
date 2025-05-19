@@ -6,8 +6,6 @@
         "interrupts.h": "c",
         "stdint.h": "c",
         "library.h": "c",
-        "syscalls.h": "c",
-        "cutest.h": "c",
-        "memorymanageradt.h": "c"
+        "syscalls.h": "c"
     }
 }
