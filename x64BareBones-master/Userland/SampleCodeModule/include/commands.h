@@ -15,5 +15,6 @@ void actualDate();         // Muestra la fecha de hoy
 extern void invalidOperation();
 void agro(); // imprime escudo de un equipo de futbol
 void testMM(); // testea el memory manager
+void memoryDump(); // imprime el estado de la memoria
 
 #endif // COMMANDS_H

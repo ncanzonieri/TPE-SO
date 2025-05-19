@@ -23,10 +23,6 @@ void swap(char *x, char *y);
 
 char toLower(char c);
 
-void* myMalloc(uint64_t size); // malloc
-
-void myFree(void* ptr); // free
-
 int putString(char * c, uint32_t color);
 
 int intToString(int num, char *str);

@@ -140,4 +140,10 @@ uint64_t sys_malloc(uint64_t size);
  */
 uint64_t sys_free(uint64_t ptr);
 
+/**
+ * @brief Returns a pointer to the structure that contains the current memory information.
+ * @return the address of the memory information structure.
+ */
+uint64_t sys_memoryDump();
+
 #endif

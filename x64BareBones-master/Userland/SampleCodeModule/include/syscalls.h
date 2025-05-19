@@ -74,4 +74,6 @@ uint64_t sys_malloc(uint64_t size);
 
 uint64_t sys_free(uint64_t ptr);
 
+uint64_t sys_memoryDump();
+
 #endif

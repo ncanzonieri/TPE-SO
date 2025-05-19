@@ -9,42 +9,42 @@
 #define BLOCK_SIZE 4096
 #define MAX_BLOCKS 1024
 
-static void *start;
-static int current;
-static uint64_t used_mem;
+static void *first;
+static int nextFreeIndex;
+static uint64_t usedMemory;
 static void *freeBlocks[MAX_BLOCKS];
-static mem_info_t mem_info;
+static memoryStats_t memoryStats;
 
-void createMemoryManager(void *m, uint32_t s) {
-	start = m;
-	current = 0;
-	used_mem = 0;
+void createMemoryManager(void *startAddress, uint32_t memorySize) {
+	first = startAddress;
+	nextFreeIndex = 0;
+	usedMemory = 0;
 
 	for (int i = 0; i < MAX_BLOCKS; i++) {
-		freeBlocks[i] = start + (i * BLOCK_SIZE);
+		freeBlocks[i] = first + (i * BLOCK_SIZE);
 	}
 }
 
 void *myMalloc(uint32_t blockSize) {
 	if (blockSize > BLOCK_SIZE)
 		return NULL;
-	if (current < MAX_BLOCKS) {
-		used_mem += BLOCK_SIZE;
-		return freeBlocks[current++];
+	if (nextFreeIndex < MAX_BLOCKS) {
+		usedMemory += BLOCK_SIZE;
+		return freeBlocks[nextFreeIndex++];
 	}
 	return NULL;
 }
 
 void myFree(void *ptr) {
-	used_mem -= BLOCK_SIZE;
-	freeBlocks[--current] = ptr;
+	usedMemory -= BLOCK_SIZE;
+	freeBlocks[--nextFreeIndex] = ptr;
 }
 
-mem_info_t *memDump() {
-	mem_info.total_mem = MAX_BLOCKS * BLOCK_SIZE;
-	mem_info.used_mem = used_mem;
-	mem_info.free_mem = (MAX_BLOCKS * BLOCK_SIZE) - used_mem;
-	return &mem_info;
+memoryStats_t *memDump() {
+	memoryStats.totalMemory = MAX_BLOCKS * BLOCK_SIZE;
+	memoryStats.usedMemory = usedMemory;
+	memoryStats.freeMemory = (MAX_BLOCKS * BLOCK_SIZE) - usedMemory;
+	return &memoryStats;
 }
 
 #endif

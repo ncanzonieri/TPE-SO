@@ -14,6 +14,7 @@ GLOBAL sys_playSound
 GLOBAL sys_ticks
 GLOBAL sys_malloc
 GLOBAL sys_free
+GLOBAL sys_memoryDump
 
 section .text
 
@@ -40,3 +41,4 @@ sys_playSound: syscall 0x0B
 sys_ticks: syscall 0x0E
 sys_malloc: syscall 0x0F
 sys_free: syscall 0x10
+sys_memoryDump: syscall 0x11

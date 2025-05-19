@@ -53,7 +53,7 @@ void * initializeKernelBinary()
 
 int main() 
 {	
-	createMemoryManager((void*) START_MM, 1048576);
+	createMemoryManager((void*) START_MM, MEM_FOR_MM);
 	load_idt();
 	return ((EntryPoint)sampleCodeModuleAddress)();
 }
