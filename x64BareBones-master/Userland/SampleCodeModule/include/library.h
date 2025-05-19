@@ -40,4 +40,7 @@ static int readFromKeyboard(char * buffer);
 
 int ownRand(int from, int to);
 
+void * myMalloc(uint64_t size);
+void myFree(void * ptr);
+
 #endif

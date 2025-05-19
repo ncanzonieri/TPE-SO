@@ -121,4 +121,10 @@ uint64_t sys_setBgColor(uint32_t color);
  */
 uint64_t sys_getBgColor();
 
+
+int64_t sys_malloc(uint64_t size);
+
+int64_t sys_free(uint64_t ptr);
+
+
 #endif

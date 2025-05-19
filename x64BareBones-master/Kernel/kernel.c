@@ -7,6 +7,7 @@
 #include <time.h>
 #include <audioDriver.h>
 #include "MemoryManagerADT.h"
+#include <stdio.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -47,10 +48,22 @@ void * initializeKernelBinary()
 	
 }
 
-
 int main() 
 {	
-	MemoryManagerADT memoryManager = createMemoryManager(&endOfKernel, &endOfKernelBinary);
+    mm_init(START_ADDRESS, MEMORY_SIZE);
+	//my_mem_init(START_FREE_MEM, MEM_SIZE);
 	load_idt();
 	return ((EntryPoint)sampleCodeModuleAddress)();
 }
+
+/*
+int main() {
+	my_mem_init(START_FREE_MEM, MEM_SIZE);
+	init_sleeping_processes();
+	createScheduler();
+	initSemManager();
+	initKeyboardDriver();
+	initPipes();
+	load_idt();
+	return 0;
+}*/
