@@ -8,12 +8,6 @@
 
 static unsigned long ticks = 0;
 
-static int dayTab[13]= { 29, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-static int bisiesto(int anio) {
-    return (anio%4 == 0 && anio%100!= 0) || anio%400 == 0;
-}
-
 void timer_handler() {
 	ticks++;
 }

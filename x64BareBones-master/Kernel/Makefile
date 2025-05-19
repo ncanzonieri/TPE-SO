@@ -4,7 +4,7 @@ KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_DRIVERS=$(wildcard drivers/*.c)
 SOURCES_IDT=$(wildcard IDT/*.c)
-SOURRCES_MM=$(wildcard memorymanagers/*.c)
+SOURRCES_MM=$(wildcard memoryManagers/*.c)
 SOURCES_ASM=$(wildcard asm/*.asm)
 
 OBJECTS=$(SOURCES:.c=.o)

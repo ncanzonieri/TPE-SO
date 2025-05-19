@@ -1,13 +1,20 @@
-#ifndef MEMORY_MANAGER_H
-#define MEMORY_MANAGER_H
+#ifndef UNTITLED_MEMORY_MANAGER_H
+#define UNTITLED_MEMORY_MANAGER_H
 
-#include <stdlib.h>
-#define MEM_FOR_MM 0x1000
+#include <stdint.h>
 
-typedef struct MemoryManagerCDT *MemoryManagerADT;
+#define MEM_SIZE 1048576
+#define MIN_SIZE 32
 
-MemoryManagerADT createMemoryManager(void *const restrict memoryForMemoryManager, void *const restrict managedMemory);
+typedef struct mem_info {
+	uint64_t total_mem;
+	uint64_t used_mem;
+	uint64_t free_mem;
+} mem_info_t;
 
-void *allocMemory(MemoryManagerADT const restrict memoryManager, const size_t memoryToAllocate);
+void createMemoryManager(void *m, uint32_t s);
+void *myMalloc(uint32_t size);
+void myFree(void *ptr);
+mem_info_t *memDump();
 
-#endif 
+#endif // UNTITLED_MEMORY_MANAGER_H

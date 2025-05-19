@@ -7,7 +7,7 @@ void clearIfNotEnoughSpace(int linesItNeeds);
 
 int strcmp(char *s1, char *s2);
 
-static int strConcat(char *str1, char *str2);
+int strConcat(char *str1, char *str2);
 
 void strcpy(char *destination, const char *source);
 
@@ -23,20 +23,23 @@ void swap(char *x, char *y);
 
 char toLower(char c);
 
+void* myMalloc(uint64_t size); // malloc
+
+void myFree(void* ptr); // free
 
 int putString(char * c, uint32_t color);
 
-static int intToString(int num, char *str);
+int intToString(int num, char *str);
 
-static int strConcat(char *str1, char *str2);
+int strConcat(char *str1, char *str2);
 
-static int stringToInt(char * num);
+int stringToInt(char * num);
 
 int printf(const char * format, ...);
 
 int scanf(const char *fmt, ...);
 
-static int readFromKeyboard(char * buffer);
+int readFromKeyboard(char * buffer);
 
 int ownRand(int from, int to);
 

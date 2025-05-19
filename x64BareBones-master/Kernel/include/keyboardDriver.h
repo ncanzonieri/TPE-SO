@@ -34,4 +34,10 @@ char kb_getchar();
  */
 uint64_t putRegisters(uint64_t * r);
 
+/**
+ * @brief Returns a character from the keyboard buffer
+ * or 0 if the buffer is empty.
+ */
+char getKeyboardChar();
+
 #endif

@@ -1,6 +1,8 @@
 #include <keyboardDriver.h>
 #include <stdint.h>
 #include <videoDriver.h>
+#include <audioDriver.h>
+#include <MemoryManagerADT.h>
 #include <time.h>
 #include <sysCalls.h>
 
@@ -9,7 +11,7 @@
 #define STDOUT 1  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
- PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS};
+ PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE};
 
 extern void loadRegisters();
 extern uint64_t* getRegisters();
@@ -48,6 +50,10 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_getBgColor();
         case TICKS: 
             return sys_ticks();
+        case MALLOC:
+            return sys_malloc(otherRegs[0]);
+        case FREE:
+            return sys_free(otherRegs[0]);
         default:
             return 0;
     }
@@ -137,6 +143,15 @@ uint64_t sys_getBgColor() {
     return getBGcolor();
 }
 
-int sys_ticks() {
+uint64_t sys_ticks() {
     return ticks_elapsed();
+}
+
+uint64_t sys_malloc(uint64_t size) {
+    return (uint64_t) myMalloc(size);
+}
+
+uint64_t sys_free(uint64_t ptr) {
+    myFree((void*)ptr);
+    return 1;
 }

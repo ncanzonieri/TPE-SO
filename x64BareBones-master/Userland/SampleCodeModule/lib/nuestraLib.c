@@ -30,7 +30,7 @@ int strcmp(char *s1, char *s2)
     return s1[i] - s2[i]; 
 }
 
-static int strConcat(char *str1, char *str2){
+int strConcat(char *str1, char *str2){
     int i = strlen(str1);
     int j = 0;
     while(str2[j] != '\0'){
@@ -102,7 +102,7 @@ char * fgets(char *buffer, size_t size) {
     return buffer;
 }
 
-static int readToBlank(char * str, int index) {
+int readToBlank(char * str, int index) {
     int readBytes = 0;
     for(int i=index; str[i] != 0 && str[i] != '\n' && str[i] != ' ' && str[i] != '\t'; i++) {
         readBytes++;
@@ -129,7 +129,7 @@ int putString(char * c, uint32_t color) {
     return sys_write(STDOUT,(uint8_t *)c,length,color);
 }
 //----------------------------------------------------------------------------------------
-static int intToString(int num, char *str) {
+int intToString(int num, char *str) {
     int i = 0, j=0;
     char isNegative = 0;
     char aux[10]; 
@@ -161,7 +161,7 @@ static int intToString(int num, char *str) {
 
 
 
-static int stringToInt(char * num){
+int stringToInt(char * num){
     char isNegative = 0;
     int i = 0;
     int res = 0;
@@ -269,7 +269,7 @@ int scanf(const char *fmt, ...) {
     return count;
 }
 
-static int readFromKeyboard(char * buffer) {
+int readFromKeyboard(char * buffer) {
     int i=0;
     char c;
     do{

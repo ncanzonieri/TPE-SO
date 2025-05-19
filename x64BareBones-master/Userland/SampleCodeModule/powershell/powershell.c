@@ -12,7 +12,7 @@
 #define CERO 0
 #define ESC 27
 #define TAB 9
-#define COMMANDS_COUNT 11
+#define COMMANDS_COUNT 12
 #define GREEN 0x66FF66 // Font Scale
 #define WHITE 0xFFFFFF
 #define ERROR -1
@@ -22,10 +22,10 @@ void welcome();
 void getCommands();
 static void startShell(char * v);
 static int belongs(char * v);
-static void runCommands(int index);
+//static void runCommands(int index);
 
 ////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
-static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake, sys_clearScreen};
+static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake, sys_clearScreen, testMM};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina$>",13,GREEN);
@@ -34,17 +34,6 @@ static void putUser(){
 #define DEFAULT_SCALE 1
 
 void welcome(){
-    sys_playSound(262,100);
-    sys_sleep(50);
-    sys_playSound(262,100);
-    sys_sleep(50);
-    sys_playSound(293,100);
-    sys_sleep(50);
-    sys_playSound(262,100);
-    sys_sleep(50);
-    sys_playSound(349,100);
-    sys_sleep(50);
-    sys_playSound(330,100);
     sys_clearScreen();
     sys_setFontScale(DEFAULT_SCALE);
     sys_write(STDOUT_FD,"Today's date is: ",18,0x00ffffff);
@@ -57,7 +46,6 @@ void getCommands(){
     char buffer[MAX_DIM] = {0};
     int dim; 
     char c=0;
-    int ans;
     while(1) {
         dim=0;
         buffer[0]=0;
@@ -95,7 +83,7 @@ static void startShell(char * v){
 }
 
 static int belongs(char * v){ 
-    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "time", "zoomIn", "zoomOut", "registers", "agro","date","snake", "clear"};
+    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "time", "zoomIn", "zoomOut", "registers", "agro","date","snake", "clear", "testMM"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;

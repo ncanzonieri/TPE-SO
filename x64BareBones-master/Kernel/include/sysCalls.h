@@ -103,6 +103,12 @@ uint64_t sys_getRegisters(uint64_t * r);
 uint64_t sys_sleep(uint64_t millis);
 
 /**
+ * @brief Returns the current ticks of the system.
+ * @return the current ticks of the system.
+ */
+uint64_t sys_ticks();
+
+/**
  * @brief Plays a sound with the given frequency.
  * @param f: frequency of the sound.
  * @param millis: the amount of milliseconds to last.
@@ -120,5 +126,18 @@ uint64_t sys_setBgColor(uint32_t color);
  * @return the current background color in hexadecimal. Usage: 0x00RRGGBB.
  */
 uint64_t sys_getBgColor();
+
+/**
+ * @brief Allocates a block of memory of the given size.
+ * @param size: the size of the block to allocate.
+ * @return the address of the block allocated.
+ */
+uint64_t sys_malloc(uint64_t size);
+
+/**
+ * @brief Frees a block of memory.
+ * @param ptr: the address of the block to free.
+ */
+uint64_t sys_free(uint64_t ptr);
 
 #endif
