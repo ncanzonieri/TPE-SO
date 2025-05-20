@@ -55,5 +55,8 @@ int main()
 {	
 	createMemoryManager((void*) START_MM, MEM_FOR_MM);
 	load_idt();
+	//deberíamos enviar un puntero a la función de inicialización del módulo
+	//createProcess("init", PRIORITY_1, NULL, 0, (main_function) &idle, fd);
+	//createProcess("Shell", PRIORITY_4, NULL, 0, (main_function) sampleCodeModuleAddress, fd);
 	return ((EntryPoint)sampleCodeModuleAddress)();
 }

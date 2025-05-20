@@ -127,6 +127,8 @@ uint64_t sys_setBgColor(uint32_t color);
  */
 uint64_t sys_getBgColor();
 
+// SysCalls de Memory Management
+
 /**
  * @brief Allocates a block of memory of the given size.
  * @param size: the size of the block to allocate.
@@ -145,5 +147,39 @@ uint64_t sys_free(uint64_t ptr);
  * @return the address of the memory information structure.
  */
 uint64_t sys_memoryDump();
+
+// SysCalls de Procesos, Context Switch y Scheduling
+
+/**
+ * @brief Returns the process ID of the current process.
+ * @return the process ID of the current process.
+ */
+uint64_t sys_getPid();
+
+/**
+ * @brief Forces termination of the given process.
+ * @param pid process ID of the process that must be terminated.
+ */
+uint64_t sys_kill(uint16_t pid);
+
+/**
+ * @brief Returns a list of the currently running processes 
+ * @return process ID of the process that must be terminated.
+ */
+uint64_t sys_ps();
+
+uint64_t sys_setPriority(uint16_t pid, uint8_t priority);
+
+uint64_t sys_yield();
+
+uint64_t sys_Block(uint16_t pid);
+
+uint64_t sys_Block(uint16_t pid);
+
+uint64_t sys_waitForChildren();
+
+uint64_t sys_initializeProcess(/*argumentos*/);
+
+uint64_t sys_finishProcess(/*argumentos*/);
 
 #endif
