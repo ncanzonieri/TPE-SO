@@ -1,4 +1,5 @@
 #include <stdint.h>
+#define NULL ((void*)0)
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -48,3 +49,35 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 	return destination;
 }
+
+int strlen(const char * s) {
+    int i = 0;
+    while(s[i] != '\0') {
+        if(s[i] == '\t') {
+            i+=4;
+        }
+        i++;
+    }
+    return i;
+} 
+
+void strncpy(char *destination, const char *source, unsigned int n){
+    unsigned int i = 0;
+    while (i < n && source[i] != '\0'){
+        destination[i] = source[i];
+        i++;
+    }
+    while (i < n){
+        destination[i] = '\0';
+        i++;
+    }
+    return;
+}
+
+int argCount(char** arr) {
+	int i = 0;
+	while (arr[i] != NULL)
+		i++;
+	return i;
+}
+

@@ -2,6 +2,12 @@
 #define PROCESS_H
 #include "../Scheduler/scheduler.h"
 #include <stdint.h>
+#include <stddef.h>
+#include "../include/lib.h"
+#include "../include/MemoryManagerADT.h"
+#include "../include/interrupts.h"
+
+typedef int (*function)(uint64_t argc, char **argv); //ESTO TAMBIEN SE USA EN KERNEL.C, VER BIEN DONDE DEFINIRLO
 
 #define MAX_LENGTH 32
 #define MIN_PRIORITY 1
@@ -24,13 +30,13 @@ typedef enum {
 */
 
 typedef struct processControlBlock{
-    int16_t pid, ppid, wpid;
+    int16_t pid, pPid, wPid;
     //Priority priority;
     uint8_t priority;
     char name[MAX_LENGTH];
     pStatus status;
-    void * stackPointer;
-    void * basePointer;
+    void * stackPtr;
+    void * stackBase;
     void * instructionPointer;
 //    struct process * children;
     //char foreground;
@@ -42,7 +48,9 @@ typedef struct processControlBlock{
     //    void (*entry_point)(int, char**); // Function to execute
 } PCB;
 
-void initProcess(PCB* process, char* name, uint16_t pid, uint16_t ppid, uint8_t priority, char** argv, int argc, void (*entry_point)(int, char**), const int16_t fds[]);
+typedef struct processControlBlock* Process;
+
+void initProcess(PCB* process, char* name, uint16_t pid, uint16_t ppid, uint8_t priority, char** argv, int argc, function func, const int16_t fds[]){
 uint64_t getPid();
 uint64_t getPpid();
 //void processInitializing(char * name, Priority priority, char **argv, int16_t pid, int16_t ppid, int16_t fd[]);

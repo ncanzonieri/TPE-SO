@@ -1,5 +1,8 @@
 #include <stdint.h>
 #include "../Process/process.h"
+#include <stddef.h>
+#include "../include/lib.h"
+#include "../include/MemoryManagerADT.h"
 
 #define SCHEDULER_ADDRESS 0x600000
 #define INIT_PID 1
@@ -14,7 +17,8 @@ typedef struct Scheduler {
     uint64_t currentPid;
 	uint64_t nextPid;
 	uint64_t processCount;
-	uint16_t processIndex; // va a estar en un lugar libre, si esta lleno valdra -1
+	int16_t availableIndex;
+	int16_t currIndex;
 	//int8_t quantumRemaining;
     //uint64_t foregroundPid;       // Foreground process PID
     //uint8_t killForeground;       // Flag to kill foreground process
@@ -26,3 +30,4 @@ typedef struct Scheduler* Sched;
 Sched initScheduler();
 Sched getScheduler();
 int64_t createProcess(char* name, uint8_t priority, void (*entry_point)(int, char**), char** argv, int argc, int16_t fds[]);
+Process getProcess(uint64_t pid);
