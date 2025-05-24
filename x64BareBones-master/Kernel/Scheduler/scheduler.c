@@ -1,9 +1,6 @@
 #include "scheduler.h"
 
-//typedef int (*main_function)(uint64_t argc, char **argv);
 static char** copyArgs(char** argv);
-
-
 static int initialized = 0;
 
 Sched initScheduler() {
@@ -28,7 +25,7 @@ Sched getScheduler() {
 }
 
 
-int64_t createProcess(char* name, uint8_t priority, void (*entry_point)(int, char**), char** argv, int argc, int16_t fds[]) {
+int64_t createProcess(char* name, uint8_t priority, ProcessEntry func, char** argv, int argc, int16_t fds[]) {
 	Sched scheduler = getScheduler();
     int16_t availableIndex = scheduler->availableIndex;
 	if (scheduler->processCount == MAX_PROCESSES || availableIndex == -1) {
@@ -47,33 +44,74 @@ int64_t createProcess(char* name, uint8_t priority, void (*entry_point)(int, cha
 		pid = scheduler->nextPid++;
 		pPid = getPid();
 	}
-    char** newArgv = copyArgs(argv/*, argc*/);
+    char** newArgv = copyArgs(argv);
 
-    init_process(process, name, pid, pPid, priority, newArgv, argc, entry_point, fds);
+    init_process(process, name, pid, pPid, priority, newArgv, argc, func, fds);
 	Process parent = getProcess(pPid);
     parent->wPid++;
 	return pid;
 }
 
-/*
-static char** copyArgs(char** argv, uint64_t argc) {
-    uint64_t totalLength = 0;
-    int argLengths[argc];
-    for (int i = 0; i < argc; i++) {
-        argLengths[i] = strlen(argv[i]) + 1;
-        totalLength += argLengths[i];
+uint8_t setStatus(uint8_t newStatus) {
+    Sched scheduler = getScheduler();
+    Process process = &scheduler->processes[scheduler->currIndex];
+    pStatus oldStatus = process->status;
+    if (newStatus == TERMINATED || newStatus == RUNNING || oldStatus == TERMINATED) {	return -1;	}
+    process->status = newStatus;
+    if (newStatus == oldStatus) {
+        return oldStatus;
     }
-    char** newArgv = (char**)myMalloc(totalLength + sizeof(char*) * (argc + 1));
-    char* stringPos = (char*)newArgv + (sizeof(char*) * (argc + 1));
-    for (int i = 0; i < argc; i++) {
-        newArgv[i] = stringPos;
-        memcpy(stringPos, argv[i], argLengths[i]);
-        stringPos += argLengths[i];
+    else if (newStatus == BLOCKED) {
+        blockProcess(getPid());
     }
-    newArgv[argc] = NULL;
-    return newArgv;
+    return newStatus;
 }
-*/ // LA DE ABAJO APROVECHA FUNCION DE LIB NUESTRA
+
+uint16_t blockProcess(int16_t pid) {
+    Sched scheduler = getScheduler();
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (scheduler->processes[i].pid == pid && scheduler->processes[i].status != TERMINATED) {
+            if (scheduler->processes[i].status == BLOCKED) {
+                return 0;
+            }
+            scheduler->processes[i].status = BLOCKED;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+uint16_t unblockProcess(int16_t pid) {
+    Sched scheduler = getScheduler();
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (scheduler->processes[i].pid == pid && scheduler->processes[i].status == BLOCKED) {
+            scheduler->processes[i].status = READY;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+uint64_t changePriority(int16_t pid, uint8_t newPriority) {
+    Sched scheduler = getScheduler();
+    Process process = NULL;
+
+    if (pid == INIT_PID) {
+		//error
+        return 0;
+    }
+
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (scheduler->processes[i].pid == pid && scheduler->processes[i].status != TERMINATED) {
+            process = &scheduler->processes[i];
+            break;
+        }
+    }
+    if (process == NULL || process->priority == newPriority) {	return 0;	}
+    process->priority = newPriority;
+    return 1;
+}
+
 static char** copyArgs(char** argv) {
     int argc = argCount(argv);
     uint64_t totalLength = 0;

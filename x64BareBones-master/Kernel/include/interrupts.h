@@ -35,6 +35,7 @@ void picSlaveMask(uint8_t mask);
 void haltcpu(void);
 
 void* _initialize_stack_frame(void* rip, void* function, void* stack, void* argv);
+void _yield(void);
 
 
 #endif /* INTERRUPS_H_ */
