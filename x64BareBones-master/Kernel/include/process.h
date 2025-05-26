@@ -1,10 +1,11 @@
-#ifndef PROCESS_H
-#define PROCESS_H
+#ifndef __PROCESS_H__
+#define __PROCESS_H__
 #include <stdint.h>
 #include <stddef.h>
-#include "../include/lib.h"
-#include "../include/MemoryManagerADT.h"
-#include "../include/interrupts.h"
+#include "./lib.h"
+#include "./MemoryManagerADT.h"
+#include "./interrupts.h"
+#include "./scheduler.h"
 
 #define MAX_LENGTH 32
 #define MIN_PRIORITY 1

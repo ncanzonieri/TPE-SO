@@ -172,9 +172,9 @@ uint64_t sys_setPriority(uint16_t pid, uint8_t priority);
 
 uint64_t sys_yield();
 
-uint64_t sys_Block(uint16_t pid);
+uint64_t sys_block(uint16_t pid);
 
-uint64_t sys_Block(uint16_t pid);
+uint64_t sys_unblock(uint16_t pid);
 
 uint64_t sys_waitForChildren();
 

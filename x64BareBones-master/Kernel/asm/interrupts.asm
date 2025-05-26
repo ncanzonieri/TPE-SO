@@ -73,7 +73,9 @@ SECTION .text
 	pushState 1
 
 	mov rdi, %1 ; pasaje de parametro
+	mov rsi, rsp; si es timer se lo manda al scheduler, si no ignora
 	call irqDispatcher
+	mov rsp, rax; acá me llegará el original o el del nuevo proceso
 
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h

@@ -1,6 +1,6 @@
 #include "scheduler.h"
 
-static char** copyArgs(char** argv);
+static char** copyArgs(char** argv, int argc);
 static void updateAvailableIndex(Sched scheduler);
 static int initialized = 0;
 
@@ -37,15 +37,14 @@ int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntr
 	process->status = READY;
 	updateAvailableIndex(scheduler);
 	uint64_t pid, pPid;
+    pid = scheduler->nextPid;
 	if (scheduler->nextPid == INIT_PID) {
-		pid = INIT_PID;
-		pPid = pid;
-		scheduler->nextPid++;
+		pPid = 0;
 	} else {
-		pid = scheduler->nextPid++;
-		pPid = getPid();
+		pPid = scheduler->currentPid;
 	}
-    char** newArgv = copyArgs(argv);
+    scheduler->nextPid++;
+    char** newArgv = copyArgs(argv, argc);
 
     initProcess(process, name, pid, pPid, priority, foreground, newArgv, argc, func);
 	Process parent = getProcess(pPid);
@@ -190,8 +189,8 @@ Process updateQuantum(void *stackPtr) {
     return currentProcess;
 }
 
-static char** copyArgs(char** argv) {
-    int argc = argCount(argv);
+static char** copyArgs(char** argv, int argc) {
+    // int argc = argCount(argv);
     uint64_t totalLength = 0;
     int argLengths[argc];
 

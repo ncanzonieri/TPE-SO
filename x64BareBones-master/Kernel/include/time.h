@@ -12,7 +12,7 @@ extern uint8_t rtcDriver(uint8_t opt);
 extern void _cli();
 extern void _sti();
 
-void timer_handler();
+uint64_t timer_handler(uint64_t rsp);
 int ticks_elapsed();
 int seconds_elapsed();
 uint64_t ms_elapsed();

@@ -6,23 +6,23 @@
 #define TIMERTICK 0
 #define KEYBOARD 1
 
-static void int_20();
+uint64_t int_20(uint64_t rsp);
 static void int_21();
 
-void irqDispatcher(uint64_t irq) {
+void irqDispatcher(uint64_t irq, uint64_t rsp) {
 	switch (irq) {
 		case TIMERTICK:
-			int_20();
+			rsp = int_20(rsp); // el scheduler decidirá qué proceso ejecutar
 			break;
 		case KEYBOARD: 
 			int_21();
 			break;
 	}
-	return;
+	return rsp;
 }
 
-void int_20() {
-	timer_handler();
+uint64_t int_20(uint64_t rsp) {
+	return timer_handler(rsp);
 }
 
 void int_21(){

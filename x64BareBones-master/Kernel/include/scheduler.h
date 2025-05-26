@@ -1,8 +1,11 @@
+#ifndef SCHEDULER_H
+#define SCHEDULER_H
+
 #include <stdint.h>
-#include "../Process/process.h"
+#include "./process.h"
 #include <stddef.h>
-#include "../include/lib.h"
-#include "../include/MemoryManagerADT.h"
+#include "./lib.h"
+#include "./MemoryManagerADT.h"
 
 #define SCHEDULER_ADDRESS 0x600000
 #define INIT_PID 1
@@ -37,3 +40,5 @@ void* scheduler(void* stackPtr);
 Process updateQuantum(void* stackPtr);
 uint64_t killProcess(uint64_t pid);
 uint64_t changePriority(uint64_t pid, uint8_t newPriority);
+
+#endif // SCHEDULER_H

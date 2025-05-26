@@ -8,8 +8,9 @@
 
 static unsigned long ticks = 0;
 
-void timer_handler() {
+uint64_t timer_handler(uint64_t rsp) {
 	ticks++;
+    return rsp; // por ahora no implementamos scheduler
 }
 
 int ticks_elapsed() {

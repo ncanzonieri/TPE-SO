@@ -1,5 +1,5 @@
-#include "process.h"
-#include "../Scheduler/scheduler.h"
+#include "../include/process.h"
+#include "../include/scheduler.h"
 
 //desde el kernel se inicializa el proceso al sheduler, el scheduler guarda el proceso en su array 
 //y acá se inicializa el proceso

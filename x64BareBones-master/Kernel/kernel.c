@@ -7,6 +7,8 @@
 #include <time.h>
 #include <audioDriver.h>
 #include <MemoryManagerADT.h>
+#include <scheduler.h>
+#include <process.h>
 
 #define MEM_FOR_MM 0x100000
 //#define START_MM 0x600000
@@ -51,11 +53,24 @@ void * initializeKernelBinary()
 	
 }
 
+int idle(uint64_t argc, char **argv)
+{
+	// This is the idle process, it does nothing and waits for other processes to run.
+	while (1) {
+		// Optionally, you can add a sleep or yield here to prevent busy-waiting.
+		_hlt();  // Sleep for 1000 milliseconds (1 second)
+	}
+	return 0;  // Should never reach here
+}
+
 
 int main() 
 {	
 	createMemoryManager((void*) START_MM, MEM_FOR_MM);
 	load_idt();
+	initScheduler();
+	createProcess("init", 3, 0, (ProcessEntry) &idle, NULL, 0);
+	createProcess("shell", 3, 0, (ProcessEntry) sampleCodeModuleAddress, NULL, 0);
 	//deberíamos enviar un puntero a la función de inicialización del módulo
 	//createProcess("init", PRIORITY_1, NULL, 0, (main_function) &idle, fd);
 	//createProcess("Shell", PRIORITY_4, NULL, 0, (main_function) sampleCodeModuleAddress, fd);
