@@ -15,6 +15,8 @@ GLOBAL sys_ticks
 GLOBAL sys_malloc
 GLOBAL sys_free
 GLOBAL sys_memoryDump
+GLOBAL sys_getPid
+GLOBAL sys_killProcess
 
 section .text
 
@@ -42,3 +44,5 @@ sys_ticks: syscall 0x0E
 sys_malloc: syscall 0x0F
 sys_free: syscall 0x10
 sys_memoryDump: syscall 0x11
+sys_getPid: syscall 0x12
+sys_killProcess: syscall 0x13

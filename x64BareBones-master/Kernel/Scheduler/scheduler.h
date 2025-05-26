@@ -5,9 +5,9 @@
 #include "../include/MemoryManagerADT.h"
 
 #define SCHEDULER_ADDRESS 0x600000
-#define INIT_PID 1
+#define INIT_PID 0
 #define QUANTUM 1
-#define MAX_PROCESSES 32
+#define MAX_PROCESSES 20 //32
 #define STACK_SIZE 4096
 
 
@@ -31,8 +31,8 @@ Sched getScheduler();
 int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc);
 Process getProcess(uint64_t pid);
 uint8_t setStatus(uint8_t newStatus);
-uint16_t blockProcess(int16_t pid);
-uint16_t unblockProcess(int16_t pid);
+uint16_t blockProcess(uint64_t pid);
+uint16_t unblockProcess(uint64_t pid);
 void* scheduler(void* stackPtr);
 Process updateQuantum(void* stackPtr);
 uint64_t killProcess(uint64_t pid);

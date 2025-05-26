@@ -76,4 +76,8 @@ uint64_t sys_free(uint64_t ptr);
 
 uint64_t sys_memoryDump();
 
+uint64_t sys_getPid();
+uint64_t sys_killProcess(uint64_t pid);
+
+
 #endif

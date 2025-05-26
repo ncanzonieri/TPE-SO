@@ -7,6 +7,7 @@
 #include <time.h>
 #include <audioDriver.h>
 #include <MemoryManagerADT.h>
+#include "./Scheduler/scheduler.h"
 
 #define MEM_FOR_MM 0x100000
 //#define START_MM 0x600000
@@ -50,14 +51,21 @@ void * initializeKernelBinary()
 	return getStackBase();
 	
 }
+void idle() {
+	while (1) {	_hlt();	}
+}
 
 
 int main() 
-{	
-	createMemoryManager((void*) START_MM, MEM_FOR_MM);
+{
+	_cli();
 	load_idt();
-	//deberíamos enviar un puntero a la función de inicialización del módulo
-	//createProcess("init", PRIORITY_1, NULL, 0, (main_function) &idle, fd);
-	//createProcess("Shell", PRIORITY_4, NULL, 0, (main_function) sampleCodeModuleAddress, fd);
-	return ((EntryPoint)sampleCodeModuleAddress)();
+	createMemoryManager((void*) START_MM, MEM_FOR_MM);
+	initScheduler();
+	createProcess("init", MIN_PRIORITY, 1, (ProcessEntry) &idle, NULL, 0);
+	createProcess("Shell", MAX_PRIORITY, 1, (ProcessEntry) sampleCodeModuleAddress, NULL, 0);
+	_sti();
+	while(1);
+
+	return 0;
 }

@@ -27,6 +27,8 @@ EXTERN syscallDispatcher
 EXTERN getStackBase
 EXTERN loadRegisters
 
+EXTERN scheduler
+
 SECTION .text
 
 %macro pushState 1
@@ -153,7 +155,20 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	;irqHandlerMaster 0
+	pushState 1
+;
+	mov rdi, 0 ; pasaje de parametro
+	call syscallDispatcher
+
+	mov rdi, rsp
+	call scheduler
+	mov rsp, rax
+	mov al, 20h
+	out 20h, al
+
+	popState 1
+	iretq
 
 ;Keyboard
 _irq01Handler:
@@ -197,20 +212,31 @@ _irq05Handler:
 	irqHandlerMaster 5
 
 ;Syscalls
+
+
 _irq80Handler:
-	pushState 0
-	push r9
-	push r8
-	push rcx
-	push rdx
-	push rsi
-	push rdi
-	mov rdi, rax
-	mov rsi, rsp
+	push rbp
+    mov rbp, rsp
+    pushState 0
+
+    ;parameters for systemcalls
+    push r9
+    push r8
+    push rcx
+    push rdx
+    push rsi
+    push rdi
+
+    mov rdi, rax
+    mov rsi, rsp   
 	call syscallDispatcher
-	add rsp, 6*8
-	popState 0
-	iretq
+	add rsp, 8*6    
+
+    popState 0
+    mov rsp, rbp
+    pop rbp
+    iretq
+
 	
 
 ;Zero Division Exception
