@@ -9,14 +9,12 @@ Sched initScheduler() {
     for (int i = 0; i < MAX_PROCESSES; i++) {
         scheduler->processes[i].status = TERMINATED;
     }
-    scheduler->currentPid = 1;
-    scheduler->nextPid = 1;
+    scheduler->currentPid = 0; //1
+    scheduler->nextPid = 0; //1
     scheduler->processCount = 0;
 	scheduler->availableIndex = 0;
 	scheduler->currIndex = 0;
-    //scheduler->quantumRemaining = QUANTUM;
-    //scheduler->foreground = 0;
-    //scheduler->killForeground = 0;
+    scheduler->quantumRemaining = QUANTUM;
     initialized = 1;
 	return scheduler;
 }
@@ -47,8 +45,7 @@ int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntr
     char** newArgv = copyArgs(argv, argc);
 
     initProcess(process, name, pid, pPid, priority, foreground, newArgv, argc, func);
-	Process parent = getProcess(pPid);
-    parent->wPid++;
+
 	return pid;
 }
 
@@ -58,16 +55,12 @@ uint8_t setStatus(uint8_t newStatus) {
     pStatus oldStatus = process->status;
     if (newStatus == TERMINATED || newStatus == RUNNING || oldStatus == TERMINATED) {	return -1;	}
     process->status = newStatus;
-    if (newStatus == oldStatus) {
-        return oldStatus;
-    }
-//    else if (newStatus == BLOCKED) {
-//        blockProcess(getPid());
-//    }
+    if (newStatus == oldStatus) {   return oldStatus;   }
+
     return newStatus;
 }
 
-uint16_t blockProcess(int16_t pid) {
+uint16_t blockProcess(uint64_t pid) {
     Sched scheduler = getScheduler();
     for (int i = 0; i < MAX_PROCESSES; i++) {
         if (scheduler->processes[i].pid == pid && scheduler->processes[i].status != TERMINATED) {
@@ -81,7 +74,7 @@ uint16_t blockProcess(int16_t pid) {
     return 0;
 }
 
-uint16_t unblockProcess(int16_t pid) {
+uint16_t unblockProcess(uint64_t pid) {
     Sched scheduler = getScheduler();
     for (int i = 0; i < MAX_PROCESSES; i++) {
         if (scheduler->processes[i].pid == pid && scheduler->processes[i].status == BLOCKED) {
@@ -212,7 +205,6 @@ static char** copyArgs(char** argv, int argc) {
     return newArgv;
 }
 
-
 Process getProcess(uint64_t pid) {
 	Sched scheduler = getScheduler();
 	for (int i = 0; i < MAX_PROCESSES; i++) {
@@ -222,6 +214,7 @@ Process getProcess(uint64_t pid) {
 	}
 	return NULL;
 }
+
 
 static void updateAvailableIndex(Sched scheduler) {
 	int16_t availableIndex = -1;
@@ -233,4 +226,3 @@ static void updateAvailableIndex(Sched scheduler) {
 	}
 	scheduler->availableIndex = availableIndex;
 }
-//hay que hacer en el asm, el guardado del contexto para luego recuperarlo y hacer una syscall de este

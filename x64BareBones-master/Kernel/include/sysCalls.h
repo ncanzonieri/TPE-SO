@@ -155,6 +155,8 @@ uint64_t sys_memoryDump();
  * @return the process ID of the current process.
  */
 uint64_t sys_getPid();
+uint64_t sys_killProcess(uint64_t pid);
+
 
 /**
  * @brief Forces termination of the given process.

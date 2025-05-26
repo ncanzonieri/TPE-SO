@@ -52,27 +52,21 @@ void * initializeKernelBinary()
 	return getStackBase();
 	
 }
-
-int idle(uint64_t argc, char **argv)
-{
-	// This is the idle process, it does nothing and waits for other processes to run.
-	while (1) {
-		// Optionally, you can add a sleep or yield here to prevent busy-waiting.
-		_hlt();  // Sleep for 1000 milliseconds (1 second)
-	}
-	return 0;  // Should never reach here
+void idle() {
+	while (1) {	_hlt();	}
 }
 
 
 int main() 
-{	
-	createMemoryManager((void*) START_MM, MEM_FOR_MM);
+{
+	_cli();
 	load_idt();
+	createMemoryManager((void*) START_MM, MEM_FOR_MM);
 	initScheduler();
-	createProcess("init", 3, 0, (ProcessEntry) &idle, NULL, 0);
-	createProcess("shell", 3, 0, (ProcessEntry) sampleCodeModuleAddress, NULL, 0);
-	//deberíamos enviar un puntero a la función de inicialización del módulo
-	//createProcess("init", PRIORITY_1, NULL, 0, (main_function) &idle, fd);
-	//createProcess("Shell", PRIORITY_4, NULL, 0, (main_function) sampleCodeModuleAddress, fd);
-	return ((EntryPoint)sampleCodeModuleAddress)();
+	createProcess("init", MIN_PRIORITY, 1, (ProcessEntry) &idle, NULL, 0);
+	createProcess("Shell", MAX_PRIORITY, 1, (ProcessEntry) sampleCodeModuleAddress, NULL, 0);
+	_sti();
+	while(1);
+
+	return 0;
 }

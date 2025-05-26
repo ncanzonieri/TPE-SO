@@ -19,7 +19,7 @@ typedef enum {
 } pStatus;
 
 typedef struct processControlBlock{
-    int16_t pid, pPid, wPid;
+    uint64_t pid, pPid, wPid;
     uint8_t priority;
     char name[MAX_LENGTH];
     pStatus status;
@@ -34,7 +34,7 @@ typedef struct processControlBlock{
 
 typedef struct processControlBlock* Process;
 
-void initProcess(Process process, char* name, uint16_t pid, uint16_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func);
+void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func);
 uint64_t getPid();
 uint64_t getPpid();
 

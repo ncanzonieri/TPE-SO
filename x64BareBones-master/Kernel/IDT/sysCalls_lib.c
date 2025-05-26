@@ -5,13 +5,14 @@
 #include <MemoryManagerADT.h>
 #include <time.h>
 #include <sysCalls.h>
+#include "../Scheduler/scheduler.h"
 
 #define REGISTERS_DIM 16
 #define STDIN 0  
 #define STDOUT 1  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
- PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE, DUMP};
+ PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE, DUMP, GET_PID, KILL_PROCESS};
 
 extern void loadRegisters();
 extern uint64_t* getRegisters();
@@ -56,6 +57,10 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_free(otherRegs[0]);
         case DUMP:
             return sys_memoryDump();
+        case GET_PID:
+            return sys_getPid();
+        case KILL_PROCESS:
+            return sys_killProcess(otherRegs[0]);
         default:
             return 0;
     }
@@ -161,4 +166,12 @@ uint64_t sys_free(uint64_t ptr) {
 uint64_t sys_memoryDump() {
     memoryStats_t * stats = memDump();
     return (uint64_t) stats;
+}
+
+uint64_t sys_getPid() {
+    return getPid();
+}
+
+uint64_t sys_killProcess(uint64_t pid) {
+    return killProcess(pid);
 }

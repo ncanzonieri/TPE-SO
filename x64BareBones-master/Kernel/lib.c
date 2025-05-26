@@ -76,7 +76,7 @@ void myStrncpy(char *destination, const char *source, unsigned int n){
 
 int argCount(char** arr) {
 	int i = 0;
-	while (arr[i] != NULL)
+	while (arr && arr[i] != NULL)
 		i++;
 	return i;
 }
