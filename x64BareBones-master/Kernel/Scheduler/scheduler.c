@@ -1,6 +1,7 @@
 #include "scheduler.h"
 
 static char** copyArgs(char** argv);
+static void updateAvailableIndex(Sched scheduler);
 static int initialized = 0;
 
 Sched initScheduler() {
@@ -25,7 +26,7 @@ Sched getScheduler() {
 }
 
 
-int64_t createProcess(char* name, uint8_t priority, ProcessEntry func, char** argv, int argc, int16_t fds[]) {
+int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc) {
 	Sched scheduler = getScheduler();
     int16_t availableIndex = scheduler->availableIndex;
 	if (scheduler->processCount == MAX_PROCESSES || availableIndex == -1) {
@@ -46,7 +47,7 @@ int64_t createProcess(char* name, uint8_t priority, ProcessEntry func, char** ar
 	}
     char** newArgv = copyArgs(argv);
 
-    init_process(process, name, pid, pPid, priority, newArgv, argc, func, fds);
+    initProcess(process, name, pid, pPid, priority, foreground, newArgv, argc, func);
 	Process parent = getProcess(pPid);
     parent->wPid++;
 	return pid;
@@ -61,9 +62,9 @@ uint8_t setStatus(uint8_t newStatus) {
     if (newStatus == oldStatus) {
         return oldStatus;
     }
-    else if (newStatus == BLOCKED) {
-        blockProcess(getPid());
-    }
+//    else if (newStatus == BLOCKED) {
+//        blockProcess(getPid());
+//    }
     return newStatus;
 }
 
@@ -92,7 +93,33 @@ uint16_t unblockProcess(int16_t pid) {
     return 0;
 }
 
-uint64_t changePriority(int16_t pid, uint8_t newPriority) {
+uint64_t killProcess(uint64_t pid) {
+    Sched scheduler = getScheduler();
+    if (pid == INIT_PID) {
+        //error
+        return 0;
+    }
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (scheduler->processes[i].pid == pid && scheduler->processes[i].status != TERMINATED) {
+            scheduler->processes[i].status = TERMINATED;
+            scheduler->processCount--;
+            myFree(scheduler->processes[i].stackBase);
+            myFree(scheduler->processes[i].argv);
+            if (scheduler->currentPid == pid) {
+                _yield();
+            }
+            for (int j = 0; j < MAX_PROCESSES; j++) {
+                if (scheduler->processes[j].pPid == pid && scheduler->processes[j].status != TERMINATED) {
+                    scheduler->processes[j].pPid = INIT_PID;
+                }
+            }
+            return 1;
+        }
+    }
+    return 0;
+}
+
+uint64_t changePriority(uint64_t pid, uint8_t newPriority) {
     Sched scheduler = getScheduler();
     Process process = NULL;
 
@@ -108,8 +135,59 @@ uint64_t changePriority(int16_t pid, uint8_t newPriority) {
         }
     }
     if (process == NULL || process->priority == newPriority) {	return 0;	}
+    process->timesToRun = newPriority;
     process->priority = newPriority;
     return 1;
+}
+
+void* scheduler(void *stackPtr) {
+    Sched scheduler = getScheduler();
+
+    if (!initialized) {     return stackPtr;    }
+
+    Process currentProcess = &scheduler->processes[scheduler->currIndex];
+
+    if (currentProcess->status == TERMINATED) {
+        scheduler->currIndex = (scheduler->currIndex + 1) % MAX_PROCESSES;
+        return stackPtr;
+    }
+
+    if (scheduler->quantumRemaining <= QUANTUM) {   currentProcess->stackPtr = stackPtr;    }
+
+    currentProcess = updateQuantum(stackPtr);
+    scheduler->currentPid = currentProcess->pid;
+
+    return currentProcess->stackPtr;
+}
+
+Process updateQuantum(void *stackPtr) {
+    Sched scheduler = getScheduler();
+    Process currentProcess = &scheduler->processes[scheduler->currIndex];
+
+    if (scheduler->quantumRemaining == 0 || currentProcess->status == BLOCKED || currentProcess->timesToRun == 0) {
+        if (currentProcess->status == RUNNING) {    currentProcess->status = READY; }
+
+        if (currentProcess->status != BLOCKED && currentProcess->timesToRun > 0) {  currentProcess->timesToRun--;   }
+        
+        currentProcess->stackPtr = stackPtr;
+
+        while (currentProcess->status != READY || currentProcess->timesToRun == 0) {
+            scheduler->currIndex = (scheduler->currIndex + 1) % MAX_PROCESSES;
+            currentProcess = &scheduler->processes[scheduler->currIndex];
+
+            if (currentProcess->timesToRun == 0 && currentProcess->status == READY) {
+                currentProcess->timesToRun = currentProcess->priority;
+            }
+        }
+
+        scheduler->quantumRemaining = QUANTUM;
+    } else {
+        scheduler->quantumRemaining--;
+    }
+
+    currentProcess->status = RUNNING;
+
+    return currentProcess;
 }
 
 static char** copyArgs(char** argv) {
@@ -118,7 +196,7 @@ static char** copyArgs(char** argv) {
     int argLengths[argc];
 
     for (int i = 0; i < argc; i++) {
-        argLengths[i] = strlen(argv[i]) + 1;
+        argLengths[i] = myStrlen(argv[i]) + 1;
         totalLength += argLengths[i];
     }
 
@@ -146,7 +224,7 @@ Process getProcess(uint64_t pid) {
 	return NULL;
 }
 
-void updateAvailableIndex(Sched scheduler) {
+static void updateAvailableIndex(Sched scheduler) {
 	int16_t availableIndex = -1;
 	for (int i = 0; i < MAX_PROCESSES; i++) {
 		if (scheduler->processes[i].status == TERMINATED) {

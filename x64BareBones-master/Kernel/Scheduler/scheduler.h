@@ -6,7 +6,7 @@
 
 #define SCHEDULER_ADDRESS 0x600000
 #define INIT_PID 1
-
+#define QUANTUM 1
 #define MAX_PROCESSES 32
 #define STACK_SIZE 4096
 
@@ -19,18 +19,21 @@ typedef struct Scheduler {
 	uint64_t processCount;
 	int16_t availableIndex;
 	int16_t currIndex;
-	//int8_t quantumRemaining;
+	int8_t quantumRemaining;
     //uint64_t foregroundPid;       // Foreground process PID
     //uint8_t killForeground;       // Flag to kill foreground process
 } Scheduler;
 
 typedef struct Scheduler* Sched;
 
-//uint64_t createProcess(char *name, Priority priority, char *argv[], int argc, main_function rip, const int16_t fds[]);
 Sched initScheduler();
 Sched getScheduler();
-int64_t createProcess(char* name, uint8_t priority, ProcessEntry func, char** argv, int argc, int16_t fds[]);
+int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc);
 Process getProcess(uint64_t pid);
 uint8_t setStatus(uint8_t newStatus);
 uint16_t blockProcess(int16_t pid);
 uint16_t unblockProcess(int16_t pid);
+void* scheduler(void* stackPtr);
+Process updateQuantum(void* stackPtr);
+uint64_t killProcess(uint64_t pid);
+uint64_t changePriority(uint64_t pid, uint8_t newPriority);
