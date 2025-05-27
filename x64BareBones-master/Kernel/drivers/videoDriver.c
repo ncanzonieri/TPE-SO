@@ -172,6 +172,71 @@ uint64_t printString(uint32_t hexCollor, char* s){
 	return counter;
 }
 
+void printInt(int num) {
+    char buffer[256] = {0};
+    int i = 0;
+    if (num == 0) {
+        buffer[i++] = '0';
+    } else if (num < 0) {
+        buffer[i++] = '-';
+        num = -num;
+    }
+    while (num > 0) {
+        buffer[i++] = num % 10 + '0';
+        num /= 10;
+    }
+    buffer[i] = 0;
+    i--;
+    int j = 0;
+    while (i > j) {
+        char aux = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j] = aux;
+        i--;
+        j++;
+    }
+    buffer[i + 1] = '\n';
+    buffer[i + 2] = 0;
+    printString(0xFFFFFF, buffer);
+    cx += (i + 2) * 8 * scale;
+    if (cx >= VBE_mode_info->width) {
+        newLine();
+    }
+}
+
+void printHex(uint64_t value) {
+    char buffer[256] = {0};
+    int i = 0;
+    buffer[i++] = '0';
+    buffer[i++] = 'x';
+    if (value == 0) {
+        buffer[i++] = '0';
+    } else {
+        while (value > 0) {
+            uint64_t nibble = value & 0xF;
+            buffer[i++] = (nibble < 10) ? (char)('0' + nibble) : (char)('A' + (nibble - 10));
+            value >>= 4;
+        }
+    }
+    buffer[i] = 0;
+    int start = 2;
+    int end = i - 1;
+    while (end > start) {
+        char aux = buffer[end];
+        buffer[end] = buffer[start];
+        buffer[start] = aux;
+        end--;
+        start++;
+    }
+    buffer[i + 1] = '\n';
+    buffer[i + 2] = 0;
+    printString(0xFFFFFF, buffer);
+    cx += (i + 2) * 8 * scale;
+    if (cx >= VBE_mode_info->width) {
+        newLine();
+    }
+}
+
 void nextBlank(){
 	if(cx+8*scale >= VBE_mode_info->width){
 		newLine();

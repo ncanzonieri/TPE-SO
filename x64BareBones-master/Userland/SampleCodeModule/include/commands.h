@@ -16,5 +16,6 @@ extern void invalidOperation();
 void agro(); // imprime escudo de un equipo de futbol
 void testMM(); // testea el memory manager
 void memoryDump(); // imprime el estado de la memoria
+void ps(); // imprime los procesos en ejecución
 
 #endif // COMMANDS_H

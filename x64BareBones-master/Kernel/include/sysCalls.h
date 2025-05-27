@@ -168,7 +168,7 @@ uint64_t sys_kill(uint16_t pid);
  * @brief Returns a list of the currently running processes 
  * @return process ID of the process that must be terminated.
  */
-uint64_t sys_ps();
+uint64_t sys_showProcesses();
 
 uint64_t sys_setPriority(uint16_t pid, uint8_t priority);
 

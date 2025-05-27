@@ -78,6 +78,7 @@ uint64_t sys_memoryDump();
 
 uint64_t sys_getPid();
 uint64_t sys_killProcess(uint64_t pid);
+uint64_t sys_showProcesses();
 
 
 #endif

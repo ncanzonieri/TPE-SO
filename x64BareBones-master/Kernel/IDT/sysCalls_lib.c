@@ -12,7 +12,7 @@
 #define STDOUT 1  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
- PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE, DUMP, GET_PID, KILL_PROCESS};
+ PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE, DUMP, GET_PID, KILL_PROCESS, SHOW_PROCESSES };
 
 extern void loadRegisters();
 extern uint64_t* getRegisters();
@@ -61,6 +61,8 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_getPid();
         case KILL_PROCESS:
             return sys_killProcess(otherRegs[0]);
+        case SHOW_PROCESSES:
+            return sys_showProcesses();
         default:
             return 0;
     }
@@ -174,4 +176,9 @@ uint64_t sys_getPid() {
 
 uint64_t sys_killProcess(uint64_t pid) {
     return killProcess(pid);
+}
+
+uint64_t sys_showProcesses() {
+    showProcessesStatus();
+    return 1;
 }

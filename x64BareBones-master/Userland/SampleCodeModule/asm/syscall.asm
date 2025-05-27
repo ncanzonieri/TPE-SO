@@ -17,6 +17,7 @@ GLOBAL sys_free
 GLOBAL sys_memoryDump
 GLOBAL sys_getPid
 GLOBAL sys_killProcess
+GLOBAL sys_showProcesses
 
 section .text
 
@@ -46,3 +47,4 @@ sys_free: syscall 0x10
 sys_memoryDump: syscall 0x11
 sys_getPid: syscall 0x12
 sys_killProcess: syscall 0x13
+sys_showProcesses: syscall 0x14

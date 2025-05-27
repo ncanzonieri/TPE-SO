@@ -215,6 +215,12 @@ Process getProcess(uint64_t pid) {
 	return NULL;
 }
 
+int8_t getStatus() {
+	Sched scheduler = getScheduler();
+	Process process = &(scheduler->processes[scheduler->currIndex]);
+	return process->status;
+}
+
 
 static void updateAvailableIndex(Sched scheduler) {
 	int16_t availableIndex = -1;
@@ -225,4 +231,27 @@ static void updateAvailableIndex(Sched scheduler) {
 		}
 	}
 	scheduler->availableIndex = availableIndex;
+}
+
+void showProcessesStatus() {
+    Sched scheduler = getScheduler();
+    newLine();
+    printString(0xFFFFFF, "PID        STAT             RSP                          RBP                       COMMAND");
+    newLine();
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (scheduler->processes[i].status != TERMINATED) {
+            printInt(scheduler->processes[i].pid);
+            printString(0xFFFFFF, "        ");
+            printString(0xFFFFFF, processInfo(&scheduler->processes[i]));
+            printString(0xFFFFFF, "        ");
+            printHex((uint64_t)scheduler->processes[i].stackPtr);
+            printString(0xFFFFFF, "        ");
+            printHex((uint64_t)scheduler->processes[i].stackBase);
+            printString(0xFFFFFF, "        ");
+            printString(0xFFFFFF, scheduler->processes[i].name);
+            newLine();
+        }
+    }
+    newLine();
+
 }

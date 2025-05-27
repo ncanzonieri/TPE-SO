@@ -7,12 +7,11 @@
 #define MAX 15
 #define MAX_DIM 256
 #define BLACK 0x00000000
-#define WHITE 0x00FFFFFF
 #define DELETE 8
 #define CERO 0
 #define ESC 27
 #define TAB 9
-#define COMMANDS_COUNT 13
+#define COMMANDS_COUNT 14
 #define GREEN 0x66FF66 // Font Scale
 #define WHITE 0xFFFFFF
 #define ERROR -1
@@ -25,7 +24,7 @@ static int belongs(char * v);
 //static void runCommands(int index);
 
 ////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
-static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake, sys_clearScreen, testMM, memoryDump};
+static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake, sys_clearScreen, testMM, memoryDump, ps};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina$>",13,GREEN);
@@ -83,7 +82,7 @@ static void startShell(char * v){
 }
 
 static int belongs(char * v){ 
-    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "time", "zoomIn", "zoomOut", "registers", "agro","date","snake", "clear", "testMM", "mem"};
+    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "time", "zoomIn", "zoomOut", "registers", "agro","date","snake", "clear", "testMM", "mem","ps"};
     for( int i=0; i < COMMANDS_COUNT; i++){
         if( strcmp(v, commands[i]) == 0){
             return i;

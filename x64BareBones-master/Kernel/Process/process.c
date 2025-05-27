@@ -32,3 +32,45 @@ uint64_t getPid() {
     Sched scheduler = getScheduler();
     return scheduler->currentPid;
 }
+
+char* processInfo(Process process) {
+    static char status[16];
+    myStrncpy(status, "", 16);
+    
+    switch (process->status) {
+        case READY:
+            myStrncpy(status, "REA", 14);
+            break;
+        case RUNNING:
+            myStrncpy(status, "RUN", 14);
+            break;
+        case BLOCKED:
+            myStrncpy(status, "BLO", 14);
+            break;
+        case TERMINATED:
+            myStrncpy(status, "TER", 14);
+            break;
+        default:
+            myStrncpy(status, "UNKNOWN", 14);
+            return status;
+    }
+    if (process->priority == 4) {
+        myStrncpy(status + myStrlen(status), " - HIGH - ", 14 - myStrlen(status));
+    }
+    else if (process->priority == 3) {
+        myStrncpy(status + myStrlen(status), " - MEDH - ", 14 - myStrlen(status));
+    }
+    else if (process->priority == 2) {
+        myStrncpy(status + myStrlen(status), " - MEDL - ", 14 - myStrlen(status));
+    }
+    else if (process->priority == 1) {
+        myStrncpy(status + myStrlen(status), " - LOW - ", 14 - myStrlen(status));
+    }
+    if (process->foreground) {
+        myStrncpy(status + myStrlen(status), "+", 14 - myStrlen(status));
+    }
+    else if (process->pid == INIT_PID) {
+        myStrncpy(status + myStrlen(status), "i", 14 - myStrlen(status));
+    }
+    return status;
+}
