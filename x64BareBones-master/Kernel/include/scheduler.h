@@ -5,6 +5,7 @@
 #include "./process.h"
 #include <stddef.h>
 #include "./lib.h"
+#include "./videoDriver.h"
 #include "./MemoryManagerADT.h"
 
 #define SCHEDULER_ADDRESS 0x600000
@@ -40,5 +41,7 @@ void* scheduler(void* stackPtr);
 Process updateQuantum(void* stackPtr);
 uint64_t killProcess(uint64_t pid);
 uint64_t changePriority(uint64_t pid, uint8_t newPriority);
+void showProcessesStatus();
+
 
 #endif // SCHEDULER_H

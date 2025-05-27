@@ -5,7 +5,6 @@
 #include "./lib.h"
 #include "./MemoryManagerADT.h"
 #include "./interrupts.h"
-#include "./scheduler.h"
 
 #define MAX_LENGTH 32
 #define MIN_PRIORITY 1
@@ -37,5 +36,6 @@ typedef struct processControlBlock* Process;
 void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func);
 uint64_t getPid();
 uint64_t getPpid();
+char* processInfo(Process process);
 
 #endif

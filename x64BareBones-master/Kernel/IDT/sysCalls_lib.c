@@ -5,7 +5,7 @@
 #include <MemoryManagerADT.h>
 #include <time.h>
 #include <sysCalls.h>
-#include "../Scheduler/scheduler.h"
+#include "../include/scheduler.h"
 
 #define REGISTERS_DIM 16
 #define STDIN 0  

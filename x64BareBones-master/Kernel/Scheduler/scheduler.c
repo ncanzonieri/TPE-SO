@@ -215,13 +215,6 @@ Process getProcess(uint64_t pid) {
 	return NULL;
 }
 
-int8_t getStatus() {
-	Sched scheduler = getScheduler();
-	Process process = &(scheduler->processes[scheduler->currIndex]);
-	return process->status;
-}
-
-
 static void updateAvailableIndex(Sched scheduler) {
 	int16_t availableIndex = -1;
 	for (int i = 0; i < MAX_PROCESSES; i++) {

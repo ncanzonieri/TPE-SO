@@ -159,8 +159,8 @@ picSlaveMask:
 _irq00Handler:
 	;irqHandlerMaster 0
 	pushState 1
-;
-	mov rdi, 0 ; pasaje de parametro
+
+	mov rdi, 0 
 	call syscallDispatcher
 
 	mov rdi, rsp
