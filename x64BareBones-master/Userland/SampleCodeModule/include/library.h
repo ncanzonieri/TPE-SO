@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+typedef int (*ProcessEntry)(uint64_t argc, char **argv);
+
 void clearIfNotEnoughSpace(int linesItNeeds);
 
 int strcmp(char *s1, char *s2);

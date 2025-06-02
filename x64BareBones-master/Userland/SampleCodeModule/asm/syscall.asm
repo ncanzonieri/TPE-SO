@@ -18,6 +18,11 @@ GLOBAL sys_memoryDump
 GLOBAL sys_getPid
 GLOBAL sys_killProcess
 GLOBAL sys_showProcesses
+GLOBAL sys_createProcess
+GLOBAL sys_changePriority
+GLOBAL sys_blockProcess
+GLOBAL sys_unblockProcess
+GLOBAL sys_yield
 
 section .text
 
@@ -48,3 +53,8 @@ sys_memoryDump: syscall 0x11
 sys_getPid: syscall 0x12
 sys_killProcess: syscall 0x13
 sys_showProcesses: syscall 0x14
+sys_createProcess: syscall 0x15
+sys_changePriority: syscall 0x16
+sys_blockProcess: syscall 0x17
+sys_unblockProcess: syscall 0x18
+sys_yield: syscall 0x19

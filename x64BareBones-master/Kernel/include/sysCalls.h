@@ -2,6 +2,7 @@
 #define TPE_ARQ_SYSCALL_LIB_H
 
 #include <stdint.h>
+#include <lib.h>
 
 #define REGS_AMOUNT 20
 
@@ -155,14 +156,18 @@ uint64_t sys_memoryDump();
  * @return the process ID of the current process.
  */
 uint64_t sys_getPid();
-uint64_t sys_killProcess(uint64_t pid);
-
 
 /**
  * @brief Forces termination of the given process.
  * @param pid process ID of the process that must be terminated.
  */
-uint64_t sys_kill(uint16_t pid);
+uint64_t sys_killProcess(uint64_t pid);
+
+int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc);
+
+uint64_t sys_blockProcess(uint64_t pid);
+
+uint64_t sys_unblockProcess(uint64_t pid);
 
 /**
  * @brief Returns a list of the currently running processes 
@@ -170,17 +175,11 @@ uint64_t sys_kill(uint16_t pid);
  */
 uint64_t sys_showProcesses();
 
-uint64_t sys_setPriority(uint16_t pid, uint8_t priority);
+uint64_t sys_changePriority(uint64_t pid, uint8_t priority);
 
 uint64_t sys_yield();
 
-uint64_t sys_block(uint16_t pid);
-
-uint64_t sys_unblock(uint16_t pid);
-
 uint64_t sys_waitForChildren();
-
-uint64_t sys_initializeProcess(/*argumentos*/);
 
 uint64_t sys_finishProcess(/*argumentos*/);
 

@@ -12,7 +12,8 @@
 #define STDOUT 1  
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
- PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE, DUMP, GET_PID, KILL_PROCESS, SHOW_PROCESSES };
+ PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE, DUMP, GET_PID, KILL_PROCESS, SHOW_PROCESSES, CREATE_PROCESS, 
+ CHANGE_PRIORITY, BLOCK_PROCESS, UNBLOCK_PROCESS, YIELD };
 
 extern void loadRegisters();
 extern uint64_t* getRegisters();
@@ -63,6 +64,16 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_killProcess(otherRegs[0]);
         case SHOW_PROCESSES:
             return sys_showProcesses();
+        case CREATE_PROCESS:
+            return sys_createProcess((char*)otherRegs[0], (uint8_t)otherRegs[1], (char)otherRegs[2], (ProcessEntry)otherRegs[3], (char**)otherRegs[4], (int)otherRegs[5]);
+        case CHANGE_PRIORITY:
+            return sys_changePriority((uint64_t)otherRegs[0], (uint8_t)otherRegs[1]);
+        case BLOCK_PROCESS:
+            return sys_blockProcess((uint64_t)otherRegs[0]);
+        case UNBLOCK_PROCESS:
+            return sys_unblockProcess((uint64_t)otherRegs[0]);
+        case YIELD:
+            return sys_yield();
         default:
             return 0;
     }
@@ -180,5 +191,27 @@ uint64_t sys_killProcess(uint64_t pid) {
 
 uint64_t sys_showProcesses() {
     showProcessesStatus();
+    return 1;
+}
+
+int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc){
+    int64_t pid = createProcess(name, priority, foreground, func, argv, argc);
+    return pid;
+}
+
+uint64_t sys_changePriority(uint64_t pid, uint8_t priority){
+    return changePriority(pid, priority);
+}
+
+uint64_t sys_blockProcess(uint64_t pid){
+    return blockProcess(pid);
+}
+
+uint64_t sys_unblockProcess(uint64_t pid){
+    return unblockProcess(pid);
+}
+
+uint64_t sys_yield() {
+    _yield();
     return 1;
 }

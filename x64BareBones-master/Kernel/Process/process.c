@@ -2,7 +2,7 @@
 #include "../include/scheduler.h"
 
 
-//Actúa como un envoltorio (wrapper) que ejecuta la función principal del proceso y asegura que el proceso termine correctamente
+//wrapper de _start
 void runProcessWrapper(ProcessEntry func, char **argv, uint64_t argc) {
     int newArgc = argCount(argv);
     int ret = func(newArgc, argv);
@@ -67,10 +67,10 @@ char* processInfo(Process process) {
         myStrncpy(status + myStrlen(status), " - LOW - ", 14 - myStrlen(status));
     }
     if (process->foreground) {
-        myStrncpy(status + myStrlen(status), "+", 14 - myStrlen(status));
+        myStrncpy(status + myStrlen(status), "F", 14 - myStrlen(status));
     }
     else if (process->pid == INIT_PID) {
-        myStrncpy(status + myStrlen(status), "i", 14 - myStrlen(status));
+        myStrncpy(status + myStrlen(status), "I", 14 - myStrlen(status));
     }
     return status;
 }

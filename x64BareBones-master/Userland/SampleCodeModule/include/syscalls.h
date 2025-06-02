@@ -2,6 +2,9 @@
 #define TPE_ARQ_SYSCALLS_H
 
 #include <stdint.h>
+//#include "library.h"
+typedef int (*ProcessEntry)(uint64_t argc, char **argv);
+
 
 /*
  * Arguments used to read the RTC.
@@ -79,6 +82,11 @@ uint64_t sys_memoryDump();
 uint64_t sys_getPid();
 uint64_t sys_killProcess(uint64_t pid);
 uint64_t sys_showProcesses();
+int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc);
+uint64_t sys_changePriority(uint64_t pid, uint8_t priority);
+uint64_t sys_blockProcess(uint64_t pid);
+uint64_t sys_unblockProcess(uint64_t pid);
+uint64_t sys_yield();
 
 
 #endif

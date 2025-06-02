@@ -35,18 +35,30 @@ int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntr
 	process->status = READY;
 	updateAvailableIndex(scheduler);
 	uint64_t pid, pPid;
-    pid = scheduler->nextPid;
-	if (scheduler->nextPid == INIT_PID) {
+    //pid = scheduler->nextPid;
+	/*
+    if (scheduler->nextPid == INIT_PID) {
 		pPid = 0;
 	} else {
 		pPid = scheduler->currentPid;
 	}
-    scheduler->nextPid++;
+
+    //scheduler->nextPid++;
+    */
+   if(scheduler->nextPid == INIT_PID) {
+		process->pid = INIT_PID;
+		pPid = process->pid;
+		scheduler->nextPid++;
+	} else {
+		process->pid = scheduler->nextPid++;
+		pPid = getPid();
+	}
+	
     char** newArgv = copyArgs(argv, argc);
 
-    initProcess(process, name, pid, pPid, priority, foreground, newArgv, argc, func);
+    initProcess(process, name, process->pid, pPid, priority, foreground, newArgv, argc, func);
 
-	return pid;
+	return process->pid;
 }
 
 uint8_t setStatus(uint8_t newStatus) {

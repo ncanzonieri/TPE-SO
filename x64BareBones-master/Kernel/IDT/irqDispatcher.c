@@ -1,4 +1,4 @@
-#include <time.h>
+#include "../include/time.h"
 #include <stdint.h>
 #include <keyboardDriver.h>
 #include <videoDriver.h>
@@ -9,7 +9,7 @@
 uint64_t int_20(uint64_t rsp);
 static void int_21();
 
-void irqDispatcher(uint64_t irq, uint64_t rsp) {
+uint64_t irqDispatcher(uint64_t irq, uint64_t rsp) {
 	switch (irq) {
 		case TIMERTICK:
 			rsp = int_20(rsp); // el scheduler decidirá qué proceso ejecutar

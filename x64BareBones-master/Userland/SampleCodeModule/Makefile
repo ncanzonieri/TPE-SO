@@ -35,6 +35,6 @@ $(LOADER_OBJECT):
 	$(GCC) $(GCCFLAGS) $(LOADER_SRC) -c -o $(LOADER_OBJECT)
 
 clean:
-	rm -rf *.o asm/*.o commands/*.o lib/*.o powershell/*.o
+	rm -rf *.o asm/*.o commands/*.o lib/*.o powershell/*.o tests/*.o
 
 .PHONY: all clean print

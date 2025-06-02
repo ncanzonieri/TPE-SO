@@ -17,5 +17,6 @@ void agro(); // imprime escudo de un equipo de futbol
 void testMM(); // testea el memory manager
 void memoryDump(); // imprime el estado de la memoria
 void ps(); // imprime los procesos en ejecución
+void testProcesses(); // Testea la creación de procesos
 
 #endif // COMMANDS_H
