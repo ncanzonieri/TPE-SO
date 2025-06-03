@@ -19,6 +19,7 @@
         "time.h": "c",
         "stdio.h": "c",
         "process.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "test_utils.h": "c"
     }
 }

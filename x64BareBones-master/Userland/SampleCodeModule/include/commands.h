@@ -18,5 +18,5 @@ void testMM(); // testea el memory manager
 void memoryDump(); // imprime el estado de la memoria
 void ps(); // imprime los procesos en ejecución
 void testProcesses(); // Testea la creación de procesos
-
+void testPriorities(); // Testea cambio de prioridades
 #endif // COMMANDS_H

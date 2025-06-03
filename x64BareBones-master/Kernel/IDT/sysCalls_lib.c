@@ -73,7 +73,7 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
         case UNBLOCK_PROCESS:
             return sys_unblockProcess((uint64_t)otherRegs[0]);
         case YIELD:
-            return sys_yield();
+            return sys_yield(); 
         default:
             return 0;
     }

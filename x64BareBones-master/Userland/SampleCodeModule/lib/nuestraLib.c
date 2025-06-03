@@ -41,16 +41,18 @@ int strConcat(char *str1, char *str2){
     return i;
 }
 
-void strcpy(char *destination, const char *source)
+int strcpy(char *destination, const char *source)
 {
+    int count = 0;
     while (*source != '\0')
     {
         *destination = *source;
         destination++;
         source++;
+        count++;
     }
     *destination = '\0';
-    return;
+    return count;
 }
 
 int strlen(const char * s) {
@@ -183,36 +185,103 @@ int stringToInt(char * num){
     return res;
 }
 
-int printf(const char * format, ...){
-    va_list variables;
+int hexToString(uint64_t num, char *toPrint) {
+	char hexa[16] = "0123456789ABCDEF";
+	char aux[16];
+	int i = 0, j = 0;
 
-    va_start(variables, format);
+	if (num == 0) {
+		toPrint[i] = '0';
+		i++;
+	}
 
-    char str[DIM];
-    int index = 0, fmtPos = 0;
+	while (num != 0) {
+		aux[j] = hexa[num % 16];
+		num = num / 16;
+		j++;
+	}
 
-    while(format[fmtPos] != '\0'){
-        if(format[fmtPos] == '%'){
-            fmtPos++;
-            switch(format[fmtPos]){
-                case 'd': //int
-                    index += intToString(va_arg(variables,int),str+index);
-                    break;
-                case 's': //string
-                    index+=strConcat(str,va_arg(variables,char*));
-                    break;
-                default:
-                    break;
-            }
-            fmtPos++;
-        }else{
-            str[index] = format[fmtPos++];
-            index++;
-        }
-    }
-    str[index] = '\0';
-    va_end(variables);
-    return putString(str, WHITE);
+	toPrint[i] = '0';
+	i++;
+	toPrint[i] = 'x';
+	i++;
+
+	for (j = j - 1; j >= 0; j--) {
+		toPrint[i] = aux[j];
+		i++;
+	}
+	toPrint[i] = '\0';
+
+	return i;
+}
+
+// int printf(const char * format, ...){
+//     va_list variables;
+
+//     va_start(variables, format);
+
+//     char str[DIM];
+//     int index = 0, fmtPos = 0;
+
+//     while(format[fmtPos] != '\0'){
+//         if(format[fmtPos] == '%'){
+//             fmtPos++;
+//             switch(format[fmtPos]){
+//                 case 'd': //int
+//                     index += intToString(va_arg(variables,int),str+index);
+//                     break;
+//                 case 's': //string
+//                     index+=strConcat(str,va_arg(variables,char*));
+//                     break;
+//                 default:
+//                     break;
+//             }
+//             fmtPos++;
+//         }else{
+//             str[index] = format[fmtPos++];
+//             index++;
+//         }
+//     }
+//     str[index] = '\0';
+//     va_end(variables);
+//     return putString(str, WHITE);
+// }
+
+int printf(const char *fmt, ...) {
+	va_list variables;
+
+	va_start(variables, fmt);
+	char toPrint[512];
+	unsigned int index = 0;
+	while (*fmt != 0) {
+		if (*fmt == '%') {
+			fmt++;
+			switch (*fmt) {
+				case 'd':
+					index += intToString(va_arg(variables, int), toPrint + index);
+					break;
+				case 's':
+					index += strcpy(toPrint + index, va_arg(variables, char *));
+					break;
+				case 'p':
+					index += hexToString(va_arg(variables, uint64_t), toPrint + index);
+					break;
+				case 'c':
+					toPrint[index++] = va_arg(variables, int);
+					break;
+				default:
+					break;
+			}
+			fmt++;
+		}
+		else
+			toPrint[index++] = *fmt++;
+	}
+	toPrint[index] = 0;
+	
+	// puts(toPrint);
+	va_end(variables);
+    return putString(toPrint, WHITE);
 }
 
 

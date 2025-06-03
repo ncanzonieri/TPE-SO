@@ -59,4 +59,4 @@ sys_changePriority: syscall 0x16
 sys_blockProcess: syscall 0x17
 sys_unblockProcess: syscall 0x18
 sys_yield: syscall 0x19
-sys_updatePriority: syscall 0x1A
+;sys_updatePriority: syscall 0x1A

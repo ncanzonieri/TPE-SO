@@ -64,8 +64,9 @@ void bussy_wait(uint64_t n) {
   for (i = 0; i < n; i++)
     ;
 }
-void endless_loop_print(uint64_t wait) {
-  int64_t pid = my_getpid();
+void endless_loop_print(int argc, char *argv[]) {
+  int64_t pid = sys_getPid();
+  uint64_t wait = satoi(argv[0]);
 
   while (1) {
     printf("%d ", pid);
@@ -74,6 +75,6 @@ void endless_loop_print(uint64_t wait) {
 }
 
 uint64_t my_nice(uint64_t pid, uint64_t newPriority){
-  return sys_updatePriority(pid, newPriority);
+  return sys_changePriority(pid, newPriority);
 }
 

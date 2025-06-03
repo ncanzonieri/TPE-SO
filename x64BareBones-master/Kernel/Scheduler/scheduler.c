@@ -133,8 +133,12 @@ uint64_t changePriority(uint64_t pid, uint8_t newPriority) {
     }
 
     for (int i = 0; i < MAX_PROCESSES; i++) {
-        if (scheduler->processes[i].pid == pid && scheduler->processes[i].status != TERMINATED) {
-            process = &scheduler->processes[i];
+        // if (scheduler->processes[i].pid == pid && scheduler->processes[i].status != TERMINATED) {
+        //     process = &scheduler->processes[i];
+        //     break;
+        // }
+        if(scheduler->processes[pid].status != TERMINATED){
+            process = &scheduler->processes[pid];
             break;
         }
     }
@@ -300,13 +304,13 @@ ProcessInfo* showProcessesStatus() {
     return processList;
 }
 
-uint64_t updatePriority(uint64_t pid, uint64_t newPriority){
-    Sched scheduler = getScheduler();
-    if(pid >= MAX_PROCESSES || scheduler->processes[pid].status == TERMINATED || newPriority > MAX_PRIORITY || newPriority < MIN_PRIORITY){
-        return -1;
-    }
-    scheduler->processes[pid].priority = newPriority;
-    //scheduler->processes[pid].timesToRun = ;
-    //return 0;
+// uint64_t updatePriority(uint64_t pid, uint64_t newPriority){
+//     Sched scheduler = getScheduler();
+//     if(pid >= MAX_PROCESSES || scheduler->processes[pid].status == TERMINATED || newPriority > MAX_PRIORITY || newPriority < MIN_PRIORITY){
+//         return -1;
+//     }
+//     scheduler->processes[pid].priority = newPriority;
+//     //scheduler->processes[pid].timesToRun = ;
+//     //return 0;
 
-}
+// }

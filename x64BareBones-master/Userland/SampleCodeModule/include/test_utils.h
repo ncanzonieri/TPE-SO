@@ -10,5 +10,6 @@ void endless_loop();
 void endless_loop_print(uint64_t wait);
 uint64_t test_mm(uint64_t argc, char *argv[]);
 int64_t test_processes(uint64_t argc, char *argv[]);
+void test_prio();
 void* myMalloc(uint64_t size); // malloc
 void myFree(void* ptr); // free

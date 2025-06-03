@@ -11,7 +11,7 @@ int strcmp(char *s1, char *s2);
 
 int strConcat(char *str1, char *str2);
 
-void strcpy(char *destination, const char *source);
+int strcpy(char *destination, const char *source);
 
 char *strncpy(char *dest, const char *src, int count);
 
@@ -28,6 +28,8 @@ char toLower(char c);
 int putString(char * c, uint32_t color);
 
 int intToString(int num, char *str);
+
+int hexToString(uint64_t num, char *toPrint);
 
 int strConcat(char *str1, char *str2);
 

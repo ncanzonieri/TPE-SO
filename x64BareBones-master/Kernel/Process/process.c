@@ -1,12 +1,17 @@
 #include "../include/process.h"
 #include "../include/scheduler.h"
 
-
+static void exit_process(int ret, unsigned int pid) {
+	Process process = getProcess(pid);
+	process->retValue = ret;
+	killProcess(pid);
+	_yield();
+}
 //wrapper de _start
 void runProcessWrapper(ProcessEntry func, char **argv, uint64_t argc) {
     int newArgc = argCount(argv);
     int ret = func(newArgc, argv);
-    killProcess(getPid());
+    exit_process(ret, getPid());
 }
 
 void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func){
