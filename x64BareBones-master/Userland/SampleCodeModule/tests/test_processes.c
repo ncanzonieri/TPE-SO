@@ -4,11 +4,6 @@
 
 #define FOREGROUND 1
 
-enum State { READY = 0, 
-    RUNNING, 
-    BLOCKED, 
-    TERMINATED, };
-
 typedef struct P_rq {
   int32_t pid;
   enum State state;

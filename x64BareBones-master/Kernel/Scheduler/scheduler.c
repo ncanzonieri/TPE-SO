@@ -3,6 +3,7 @@
 static char** copyArgs(char** argv, int argc);
 static void updateAvailableIndex(Sched scheduler);
 static int initialized = 0;
+static ProcessInfo processList[MAX_PROCESSES+1];
 
 Sched initScheduler() {
 	Sched scheduler = (Sched) SCHEDULER_ADDRESS;
@@ -23,40 +24,35 @@ Sched getScheduler() {
 	return (Sched) SCHEDULER_ADDRESS;
 }
 
-
 int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc) {
 	Sched scheduler = getScheduler();
     int16_t availableIndex = scheduler->availableIndex;
-	if (scheduler->processCount == MAX_PROCESSES || availableIndex == -1) {
+	if (scheduler->processCount == MAX_PROCESSES || availableIndex == MAX_PROCESSES) {
 		return -1;
 	}
     scheduler->processCount++;
     Process process = &scheduler->processes[availableIndex];
-	process->status = READY;
-	updateAvailableIndex(scheduler);
-	uint64_t pid, pPid;
-    //pid = scheduler->nextPid;
-	/*
-    if (scheduler->nextPid == INIT_PID) {
-		pPid = 0;
-	} else {
-		pPid = scheduler->currentPid;
-	}
-
-    //scheduler->nextPid++;
-    */
-   if(scheduler->nextPid == INIT_PID) {
-		process->pid = INIT_PID;
+	//process->status = READY;
+	// updateAvailableIndex(scheduler);
+	
+    uint64_t pPid;
+    if(scheduler->availableIndex == INIT_PID) {
 		pPid = process->pid;
-		scheduler->nextPid++;
+		// scheduler->nextPid++;
 	} else {
-		process->pid = scheduler->nextPid++;
 		pPid = getPid();
 	}
 	
     char** newArgv = copyArgs(argv, argc);
 
-    initProcess(process, name, process->pid, pPid, priority, foreground, newArgv, argc, func);
+    initProcess(process, name, availableIndex, pPid, priority, foreground, newArgv, argc, func);
+
+    for(uint64_t pid=0; pid < MAX_PROCESSES; pid++) {
+        if(scheduler->processes[pid].status == TERMINATED) {
+            scheduler->availableIndex = pid;
+            break;
+        }
+    }
 
 	return process->pid;
 }
@@ -103,23 +99,27 @@ uint64_t killProcess(uint64_t pid) {
         //error
         return 0;
     }
-    for (int i = 0; i < MAX_PROCESSES; i++) {
-        if (scheduler->processes[i].pid == pid && scheduler->processes[i].status != TERMINATED) {
-            scheduler->processes[i].status = TERMINATED;
-            scheduler->processCount--;
-            myFree(scheduler->processes[i].stackBase);
-            myFree(scheduler->processes[i].argv);
-            if (scheduler->currentPid == pid) {
-                _yield();
-            }
-            for (int j = 0; j < MAX_PROCESSES; j++) {
-                if (scheduler->processes[j].pPid == pid && scheduler->processes[j].status != TERMINATED) {
-                    scheduler->processes[j].pPid = INIT_PID;
-                }
-            }
-            return 1;
+
+    //for (int i = 0; i < MAX_PROCESSES; i++) {
+    if (/*scheduler->processes[i].pid == pid &&*/ scheduler->processes[pid].status != TERMINATED) {
+        scheduler->processes[pid].status = TERMINATED;
+        scheduler->processCount--;
+        myFree(scheduler->processes[pid].stackBase);
+        myFree(scheduler->processes[pid].argv);
+        if (scheduler->currentPid == pid) {
+            _yield();
         }
+        for (int j = 0; j < MAX_PROCESSES; j++) {
+            if (scheduler->processes[j].pPid == pid && scheduler->processes[j].status != TERMINATED) {
+                scheduler->processes[j].pPid = INIT_PID;
+            }
+        }
+        if (scheduler->availableIndex > pid) {
+            scheduler->availableIndex = pid;
+        }
+        return 1;
     }
+    //}
     return 0;
 }
 
@@ -147,7 +147,7 @@ uint64_t changePriority(uint64_t pid, uint8_t newPriority) {
 void* scheduler(void *stackPtr) {
     Sched scheduler = getScheduler();
 
-    if (!initialized) {     return stackPtr;    }
+    if (!initialized) {     return stackPtr;    }  //chequear 
 
     Process currentProcess = &scheduler->processes[scheduler->currIndex];
 
@@ -238,25 +238,75 @@ static void updateAvailableIndex(Sched scheduler) {
 	scheduler->availableIndex = availableIndex;
 }
 
-void showProcessesStatus() {
+ProcessInfo* showProcessesStatus() {
     Sched scheduler = getScheduler();
+
     newLine();
     printString(0xFFFFFF, "PID        STAT             RSP                          RBP                       COMMAND");
     newLine();
-    for (int i = 0; i < MAX_PROCESSES; i++) {
+    int count = 0;
+    for(int i = 0; i < MAX_PROCESSES; i++) {
         if (scheduler->processes[i].status != TERMINATED) {
-            printInt(scheduler->processes[i].pid);
-            printString(0xFFFFFF, "        ");
-            printString(0xFFFFFF, processInfo(&scheduler->processes[i]));
-            printString(0xFFFFFF, "        ");
-            printHex((uint64_t)scheduler->processes[i].stackPtr);
-            printString(0xFFFFFF, "        ");
-            printHex((uint64_t)scheduler->processes[i].stackBase);
-            printString(0xFFFFFF, "        ");
-            printString(0xFFFFFF, scheduler->processes[i].name);
+            ProcessInfo process;
+            process.pid = scheduler->processes[i].pid;
+            printInt(process.pid);
+            myStrncpy(process.name, scheduler->processes[i].name, MAX_LENGTH);
+            printString(0xFFFFFF, "  ");
+            printString(0xFFFFFF, process.name);
+            process.priority = scheduler->processes[i].priority;
+            printString(0xFFFFFF, "  ");
+            printString(0xFFFFFF, process.priority == 4 ? "HIGH" :
+                          process.priority == 3 ? "MEDH" :
+                          process.priority == 2 ? "MEDL" : "LOW ");
+            process.foreground = scheduler->processes[i].foreground;
+            printString(0xFFFFFF, "  ");
+            printString(0xFFFFFF, process.foreground ? "YES" : "NO ");
+            process.status = scheduler->processes[i].status;
+            printString(0xFFFFFF, "  ");
+            printString(0xFFFFFF, process.status == READY ? "READY" :
+                          process.status == RUNNING ? "RUNNING" :
+                          process.status == BLOCKED ? "BLOCKED" : "TERMINATED");
+            process.stackBase = scheduler->processes[i].stackBase;
+            printString(0xFFFFFF, "  ");
+            printHex((uint64_t)process.stackBase);
+            process.pPid = scheduler->processes[i].pPid;
+            printString(0xFFFFFF, "  ");
+            printInt(process.pPid);
             newLine();
+            processList[count++] = process;
         }
     }
-    newLine();
+    ProcessInfo emptyProcess;
+    emptyProcess.pid = -1;
+    processList[count] = emptyProcess; // Null-terminate the list
+   
+
+    
+    // newLine();
+    // for (int i = 0; i < MAX_PROCESSES; i++) {
+    //     if (scheduler->processes[i].status != TERMINATED) {
+            
+    //         printString(0xFFFFFF, "        ");
+    //         printString(0xFFFFFF, processInfo(&scheduler->processes[i]));
+    //         printString(0xFFFFFF, "        ");
+    //         printHex((uint64_t)scheduler->processes[i].stackPtr);
+            
+            
+    //         newLine();
+    //     }
+    // }
+    // newLine();
+
+    return processList;
+}
+
+uint64_t updatePriority(uint64_t pid, uint64_t newPriority){
+    Sched scheduler = getScheduler();
+    if(pid >= MAX_PROCESSES || scheduler->processes[pid].status == TERMINATED || newPriority > MAX_PRIORITY || newPriority < MIN_PRIORITY){
+        return -1;
+    }
+    scheduler->processes[pid].priority = newPriority;
+    //scheduler->processes[pid].timesToRun = ;
+    //return 0;
 
 }

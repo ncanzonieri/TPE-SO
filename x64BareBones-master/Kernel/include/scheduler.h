@@ -28,6 +28,16 @@ typedef struct Scheduler {
     //uint8_t killForeground;       // Flag to kill foreground process
 } Scheduler;
 
+typedef struct ProcessInfo {
+	uint64_t pid;
+	char name[MAX_LENGTH];
+	uint8_t priority;
+	char foreground;
+	pStatus status;
+	uint64_t* stackBase;
+	uint64_t pPid;
+} ProcessInfo;
+
 typedef struct Scheduler* Sched;
 
 Sched initScheduler();
@@ -41,7 +51,7 @@ void* scheduler(void* stackPtr);
 Process updateQuantum(void* stackPtr);
 uint64_t killProcess(uint64_t pid);
 uint64_t changePriority(uint64_t pid, uint8_t newPriority);
-void showProcessesStatus();
+ProcessInfo* showProcessesStatus();
 
 
 #endif // SCHEDULER_H

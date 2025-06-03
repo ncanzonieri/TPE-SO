@@ -19,6 +19,7 @@ void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8
     process->argv = argv;
     process->foreground = foreground;
     process->stackBase = myMalloc(STACK_SIZE);
+    process->status = READY;
     if (process->stackBase == NULL) {
         //error
         myFree(process->stackBase);

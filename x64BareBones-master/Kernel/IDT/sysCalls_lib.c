@@ -190,8 +190,7 @@ uint64_t sys_killProcess(uint64_t pid) {
 }
 
 uint64_t sys_showProcesses() {
-    showProcessesStatus();
-    return 1;
+    return (uint64_t) showProcessesStatus();
 }
 
 int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc){

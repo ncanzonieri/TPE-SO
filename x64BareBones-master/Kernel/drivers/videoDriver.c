@@ -186,6 +186,7 @@ void printInt(int num) {
         num /= 10;
     }
     buffer[i] = 0;
+	int length = i;
     i--;
     int j = 0;
     while (i > j) {
@@ -195,10 +196,8 @@ void printInt(int num) {
         i--;
         j++;
     }
-    buffer[i + 1] = '\n';
-    buffer[i + 2] = 0;
     printString(0xFFFFFF, buffer);
-    cx += (i + 2) * 8 * scale;
+    cx += (length) * 8 * scale;
     if (cx >= VBE_mode_info->width) {
         newLine();
     }

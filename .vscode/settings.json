@@ -17,6 +17,8 @@
         "vector": "c",
         "commands.h": "c",
         "time.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "process.h": "c",
+        "typeinfo": "c"
     }
 }

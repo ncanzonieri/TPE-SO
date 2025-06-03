@@ -2,8 +2,22 @@
 #define TPE_ARQ_SYSCALLS_H
 
 #include <stdint.h>
+#define MAX_LENGTH 32
 //#include "library.h"
 typedef int (*ProcessEntry)(uint64_t argc, char **argv);
+enum State { READY = 0, 
+    RUNNING, 
+    BLOCKED, 
+    TERMINATED, };
+typedef struct ProcessInfo {
+	uint64_t pid;
+	char name[MAX_LENGTH];
+	uint8_t priority;
+	char foreground;
+	enum State status;
+	uint64_t* stackBase;
+	uint64_t pPid;
+} ProcessInfo;
 
 
 /*

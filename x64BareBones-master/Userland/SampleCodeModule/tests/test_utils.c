@@ -57,14 +57,13 @@ void endless_loop() {
     ;
 }
 
-/*
+
 // Dummies
 void bussy_wait(uint64_t n) {
   uint64_t i;
   for (i = 0; i < n; i++)
     ;
 }
-
 void endless_loop_print(uint64_t wait) {
   int64_t pid = my_getpid();
 
@@ -73,4 +72,8 @@ void endless_loop_print(uint64_t wait) {
     bussy_wait(wait);
   }
 }
-*/
+
+uint64_t my_nice(uint64_t pid, uint64_t newPriority){
+  return sys_updatePriority(pid, newPriority);
+}
+
