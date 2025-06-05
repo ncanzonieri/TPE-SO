@@ -24,6 +24,7 @@ Sched getScheduler() {
 	return (Sched) SCHEDULER_ADDRESS;
 }
 
+
 int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc) {
 	Sched scheduler = getScheduler();
     int16_t availableIndex = scheduler->availableIndex;
@@ -42,9 +43,8 @@ int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntr
 	} else {
 		pPid = getPid();
 	}
-	
+	scheduler->currentPid = availableIndex;
     char** newArgv = copyArgs(argv, argc);
-
     initProcess(process, name, availableIndex, pPid, priority, foreground, newArgv, argc, func);
 
     for(uint64_t pid=0; pid < MAX_PROCESSES; pid++) {
@@ -223,6 +223,7 @@ static char** copyArgs(char** argv, int argc) {
 
 Process getProcess(uint64_t pid) {
 	Sched scheduler = getScheduler();
+   
 	for (int i = 0; i < MAX_PROCESSES; i++) {
 		if (scheduler->processes[i].pid == pid) {
 			return &scheduler->processes[i];

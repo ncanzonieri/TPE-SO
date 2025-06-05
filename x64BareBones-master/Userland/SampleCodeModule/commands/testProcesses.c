@@ -12,6 +12,8 @@ void testProcesses(){
 void testPriorities(){
     //char* argv[1];
     //argv[0] = "";
+    printf("pre testPriority %d\n", sys_getPid());
     sys_createProcess("testPriority", 1, 0, &test_prio, NULL, 0);
+    printf("post testPriority %d\n", sys_getPid());
 }
 
