@@ -8,7 +8,7 @@
 #include "./videoDriver.h"
 #include "./MemoryManagerADT.h"
 
-#define SCHEDULER_ADDRESS 0x600000
+#define SCHEDULER_ADDRESS 0x60000
 #define INIT_PID 0
 #define QUANTUM 1
 #define MAX_PROCESSES 20 //32

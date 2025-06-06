@@ -6,6 +6,9 @@ GLOBAL loadRegisters
 GLOBAL rtcDriver
 GLOBAL outb
 GLOBAL inb
+GLOBAL acquire
+GLOBAL release
+
 section .text
 
 cpuVendor:
@@ -105,6 +108,20 @@ inb:
 
     pop rdx
     ret
+
+; void acquire(uint8_t* lock)
+acquire:
+	mov al, 0
+.retry:
+	xchg [rdi], al
+	test al, al
+	jz .retry
+	ret
+
+; void release(uint8_t* lock)
+release:
+	mov byte [rdi], 1
+	ret
 
 
 section .data
