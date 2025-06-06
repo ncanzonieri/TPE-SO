@@ -23,7 +23,10 @@ GLOBAL sys_changePriority
 GLOBAL sys_blockProcess
 GLOBAL sys_unblockProcess
 GLOBAL sys_yield
-global sys_updatePriority
+GLOBAL sys_semOpen
+GLOBAL sys_semClose
+GLOBAL sys_semWait
+GLOBAL sys_semPost
 
 section .text
 
@@ -59,4 +62,7 @@ sys_changePriority: syscall 0x16
 sys_blockProcess: syscall 0x17
 sys_unblockProcess: syscall 0x18
 sys_yield: syscall 0x19
-;sys_updatePriority: syscall 0x1A
+sys_semOpen: syscall 0x1A
+sys_semClose: syscall 0x1B
+sys_semWait: syscall 0x1C
+sys_semPost: syscall 0x1D

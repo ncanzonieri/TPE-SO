@@ -6,6 +6,7 @@
 #include <time.h>
 #include <sysCalls.h>
 #include "../include/scheduler.h"
+#include "../include/semaphores.h"
 
 #define REGISTERS_DIM 16
 #define STDIN 0  
@@ -13,7 +14,7 @@
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
  PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE, DUMP, GET_PID, KILL_PROCESS, SHOW_PROCESSES, CREATE_PROCESS, 
- CHANGE_PRIORITY, BLOCK_PROCESS, UNBLOCK_PROCESS, YIELD };
+ CHANGE_PRIORITY, BLOCK_PROCESS, UNBLOCK_PROCESS, YIELD, SEM_OPEN, SEM_CLOSE, SEM_WAIT, SEM_POST };
 
 extern void loadRegisters();
 extern uint64_t* getRegisters();
@@ -74,6 +75,14 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_unblockProcess((uint64_t)otherRegs[0]);
         case YIELD:
             return sys_yield(); 
+        case SEM_OPEN:
+            return sys_semOpen((char*)otherRegs[0], otherRegs[1]);
+        case SEM_CLOSE:
+            return sys_semClose((char*)otherRegs[0]);
+        case SEM_WAIT:
+            return sys_semWait((char*)otherRegs[0]);
+        case SEM_POST:
+            return sys_semPost((char*)otherRegs[0]);
         default:
             return 0;
     }
@@ -213,4 +222,20 @@ uint64_t sys_unblockProcess(uint64_t pid){
 uint64_t sys_yield() {
     _yield();
     return 1;
+}
+
+int64_t sys_semOpen(char *semId, uint64_t initialValue) {
+    return semOpen(semId, initialValue);
+}
+
+int64_t sys_semClose(char *semId) {
+    return semClose(semId);
+}
+
+int64_t sys_semWait(char *semId) {
+    return semWait(semId);
+}
+
+int64_t sys_semPost(char *semId) {
+    return semPost(semId);
 }
