@@ -1,17 +1,30 @@
 #include "../include/process.h"
 #include "../include/scheduler.h"
 
-static void exit_process(int ret, unsigned int pid) {
+static void exit_process(int ret) {
+    Sched scheduler = getScheduler();
+    int64_t pid = getPid();
+    int64_t ppid = scheduler->processes[pid].pPid;
 	Process process = getProcess(pid);
 	process->retValue = ret;
-	killProcess(pid);
+    process->status = TERMINATED;
+    scheduler->processCount--;
+    myFree(process->stackBase);
+    myFree(process->argv);
+    if(ppid != INIT_PID) {
+        Process parent = getProcess(ppid);
+        if (parent && parent->status == BLOCKED && parent->wPid == pid) {
+            parent->status = READY;
+        }
+    }
+	//killProcess(pid);
 	_yield();
 }
 //wrapper de _start
 void runProcessWrapper(ProcessEntry func, char **argv, uint64_t argc) {
     int newArgc = argCount(argv);
     int ret = func(newArgc, argv);
-    exit_process(ret, getPid());
+    exit_process(ret);
 }
 
 void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func){

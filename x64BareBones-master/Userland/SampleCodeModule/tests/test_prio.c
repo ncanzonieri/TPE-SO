@@ -22,7 +22,7 @@ void test_prio() {
   int64_t pids[TOTAL_PROCESSES];
   char *argv[] = {"30000000"};
   uint64_t i;
-  printf("TESTING PRIORITIES, my pid: %d\n", sys_getPid());
+  //printf("TESTING PRIORITIES, my pid: %d\n", sys_getPid());
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
     pids[i] = sys_createProcess("endless_loop_print",1, FOREGROUND, &endless_loop_print, argv, 1);
@@ -55,8 +55,8 @@ void test_prio() {
     sys_killProcess(pids[i]);
 
   printf("TEST COMPLETED\n");
-  printf("EL PID es:%d ",sys_getPid());
+  //printf("EL PID es:%d ",sys_getPid());
 
-  sys_killProcess(sys_getPid()); // Kill the test process itself
-  printf("Process killed \n");
+  //sys_killProcess(sys_getPid()); // Kill the test process itself
+  //printf("Process killed \n");
 }

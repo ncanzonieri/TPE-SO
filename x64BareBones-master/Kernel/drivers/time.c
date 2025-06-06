@@ -4,13 +4,15 @@
 #include <string.h>
 #include <stdarg.h>
 #include <naiveConsole.h>
+#include <scheduler.h>
 #define DIM 400
 
 static unsigned long ticks = 0;
 
 uint64_t timer_handler(uint64_t rsp) {
 	ticks++;
-    return rsp; // por ahora no implementamos scheduler
+    rsp = (uint64_t) scheduler((void*) rsp);
+    return rsp;
 }
 
 int ticks_elapsed() {

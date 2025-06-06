@@ -160,12 +160,15 @@ _irq00Handler:
 	;irqHandlerMaster 0
 	pushState 1
 
-	mov rdi, 0 
-	call syscallDispatcher
-
-	mov rdi, rsp
-	call scheduler
+	mov rdi, 0
+	mov rsi, rsp
+	call irqDispatcher
 	mov rsp, rax
+
+	;mov rdi, rsp
+	;call scheduler
+	;mov rsp, rax
+
 	mov al, 20h
 	out 20h, al
 
