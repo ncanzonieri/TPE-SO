@@ -41,9 +41,9 @@ int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntr
 		pPid = process->pid;
 		// scheduler->nextPid++;
 	} else {
-		pPid = getPid();
+		pPid = scheduler->currentPid;
 	}
-	scheduler->currentPid = availableIndex;
+	// scheduler->currentPid = availableIndex;
     char** newArgv = copyArgs(argv, argc);
     initProcess(process, name, availableIndex, pPid, priority, foreground, newArgv, argc, func);
 
