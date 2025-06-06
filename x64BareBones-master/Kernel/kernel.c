@@ -9,6 +9,7 @@
 #include <MemoryManagerADT.h>
 #include <scheduler.h>
 #include <process.h>
+#include <semaphores.h>
 
 #define MEM_FOR_MM 0x100000
 //#define START_MM 0x600000
@@ -63,6 +64,7 @@ int main()
 	load_idt();
 	createMemoryManager((void*) START_MM, MEM_FOR_MM);
 	initScheduler();
+	//createSemManager();
 	createProcess("init", MIN_PRIORITY, 1, (ProcessEntry) &idle, NULL, 0);
 	createProcess("Shell", MAX_PRIORITY, 1, (ProcessEntry) sampleCodeModuleAddress, NULL, 0);
 	_sti();

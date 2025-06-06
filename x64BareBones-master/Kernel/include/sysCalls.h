@@ -183,4 +183,12 @@ uint64_t sys_waitForChildren();
 
 uint64_t sys_finishProcess(/*argumentos*/);
 
+int64_t sys_semOpen(char* semId, uint64_t initialValue);
+
+int64_t sys_semClose(char* semId);
+
+int64_t sys_semWait(char* semId);
+
+int64_t sys_semPost(char* semId);
+
 #endif

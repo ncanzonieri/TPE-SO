@@ -40,7 +40,7 @@ int addSem(Sem sem) {
     return -1;
 }
 
-Sem getSem(char *semId) {
+Sem getSem(char* semId) {
     SemManager semManager = getSemManager();
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
         if (semManager->semaphores[i] != NULL && myStrcmp(semManager->semaphores[i]->name, semId) == 0) {
@@ -60,11 +60,9 @@ static void deleteSem(Sem sem) {
     myFree(sem);
 }
 
-static int createSem(char *semId, uint64_t initialValue) {
+static int createSem(char* semId, uint64_t initialValue) {
     Sem sem = (Sem)myMalloc(sizeof(struct SemCDT));
-    if (sem == NULL) {
-        return -1;
-    }
+    if (sem == NULL) {  return -1;  }
 
     sem->mutex = 1;
     sem->name = (char *)myMalloc(myStrlen(semId) + 1);
@@ -86,21 +84,17 @@ static int createSem(char *semId, uint64_t initialValue) {
     return id;
 }
 
-int64_t semOpen(char *semId, uint64_t initialValue) {
+int64_t semOpen(char* semId, uint64_t initialValue) {
     Sem existing = getSem(semId);
-    if (existing != NULL) {
-        return existing->id;
-    }
+    if (existing != NULL) { return existing->id;    }
 
     int id = createSem(semId, initialValue);
     return id;
 }
 
-int64_t semWait(char *semId) {
+int64_t semWait(char* semId) {
     Sem sem = getSem(semId);
-    if (sem == NULL) {
-        return -1;
-    }
+    if (sem == NULL) {  return -1;  }
     acquire(&(sem->mutex));
     while (sem->value <= 0) {
         addLast(sem->waitingProcesses, (void *)getPid());
@@ -114,12 +108,10 @@ int64_t semWait(char *semId) {
     return 0;
 }
 
-int64_t semPost(char *semId) {
+int64_t semPost(char* semId) {
     SemManager semManager = getSemManager();
     Sem sem = getSem(semId);
-    if (sem == NULL) {
-        return -1;
-    }
+    if (sem == NULL) {  return -1;  }
     acquire(&(sem->mutex));
     semManager->semaphores[sem->id]->value += 1;
     Node *nextProcess = getFirst(sem->waitingProcesses);
@@ -131,14 +123,10 @@ int64_t semPost(char *semId) {
     return 0;
 }
 
-int64_t semClose(char *semId) {
+int64_t semClose(char* semId) {
     Sem sem = getSem(semId);
-    if (sem == NULL) {
-        return 2;
-    }
-    if (!isEmpty(sem->waitingProcesses)) {
-        return 1;
-    }
+    if (sem == NULL) {  return 2;   }
+    if (!isEmpty(sem->waitingProcesses)) {  return 1;   }
     acquire(&(sem->mutex));
     deleteSem(sem);
     return 0;

@@ -101,5 +101,10 @@ uint64_t sys_changePriority(uint64_t pid, uint8_t priority);
 uint64_t sys_blockProcess(uint64_t pid);
 uint64_t sys_unblockProcess(uint64_t pid);
 uint64_t sys_yield();
-//uint64_t sys_updatePriority(uint64_t pid, uint64_t newPriority);
+
+int64_t sys_semOpen(char* semId, uint64_t initialValue);
+int64_t sys_semClose(char* semId);
+int64_t sys_semWait(char* semId);
+int64_t sys_semPost(char* semId);
+
 #endif

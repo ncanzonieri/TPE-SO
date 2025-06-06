@@ -20,6 +20,10 @@
         "stdio.h": "c",
         "process.h": "c",
         "typeinfo": "c",
-        "test_utils.h": "c"
+        "test_utils.h": "c",
+        "semaphores.h": "c",
+        "linkedlist.h": "c",
+        "memorymanageradt.h": "c",
+        "videodriver.h": "c"
     }
 }
