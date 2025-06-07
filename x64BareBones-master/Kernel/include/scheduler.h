@@ -52,6 +52,6 @@ Process updateQuantum(void* stackPtr);
 uint64_t killProcess(uint64_t pid);
 uint64_t changePriority(uint64_t pid, uint8_t newPriority);
 ProcessInfo* showProcessesStatus();
-
+void killForegroundProcess();
 
 #endif // SCHEDULER_H

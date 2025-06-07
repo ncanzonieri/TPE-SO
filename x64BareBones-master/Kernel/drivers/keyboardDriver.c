@@ -1,5 +1,6 @@
 #include <keyboardDriver.h>
 #include <sysCalls.h>
+#include <scheduler.h>
 
 extern uint8_t getKeyCode();
 extern void loadRegisters();
@@ -56,13 +57,22 @@ static volatile uint64_t cpuRegisters[REGS_AMOUNT];
 static uint64_t registersAvailable = 0;
 
 int64_t keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
-      uint8_t scancode = getKeyCode();
+    uint8_t scancode = getKeyCode();
     handleSpecialKeys(scancode);
     char asciiChar = convertScancode(scancode);
 
     if(keyFlags.ctrl /*&& (asciiChar == 'r' || asciiChar == 'R')*/) {
-        registersAvailable = 1;
-        return registersAvailable;
+        if(asciiChar == 'r' || asciiChar == 'R') {
+            registersAvailable = 1;
+            return registersAvailable;
+        } else if (asciiChar == 'c' || asciiChar == 'C') {
+            _sys_write(1, "^C", 2, 0x00FFFFFF);
+            killForegroundProcess();
+        }else if (asciiChar == 'd' || asciiChar == 'D') {
+            _sys_write(1, "^D", 2, 0x00FFFFFF);
+            // send eof
+        }
+        
         //loadRegisters();
     } else if (asciiChar) {
         insertCharIntoBuffer(asciiChar);

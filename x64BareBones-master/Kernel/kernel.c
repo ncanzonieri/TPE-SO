@@ -65,8 +65,8 @@ int main()
 	createMemoryManager((void*) START_MM, MEM_FOR_MM);
 	initScheduler();
 	//createSemManager();
-	createProcess("init", MIN_PRIORITY, 1, (ProcessEntry) &idle, NULL, 0);
-	createProcess("Shell", MAX_PRIORITY, 1, (ProcessEntry) sampleCodeModuleAddress, NULL, 0);
+	createProcess("init    ", MIN_PRIORITY, 1, (ProcessEntry) &idle, NULL, 0);
+	createProcess("Shell   ", MAX_PRIORITY, 1, (ProcessEntry) sampleCodeModuleAddress, NULL, 0);
 	_sti();
 	while(1);
 

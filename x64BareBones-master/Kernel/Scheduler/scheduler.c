@@ -38,7 +38,7 @@ int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntr
 	
     uint64_t pPid;
     if(scheduler->availableIndex == INIT_PID) {
-		pPid = process->pid;
+		pPid = INIT_PID;
 		// scheduler->nextPid++;
 	} else {
 		pPid = scheduler->currentPid;
@@ -193,6 +193,7 @@ void* scheduler(void *stackPtr) {
     */
 }
 
+// no se usa
 Process updateQuantum(void *stackPtr) {
     Sched scheduler = getScheduler();
     Process currentProcess = &scheduler->processes[scheduler->currentPid];
@@ -271,38 +272,17 @@ static void updateAvailableIndex(Sched scheduler) {
 ProcessInfo* showProcessesStatus() {
     Sched scheduler = getScheduler();
 
-    newLine();
-    printString(0xFFFFFF, "PID        STAT             RSP                          RBP                       COMMAND");
-    newLine();
     int count = 0;
     for(int i = 0; i < MAX_PROCESSES; i++) {
         if (scheduler->processes[i].status != TERMINATED) {
             ProcessInfo process;
             process.pid = scheduler->processes[i].pid;
-            printInt(process.pid);
             myStrncpy(process.name, scheduler->processes[i].name, MAX_LENGTH);
-            printString(0xFFFFFF, "  ");
-            printString(0xFFFFFF, process.name);
             process.priority = scheduler->processes[i].priority;
-            printString(0xFFFFFF, "  ");
-            printString(0xFFFFFF, process.priority == 4 ? "HIGH" :
-                          process.priority == 3 ? "MEDH" :
-                          process.priority == 2 ? "MEDL" : "LOW ");
             process.foreground = scheduler->processes[i].foreground;
-            printString(0xFFFFFF, "  ");
-            printString(0xFFFFFF, process.foreground ? "YES" : "NO ");
             process.status = scheduler->processes[i].status;
-            printString(0xFFFFFF, "  ");
-            printString(0xFFFFFF, process.status == READY ? "READY" :
-                          process.status == RUNNING ? "RUNNING" :
-                          process.status == BLOCKED ? "BLOCKED" : "TERMINATED");
             process.stackBase = scheduler->processes[i].stackBase;
-            printString(0xFFFFFF, "  ");
-            printHex((uint64_t)process.stackBase);
             process.pPid = scheduler->processes[i].pPid;
-            printString(0xFFFFFF, "  ");
-            printInt(process.pPid);
-            newLine();
             processList[count++] = process;
         }
     }
@@ -328,6 +308,18 @@ ProcessInfo* showProcessesStatus() {
     // newLine();
 
     return processList;
+}
+
+void killForegroundProcess() {
+    if(!initialized){
+        return;
+    }
+    Sched scheduler = getScheduler();
+    for (int i = 2; i < MAX_PROCESSES; i++) {
+        if (scheduler->processes[i].foreground && scheduler->processes[i].status != TERMINATED) {
+            killProcess(scheduler->processes[i].pid);
+        }
+    }
 }
 
 // uint64_t updatePriority(uint64_t pid, uint64_t newPriority){
