@@ -24,7 +24,7 @@ static int belongs(char * v);
 //static void runCommands(int index);
 
 ////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
-static void (* runFuncts[])() = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake, sys_clearScreen,
+mainFunction_t runFuncts[] = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake, sys_clearScreen,
  testMM, memoryDump, ps, testProcesses, testPriorities};
 
 static void putUser(){
@@ -78,8 +78,47 @@ static void startShell(char * v){
     if( flag == ERROR ){
         sys_write(STDOUT_FD, "command not found, type 'help'\n",31, WHITE);
     }else{
-        runFuncts[flag]();
+        runFuncts[flag](0,NULL);
     }
+}
+
+static int parser(char * input, inputCommand_t * command){
+    if(input == NULL){
+        return ERROR;
+    }
+    int argCount = 0;
+    int foreground = 1;
+    char* copy = input;
+    command->name = input;
+    while(*copy==' '){
+        copy++;
+    }
+    char* command = copy;
+    while(*copy != '\0'){
+        if(*copy == '&' && (*(copy+1) == ' ' || *(copy+1) == '\0')){
+            foreground = 0;
+            *copy = '\0';
+            break;
+        }
+
+        if(*copy == ' '){
+            *copy = '\0';
+            while(*(copy+1) == ' '){
+                copy++;
+            }
+            if(*(copy+1) != '\0' && *(copy+1) != '&'){
+                command->args[argCount++] = copy + 1;
+                if(argCount >= MAX_ARGS){
+                    printf("Máximo de 3 argumentos alcanzado.\n");
+                    break;
+                }
+            }
+        }
+        copy++;
+    }
+    command->args[argCount] = NULL; // Terminar la lista de argumentos
+    command->argCount = argCount;
+    return argCount;
 }
 
 static int belongs(char * v){ 

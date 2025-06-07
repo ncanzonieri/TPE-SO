@@ -1,6 +1,41 @@
 
 #ifndef COMMANDS_H  // Prevenir la inclusión múltiple
 #define COMMANDS_H
+#define MAX_ARGS 3
+typedef int (*mainFunction_t)(int argc, char* argv[]);
+
+typedef struct inputCommand {
+    char* name;
+    char* args[MAX_ARGS+1];
+    int argCount;
+    int pid;
+} inputCommand_t;
+
+typedef struct command {
+    char* name;
+    char* description;
+    char foreground;
+    mainFunction_t function;
+} command_t;
+
+typedef enum {
+    DIVX0 = 0,
+    INVALID,
+    HELP,
+    TIME,
+    ZOOM_IN,
+    ZOOM_OUT,
+    REGISTERS,
+    AGRO,
+    DATE,
+    SNAKE,
+    CLEAR,
+    TEST_MM,
+    MEM_DUMP,
+    PS,
+    TEST_PROC,
+    TEST_PRIO,
+} commandId_t;
 
 // Declaración de funciones
 void help();          // Muestra la ayuda sobre los comandos disponibles
