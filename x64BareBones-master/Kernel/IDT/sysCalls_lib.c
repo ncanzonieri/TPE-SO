@@ -126,7 +126,7 @@ uint64_t _sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color) {
     if(fd != STDOUT) {
         return writePipe(fd, buffer, count);
     }
-    int fds[2];
+    int fds[2]={STDIN, STDOUT};
     getFDs(fds);
     if (fds[1] != STDOUT) {
         return writePipe(fds[1], buffer, count);

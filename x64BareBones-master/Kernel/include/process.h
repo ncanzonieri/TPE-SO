@@ -29,8 +29,8 @@ typedef struct processControlBlock{
     char** argv; // Arguments
     uint64_t argc; // Argument count
     int8_t retValue; // Return value
-    int16_t read;
-    int16_t write;
+    int read;
+    int write;
 } PCB;
 
 typedef struct processControlBlock* Process;

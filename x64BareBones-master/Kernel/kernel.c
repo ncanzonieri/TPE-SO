@@ -67,9 +67,10 @@ int main()
 	createScheduler();
 	createSemManager();
 	createPipeManager();
-	int16_t fds[] = {STDIN, STDOUT};
+	int fds[] = {STDIN, STDOUT};
 	createProcess("init    ", MIN_PRIORITY, 1, (ProcessEntry) &idle, NULL, 0, fds);
 	createProcess("Shell   ", MAX_PRIORITY, 1, (ProcessEntry) sampleCodeModuleAddress, NULL, 0, fds);
+	
 	_sti();
 	while(1);
 

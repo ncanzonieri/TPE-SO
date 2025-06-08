@@ -81,19 +81,19 @@ static void startShell(char * v){
     }
     inputCommand_t cmd;
     int foreground = parser(v, &cmd);
-    int index = belongs(cmd.name);
-    if(index < COMMANDS_COUNT && commands[index].processOrCommand){
-        cmd.pid = sys_createProcess(commands[index].name, 1, foreground, runFuncts[index], cmd.args, cmd.argCount, cmd.fds);
-        if(cmd.pid < 0){
-            sys_write(STDOUT_FD, "Error al crear el proceso.\n", 28, WHITE);
-            return;
-        }
-        if(foreground){
-            sys_waitForChildren(cmd.pid); //ACA QUE ONDA
-        }
-    }else{
-        runFuncts[index](0,NULL);
-    }
+    // int index = belongs(cmd.name);
+    // if(index < COMMANDS_COUNT && commands[index].processOrCommand){
+    //     cmd.pid = sys_createProcess(commands[index].name, 1, foreground, runFuncts[index], cmd.args, cmd.argCount, cmd.fds);
+    //     if(cmd.pid < 0){
+    //         sys_write(STDOUT_FD, "Error al crear el proceso.\n", 28, WHITE);
+    //         return;
+    //     }
+    //     if(foreground){
+    //         sys_waitForChildren(cmd.pid); //ACA QUE ONDA
+    //     }
+    // }else{
+    //     runFuncts[index](0,NULL);
+    // }
     
 }
 

@@ -75,7 +75,9 @@ uint16_t blockProcess(uint64_t pid) {
         if (scheduler->processes[pid].status == BLOCKED) {
             return 0;
         }
+        int flag = scheduler->processes[pid].status == RUNNING;
         scheduler->processes[pid].status = BLOCKED;
+        if(flag) _yield();
         return 1;
     }
     return 0;
@@ -320,8 +322,18 @@ ProcessInfo* showProcessesStatus() {
 }
 
 void getFDs(int* fds) {
+    if(!initialized){
+        fds[0] = STDIN;  // Default to standard input
+        fds[1] = STDOUT; // Default to standard output
+        return;
+    }
     Sched scheduler = getScheduler();
-	if (scheduler->currentPid == -1)    return;
+	if (scheduler->currentPid == -1){
+        fds[0] = STDIN;  // Default to standard input
+        fds[1] = STDOUT; // Default to standard output
+        return;
+    }
+
     fds[0] = scheduler->processes[scheduler->currentPid].read;
 	fds[1] = scheduler->processes[scheduler->currentPid].write;
 }
