@@ -35,6 +35,7 @@ typedef struct ProcessInfo {
 	char foreground;
 	pStatus status;
 	uint64_t* stackBase;
+	uint64_t* stackPtr;
 	uint64_t pPid;
 } ProcessInfo;
 

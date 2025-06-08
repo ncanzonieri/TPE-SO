@@ -294,6 +294,7 @@ ProcessInfo* showProcessesStatus() {
             process.status = scheduler->processes[i].status;
             process.stackBase = scheduler->processes[i].stackBase;
             process.pPid = scheduler->processes[i].pPid;
+            process.stackPtr = scheduler->processes[i].stackPtr;
             processList[count++] = process;
         }
     }
@@ -328,7 +329,7 @@ void getFDs(int* fds) {
         return;
     }
     Sched scheduler = getScheduler();
-	if (scheduler->currentPid == -1){
+	if (scheduler->currentPid <= 1){
         fds[0] = STDIN;  // Default to standard input
         fds[1] = STDOUT; // Default to standard output
         return;

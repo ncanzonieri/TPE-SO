@@ -151,7 +151,11 @@ static int parser(char * input, inputCommand_t * command){
                     return commands[j].function(inputCommands[i].argCount,inputCommands[i].args);
                 }
                 else{
-                    inputCommands[i].pid = sys_createProcess(inputCommands[i].name, 1, foreground,commands[j].function,inputCommands[i].args,0,inputCommands[i].fds);
+                    int* vector;
+                    vector[0] = inputCommands[i].fds[0];
+                    vector[1] = inputCommands[i].fds[1];
+                    inputCommands[i].pid = sys_createProcess(inputCommands[i].name, 1, foreground, commands[j].function, inputCommands[i].args, 
+                        inputCommands[i].argCount, vector);
 					if (inputCommands[i].pid == -1) {
                         printf("Error creating process.");
 						return ERROR;

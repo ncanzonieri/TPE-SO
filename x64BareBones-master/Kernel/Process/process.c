@@ -105,17 +105,15 @@ int64_t waitChildren(uint64_t pid) {
     if (scheduler == NULL || pid >= MAX_PROCESSES || pid == INIT_PID) {
         return -1;
     }
-    if(scheduler->processes[pid].pid == -1) {
-        return -1;
-    }
     if(scheduler->currentPid != scheduler->processes[pid].pPid) {
         return -1;
     }
-    if(scheduler->processes[pid].status != TERMINATED) {
-        scheduler->processes[scheduler->currentPid].wPid = pid;
-        blockProcess(scheduler->currentPid);
+    if(scheduler->processes[pid].status == TERMINATED) {
+        return -1;
     }
-    scheduler->processes[scheduler->currentPid].wPid = -1;
+    scheduler->processes[scheduler->currentPid].wPid = pid;
+    blockProcess(scheduler->currentPid);
+    scheduler->processes[scheduler->currentPid].wPid = INIT_PID;
     int64_t retValue = scheduler->processes[pid].retValue;
     return retValue;
 
