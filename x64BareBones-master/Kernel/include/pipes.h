@@ -6,7 +6,7 @@
 #include "../include/MemoryManagerADT.h"
 #include "../include/semaphores.h"
 
-#define MAX_PIPES 50
+#define MAX_PIPES 12
 #define PIPE_SIZE 1024 //1 byte de información
 #define STDIN 0  
 #define STDOUT 1

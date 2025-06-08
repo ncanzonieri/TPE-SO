@@ -44,6 +44,9 @@ typedef enum {
     INVALID_OPERATION
 } commandId_t;
 
+extern command_t commands[INVALID_OPERATION];
+
+/*
 command_t commands[INVALID_OPERATION] = {
     {"divx0", "Simula la excepión de dividir por 0.", 0, divx0},
     {"invalid", "Simula la excepción de código de operación inválida.", 0, invalid},
@@ -67,7 +70,7 @@ command_t commands[INVALID_OPERATION] = {
     {"block", "Bloquea un proceso por su PID.", 1, block},
     {"unblock", "Desbloquea un proceso por su PID.", 1, unblock}
     };
-
+*/
 // Declaración de funciones
 int help(int argc, char *argv[]);          // Muestra la ayuda sobre los comandos disponibles
 int snake(int argc, char *argv[]);         // Ejecuta el juego de la serpiente

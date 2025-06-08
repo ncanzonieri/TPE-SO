@@ -1,6 +1,6 @@
 #include <time.h>
 #include <commands.h>
-
+#include <powershell.h>
 #include <syscalls.h>
 #include <library.h>
 
@@ -21,6 +21,8 @@ void welcome();
 void getCommands();
 static void startShell(char * v);
 static commandId_t belongs(char * v);
+static int invalidCommand(int argc, char ** argv);
+static int parser(char * input, inputCommand_t * command);
 
 //static void runCommands(int index);
 
@@ -81,13 +83,13 @@ static void startShell(char * v){
     int foreground = parser(v, &cmd);
     int index = belongs(cmd.name);
     if(index < COMMANDS_COUNT && commands[index].processOrCommand){
-        cmd.pid=sys_createProcess(commands[index].name, 1, foreground, runFuncts[index], cmd.args, cmd.argCount);
+        cmd.pid = sys_createProcess(commands[index].name, 1, foreground, runFuncts[index], cmd.args, cmd.argCount, cmd.fds);
         if(cmd.pid < 0){
             sys_write(STDOUT_FD, "Error al crear el proceso.\n", 28, WHITE);
             return;
         }
         if(foreground){
-            sys_waitProcess(cmd.pid);
+            sys_waitForChildren(cmd.pid); //ACA QUE ONDA
         }
     }else{
         runFuncts[index](0,NULL);
@@ -149,7 +151,7 @@ static int parser(char * input, inputCommand_t * command){
                     return commands[j].function(inputCommands[i].argCount,inputCommands[i].args);
                 }
                 else{
-                    inputCommands[i].pid = _sys_createProcess(commands[j].function, inputCommands[i].args,inputCommands[i].name, 0, inputCommands[i].fds);
+                    inputCommands[i].pid = sys_createProcess(inputCommands[i].name, 1, foreground,commands[j].function,inputCommands[i].args,0,inputCommands[i].fds);
 					if (inputCommands[i].pid == -1) {
                         printf("Error creating process.");
 						return ERROR;
@@ -223,3 +225,27 @@ static commandId_t belongs(char * v){
     }
     return i;
 }
+
+command_t commands[INVALID_OPERATION] = {
+    {"divx0", "Simula la excepión de dividir por 0.", 0, divx0},
+    {"invalid", "Simula la excepción de código de operación inválida.", 0, invalid},
+    {"help", "Imprime la lista de los comandos disponibles y su descripción.", 0, help},
+    {"time", "Imprime hora actual en Buenos Aires.", 0, actualTime},
+    {"zoom", "Varía la escala del texto: <in> la aumenta, <out> la decrementa", 0, zoom},
+    {"registers", "Imprime los últimos registros cargados (se cargan con Ctrl+R).", 0, registers},
+    {"agro", "Imprime el escudo de Club Atlético Agropecuario.", 0, agro},
+    {"date", "Imprime fecha actual en Buenos Aires.", 0, actualDate},
+    {"snake", "Comienza el juego de snake." , 0, snake},
+    {"clear", "Limpia la pantalla.", 0, sys_clearScreen},
+    {"testMemM", "Test del memory manager.", 1, testMM},
+    {"mem", "Imprime el uso de memoria actual.", 1, memoryDump},
+    {"ps", "Imprime información sobre los procesos vivos al momento.", 1, ps},
+    {"testProc", "Test del scheduler.", 1, testProcesses},
+    {"testPrio", "Test de prioridades.", 1, testPriorities},
+    {"testSync", "Test de sincronización.", 1, testSync},
+    {"loop", "Imprime su ID con un saludo cada una determinada cantidad de segundos.", 1, loop},
+    {"kill", "Mata un proceso por su PID.", 1, kill},
+    {"nice", "Cambia la prioridad de un proceso dado su PID y nueva prioridad", 1, nice},
+    {"block", "Bloquea un proceso por su PID.", 1, block},
+    {"unblock", "Desbloquea un proceso por su PID.", 1, unblock}
+};

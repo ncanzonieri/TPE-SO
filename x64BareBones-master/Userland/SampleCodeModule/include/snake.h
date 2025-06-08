@@ -77,7 +77,7 @@ typedef struct appleStruct{
 }appleStruct;
 
 // Funciones del  Snake
-void snake();
+int snake(int argc, char *argv[]);
 void start();
 int welcomeSnake();
 

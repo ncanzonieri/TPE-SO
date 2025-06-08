@@ -23,9 +23,9 @@ void test_prio() {
   char *argv[] = {"10000000"};
   uint64_t i;
   //printf("TESTING PRIORITIES, my pid: %d\n", sys_getPid());
-
+  int fds[2] = {0, 1};
   for (i = 0; i < TOTAL_PROCESSES; i++)
-  pids[i] = sys_createProcess("loopPrnt",1, FOREGROUND, &endless_loop_print, argv, 1);
+  pids[i] = sys_createProcess("loopPrnt",1, FOREGROUND, &endless_loop_print, argv, 1, fds);
   bussy_wait(WAIT);
   printf("\nCHANGING PRIORITIES...\n");
 

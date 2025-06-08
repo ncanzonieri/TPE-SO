@@ -27,6 +27,7 @@
         "videodriver.h": "c",
         "pipes.h": "c",
         "bitset": "c",
-        "unordered_map": "c"
+        "unordered_map": "c",
+        "powershell.h": "c"
     }
 }

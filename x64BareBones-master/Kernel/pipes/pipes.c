@@ -2,7 +2,6 @@
 #include "../include/semaphores.h"
 #define BUILTIN_FDS 3 // STDIN, STDOUT, STDERR
 #define NAME_SIZE 32
-#define PIPE_SIZE 1024
 #define EOF -1
 
 typedef struct Pipe {

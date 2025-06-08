@@ -71,42 +71,40 @@ uint8_t setStatus(uint8_t newStatus) {
 
 uint16_t blockProcess(uint64_t pid) {
     Sched scheduler = getScheduler();
-    for (int i = 0; i < MAX_PROCESSES; i++) {
-        if (scheduler->processes[i].pid == pid && scheduler->processes[i].status != TERMINATED) {
-            if (scheduler->processes[i].status == BLOCKED) {
-                return 0;
-            }
-            scheduler->processes[i].status = BLOCKED;
-            return 1;
+    if (scheduler->processes[pid].status != TERMINATED) {
+        if (scheduler->processes[pid].status == BLOCKED) {
+            return 0;
         }
+        scheduler->processes[pid].status = BLOCKED;
+        return 1;
     }
     return 0;
 }
 
 uint16_t unblockProcess(uint64_t pid) {
     Sched scheduler = getScheduler();
-    for (int i = 0; i < MAX_PROCESSES; i++) {
-        if (scheduler->processes[i].pid == pid && scheduler->processes[i].status == BLOCKED) {
-            scheduler->processes[i].status = READY;
-            return 1;
-        }
+    if (scheduler->processes[pid].status == BLOCKED) {
+        scheduler->processes[pid].status = READY;
+        return 1;
     }
     return 0;
 }
 
 uint64_t killProcess(uint64_t pid) {
     Sched scheduler = getScheduler();
+    Process process = &scheduler->processes[pid];
+    Process parent = &scheduler->processes[process->pPid];
     if (pid <= INIT_PID || pid >= MAX_PROCESSES || scheduler->processes[pid].status == TERMINATED) {
         //error
         return 0;
     }
 
-    /*
+    
     if (parent != NULL && parent->status == BLOCKED &&
-		parent->waitingForPid == process->pid) {
+		parent->wPid == process->pid) {
 		unblockProcess(parent->pid);
 	}
-    */
+    
     scheduler->processes[pid].status = TERMINATED;
     scheduler->processCount--;
     myFree(scheduler->processes[pid].stackBase);

@@ -15,6 +15,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   uint8_t action;
   uint64_t max_processes;
   char *argvAux[] = {0};
+  int fds[2] = {0, 1};
 
   if (argc != 1)
     return -1;
@@ -28,7 +29,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
-      p_rqs[rq].pid = sys_createProcess("loopDud ", 1, FOREGROUND, &endless_loop, argvAux, 0);
+      p_rqs[rq].pid = sys_createProcess("loopDud ", 1, FOREGROUND, &endless_loop, argvAux, 0, fds);
       //printf("PID ACTUAL:%d ",p_rqs[rq].pid);
       if (p_rqs[rq].pid == -1) {
         printf("test_processes: ERROR creating process\n");

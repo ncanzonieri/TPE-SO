@@ -15,6 +15,7 @@ typedef struct ProcessInfo {
 	uint8_t priority;
 	char foreground;
 	enum State status;
+    uint64_t* stackPtr;
 	uint64_t* stackBase;
 	uint64_t pPid;
 } ProcessInfo;
@@ -96,7 +97,7 @@ uint64_t sys_memoryDump();
 uint64_t sys_getPid();
 uint64_t sys_killProcess(uint64_t pid);
 uint64_t sys_showProcesses();
-int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc);
+int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc, int * fds);
 uint64_t sys_changePriority(uint64_t pid, uint8_t priority);
 uint64_t sys_blockProcess(uint64_t pid);
 uint64_t sys_unblockProcess(uint64_t pid);

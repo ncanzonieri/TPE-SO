@@ -163,7 +163,7 @@ uint64_t sys_getPid();
  */
 uint64_t sys_killProcess(uint64_t pid);
 
-int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc);
+int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc, int * fds);
 
 uint64_t sys_blockProcess(uint64_t pid);
 

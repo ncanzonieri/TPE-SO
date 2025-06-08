@@ -102,21 +102,36 @@ char* processInfo(Process process) {
 
 int64_t waitChildren(uint64_t pid) {
     Sched scheduler = getScheduler();
-    if (pid == INIT_PID) {
+    if (scheduler == NULL || pid >= MAX_PROCESSES || pid == INIT_PID) {
         return -1;
     }
-    Process child = getProcess(pid);
-    if (child == NULL) {
+    if(scheduler->processes[pid].pid == -1) {
         return -1;
     }
-    Process parent = getProcess(child->pPid);
-    if (child->status != TERMINATED) {
-        parent->wPid = pid;
-        blockProcess(parent->pid);
-        _yield();
+    if(scheduler->currentPid != scheduler->processes[pid].pPid) {
+        return -1;
     }
-    int8_t retValue = child->retValue;
-    child->status = TERMINATED;
-    scheduler->processCount--;
+    if(scheduler->processes[pid].status != TERMINATED) {
+        scheduler->processes[scheduler->currentPid].wPid = pid;
+        blockProcess(scheduler->currentPid);
+    }
+    scheduler->processes[scheduler->currentPid].wPid = -1;
+    int64_t retValue = scheduler->processes[pid].retValue;
     return retValue;
+
+    // Process child = getProcess(pid);
+    // if (child == NULL) {
+    //     return -1;
+    // }
+    // Process parent = getProcess(child->pPid);
+    
+    // if (child->status != TERMINATED) {
+    //     parent->wPid = pid;
+    //     blockProcess(parent->pid);
+    //     //_yield();
+    // }
+    // int8_t retValue = child->retValue;
+    // child->status = TERMINATED;
+    // scheduler->processCount--;
+    // return retValue;
 }
