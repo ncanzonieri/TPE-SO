@@ -36,7 +36,6 @@ static void putUser(){
 }
 
 #define DEFAULT_SCALE 1
-static int foreground = 1;
 
 void welcome(){
     sys_clearScreen();
@@ -111,7 +110,7 @@ static int parser(char * input, inputCommand_t * command){
     for(int i = 0; i < 2; i++){
         inputCommands[i].pid = -1;
     }
-
+    int foreground = 1;
     char * pipe = strchr(input, '|');
     size_t commandsToExecute = pipe != NULL ? 2:1;
     if(pipe){
@@ -122,7 +121,7 @@ static int parser(char * input, inputCommand_t * command){
         }
     }
     for(int i = 0; i < commandsToExecute; i++){
-        inputCommands[i].argCount = commandArgs(&inputCommands[i].name,inputCommands[i].args,input);
+        foreground = foreground && commandArgs(&inputCommands[i],input);
         if(inputCommands[i].argCount == -1){return -1;}
         if(pipe) { input = pipe+1; }
     }
@@ -187,12 +186,13 @@ static int parser(char * input, inputCommand_t * command){
 	return 0; 
 }
 
-int commandArgs(char ** name, char * args[], char * input){
+int commandArgs(inputCommand_t* cmd, char * input){
+    int foreground = 1;
     char* copy = input;
     while(*copy == ' '){ 
         copy++;
     }
-    *name = copy;
+    cmd->name = copy;
     int argCount = 0;
     while(*copy != '\0'){
         if(*copy == '&' && (*(copy+1) == ' ' || *(copy+1) == '\0')){
@@ -206,7 +206,7 @@ int commandArgs(char ** name, char * args[], char * input){
                 copy++;
             }
             if(*(copy+1) != '\0' && *(copy+1) != '&'){
-                args[argCount++] = copy + 1;
+                cmd->args[argCount++] = copy + 1;
                 if(argCount >= MAX_ARGS){
                     printf("Máximo de 3 argumentos alcanzado.\n");
                     break;
@@ -215,8 +215,9 @@ int commandArgs(char ** name, char * args[], char * input){
         }
         copy++;
     }
-    args[argCount] = NULL; // Terminar la lista de argumentos
-    return argCount;
+    cmd->args[argCount] = NULL; // Terminar la lista de argumentos
+    cmd->argCount = argCount;
+    return foreground;
 }
 
 
