@@ -25,21 +25,7 @@ Node* addLast(LinkedList list, void *data) {
     return addNodeLast(list, newNode);
 }
 
-int deleteElement(LinkedList list, void *data) {
-    if (list == NULL) return -1;
-    startIter(list);
-    while (hasNext(list)) {
-        Node* current = list->curr;
-        list->curr = current->next;
-        if (current->data == data) {
-            removeNode(list, current);
-            return 0;
-        }
-    }
-    return -1;
-}
-
-Node* addNodeLast(LinkedList list, Node *node) {
+Node* addNodeLast(LinkedList list, Node* node) {
     if (list == NULL || node == NULL) return NULL;
     node->next = NULL;
     if (list->len > 0) {
@@ -53,33 +39,18 @@ Node* addNodeLast(LinkedList list, Node *node) {
     return node;
 }
 
-Node* addNodeFirst(LinkedList list, Node *node) {
-    if (list == NULL || node == NULL) return NULL;
-    node->prev = NULL;
-    if (list->len > 0) {
-        list->first->prev = node;
-    } else {
-        list->last = node;
+int deleteElement(LinkedList list, void *data) {
+    if (list == NULL) return -1;
+    startIter(list);
+    while (hasNext(list)) {
+        Node* current = list->curr;
+        list->curr = current->next;
+        if (current->data == data) {
+            removeNode(list, current);
+            return 0;
+        }
     }
-    node->next = list->first;
-    list->first = node;
-    list->len++;
-    return node;
-}
-
-Node* getFirst(LinkedList list) {
-    if (list == NULL) return NULL;
-    return list->first;
-}
-
-int isEmpty(LinkedList list) {
-    if (list == NULL) return -1;
-    return !list->len;
-}
-
-int getLength(LinkedList list) {
-    if (list == NULL) return -1;
-    return list->len;
+    return -1;
 }
 
 void* removeNode(LinkedList list, Node *node) {
@@ -103,6 +74,16 @@ void* removeNode(LinkedList list, Node *node) {
     return data;
 }
 
+Node* getFirst(LinkedList list) {
+    if (list == NULL) return NULL;
+    return list->first;
+}
+
+int isEmpty(LinkedList list) {
+    if (list == NULL) return -1;
+    return !list->len;
+}
+
 void startIter(LinkedList list) {
     if (list == NULL) return;
     list->curr = list->first;
@@ -111,13 +92,6 @@ void startIter(LinkedList list) {
 int hasNext(LinkedList list) {
     if (list == NULL) return -1;
     return list->curr != NULL;
-}
-
-void* getNext(LinkedList list) {
-    if (!hasNext(list)) return NULL;
-    void* data = list->curr->data;
-    list->curr = list->curr->next;
-    return data;
 }
 
 void freeLinkedList(LinkedList list) {

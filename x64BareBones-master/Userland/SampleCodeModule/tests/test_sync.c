@@ -38,11 +38,13 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
 
   uint64_t i;
   for (i = 0; i < n; i++) {
-    if (use_sem)
+    if (use_sem){
       sys_semWait(SEM_ID);
+    }
     slowInc(&global, inc);
-    if (use_sem)
+    if (use_sem){
       sys_semPost(SEM_ID);
+    }
   }
 
   if (use_sem)
@@ -54,7 +56,6 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
 uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
   int fds[2] = {0, 1};
-
   if (argc != 2)
     return -1;
 
@@ -70,8 +71,8 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   }
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    sys_semWait(pids[i]);
-    sys_semWait(pids[i + TOTAL_PAIR_PROCESSES]);
+    sys_waitForChildren(pids[i]);
+    sys_waitForChildren(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
   printf("Final value: %d\n", global);

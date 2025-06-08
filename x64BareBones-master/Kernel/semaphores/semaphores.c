@@ -4,7 +4,7 @@ struct SemCDT {
     int id;
     char *name;
     uint64_t value;
-    uint8_t mutex;
+    uint8_t lock;
     LinkedList waitingProcesses;
 };
 
@@ -50,7 +50,6 @@ Sem getSem(char* semId) {
     return NULL;
 }
 
-
 static void deleteSem(Sem sem) {
     SemManager semManager = getSemManager();
     semManager->semaphores[sem->id] = NULL;
@@ -60,12 +59,12 @@ static void deleteSem(Sem sem) {
     myFree(sem);
 }
 
-static int createSem(char* semId, uint64_t initialValue) {
-    Sem sem = (Sem)myMalloc(sizeof(struct SemCDT));
+int createSem(char* semId, uint64_t initialValue) {
+    Sem sem = (Sem) myMalloc(sizeof(struct SemCDT));
     if (sem == NULL) {  return -1;  }
 
-    sem->mutex = 1;
-    sem->name = (char *)myMalloc(myStrlen(semId) + 1);
+    sem->lock = 1;
+    sem->name = (char *) myMalloc(myStrlen(semId) + 1);
     if (sem->name == NULL) {
         myFree(sem);
         return -1;
@@ -85,8 +84,8 @@ static int createSem(char* semId, uint64_t initialValue) {
 }
 
 int64_t semOpen(char* semId, uint64_t initialValue) {
-    Sem existing = getSem(semId);
-    if (existing != NULL) { return existing->id;    }
+    Sem exists = getSem(semId);
+    if (exists != NULL) { return exists->id;    }
 
     int id = createSem(semId, initialValue);
     return id;
@@ -95,31 +94,30 @@ int64_t semOpen(char* semId, uint64_t initialValue) {
 int64_t semWait(char* semId) {
     Sem sem = getSem(semId);
     if (sem == NULL) {  return -1;  }
-    acquire(&(sem->mutex));
-    while (sem->value <= 0) {
-        addLast(sem->waitingProcesses, (void *)getPid());
+    acquire(&(sem->lock));
+    while (sem->value == 0) {
+        addLast(sem->waitingProcesses, (void *) (uintptr_t) getPid());
+        release(&(sem->lock));
         blockProcess(getPid());
-        release(&(sem->mutex));
         _yield();
-        acquire(&(sem->mutex));
+        acquire(&(sem->lock));
     }
     sem->value -= 1;
-    release(&(sem->mutex));
+    release(&(sem->lock));
     return 0;
 }
 
 int64_t semPost(char* semId) {
-    SemManager semManager = getSemManager();
     Sem sem = getSem(semId);
     if (sem == NULL) {  return -1;  }
-    acquire(&(sem->mutex));
-    semManager->semaphores[sem->id]->value += 1;
-    Node *nextProcess = getFirst(sem->waitingProcesses);
+    acquire(&(sem->lock));
+    sem->value += 1;
+    Node* nextProcess = getFirst(sem->waitingProcesses);
     if (nextProcess != NULL) {
-        deleteElement(sem->waitingProcesses, (void *)getPid());
-        unblockProcess((uint64_t)nextProcess->data);
+        deleteElement(sem->waitingProcesses, (void *) (uintptr_t) getPid());
+        unblockProcess((uint64_t) (uintptr_t) nextProcess->data);
     }
-    release(&(sem->mutex));
+    release(&(sem->lock));
     return 0;
 }
 
@@ -127,7 +125,7 @@ int64_t semClose(char* semId) {
     Sem sem = getSem(semId);
     if (sem == NULL) {  return 2;   }
     if (!isEmpty(sem->waitingProcesses)) {  return 1;   }
-    acquire(&(sem->mutex));
+    acquire(&(sem->lock));
     deleteSem(sem);
     return 0;
 }

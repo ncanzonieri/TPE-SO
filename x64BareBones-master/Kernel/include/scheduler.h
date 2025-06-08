@@ -41,7 +41,7 @@ typedef struct ProcessInfo {
 
 typedef struct Scheduler* Sched;
 
-Sched initScheduler();
+Sched createScheduler();
 Sched getScheduler();
 int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc, int* fds);
 Process getProcess(uint64_t pid);

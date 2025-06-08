@@ -96,7 +96,7 @@ uint64_t killProcess(uint64_t pid) {
     Sched scheduler = getScheduler();
     Process process = &scheduler->processes[pid];
     Process parent = &scheduler->processes[process->pPid];
-    if (pid <= INIT_PID || pid >= MAX_PROCESSES || scheduler->processes[pid].status == TERMINATED) {
+    if (pid <= INIT_PID + 1 || pid >= MAX_PROCESSES || scheduler->processes[pid].status == TERMINATED) {
         //error
         return 0;
     }

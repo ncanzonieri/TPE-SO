@@ -13,7 +13,7 @@ int loop(int argc, char **argv) {
 		return -1;
 	}
 	while (1) {
-		printf("Hi %d!", pid);
-		sys_sleep(ticks);
+		printf("Hi %d, ", pid);
+		sys_sleep(ticks * 1000);
 	}
 }

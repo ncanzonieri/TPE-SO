@@ -17,7 +17,7 @@ int testPriorities(int argc, char *argv[]){
 }
 
 int testSync(int argc, char *argv[]){
-    if(test_sync(argv, argc) == -1){
+    if(test_sync(argc, argv) == -1){
         printf("Error al inicializar testSync\n");
         return 1;
     }

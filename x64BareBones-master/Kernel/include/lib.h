@@ -19,7 +19,7 @@ int argCount(char** arr);
 int myStrcmp(const char *s1, const char *s2);
 char *cpuVendor(char *result);
 
-void acquire(uint8_t* lock);
-void release(uint8_t* lock);
+extern void acquire(uint8_t* lock);
+extern void release(uint8_t* lock);
 
 #endif

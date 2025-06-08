@@ -55,8 +55,4 @@ void test_prio() {
     sys_killProcess(pids[i]);
 
   printf("TEST COMPLETED\n");
-  //printf("EL PID es:%d ",sys_getPid());
-
-  //sys_killProcess(sys_getPid()); // Kill the test process itself
-  printf("Process killed \n");
 }
