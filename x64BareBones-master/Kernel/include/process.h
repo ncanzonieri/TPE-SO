@@ -29,13 +29,16 @@ typedef struct processControlBlock{
     char** argv; // Arguments
     uint64_t argc; // Argument count
     int8_t retValue; // Return value
+    int16_t read;
+    int16_t write;
 } PCB;
 
 typedef struct processControlBlock* Process;
 
-void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func);
+void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func, int* fds);
 uint64_t getPid();
 uint64_t getPpid();
 char* processInfo(Process process);
+int64_t waitChildren(uint64_t pid);
 
 #endif

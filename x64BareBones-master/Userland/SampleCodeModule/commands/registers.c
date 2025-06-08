@@ -20,14 +20,14 @@ static void hexaToAscii(uint64_t num, char* buffer){
     buffer[0]='0';
 }
 
-void registers(){
+int registers(int argc, char *argv[]){
     uint64_t r[REGS_AMOUNT];
     int flag = sys_getRegisters(r);
     if( !flag ){
         clearIfNotEnoughSpace(1);
         sys_write(STDOUT_FD,"error: wrong registers upload\n",31,0xFFFFFF);
 
-        return;
+        return 1;
     }
     char buffer[18];
     clearIfNotEnoughSpace(REGS_AMOUNT);
@@ -38,5 +38,5 @@ void registers(){
         sys_write(STDOUT_FD,buffer,18,0xFFFFFF);
         sys_write(STDOUT_FD,"\n",2,0xffffff);
     }
-return;
+    return 0;
 }

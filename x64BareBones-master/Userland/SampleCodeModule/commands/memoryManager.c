@@ -11,7 +11,7 @@ void myFree(void* ptr) {
     sys_free(ptr);
 }
 
-void memoryDump() {
+int memoryDump(int argc, char* argv[]) {
     uint64_t* memoryInfo = (uint64_t*) sys_memoryDump();
     uint64_t totalMemory = memoryInfo[0];
     uint64_t usedMemory = memoryInfo[1];
@@ -20,4 +20,5 @@ void memoryDump() {
     printf("Total Memory: %d bytes\n", totalMemory);
     printf("Used Memory: %d bytes\n", usedMemory);
     printf("Free Memory: %d bytes\n", freeMemory);
+    return 0;
 }

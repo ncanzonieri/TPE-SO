@@ -40,11 +40,11 @@ static void reset(int xPos, int yPos);
 static void startTitle();
 
 
-void snake(){
+int snake(int argc, char *argv[]){
     // sys_clearScreen();
     start(); 
     sys_clearScreen(); // finish = 1 y sale de start();
-    return;
+    return 0;
 }
 
 #define P1_DIM 1

@@ -179,7 +179,7 @@ uint64_t sys_changePriority(uint64_t pid, uint8_t priority);
 
 uint64_t sys_yield();
 
-uint64_t sys_waitForChildren();
+int64_t sys_waitForChildren(uint64_t pid);
 
 uint64_t sys_finishProcess(/*argumentos*/);
 
@@ -190,5 +190,10 @@ int64_t sys_semClose(char* semId);
 int64_t sys_semWait(char* semId);
 
 int64_t sys_semPost(char* semId);
+
+
+int64_t sys_createPipe(int fds[2]);
+
+int64_t sys_destroyPipe(int writeFd);
 
 #endif

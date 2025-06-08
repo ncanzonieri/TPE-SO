@@ -10,6 +10,7 @@
 #include <scheduler.h>
 #include <process.h>
 #include <semaphores.h>
+#include <pipes.h>
 
 #define MEM_FOR_MM 0x100000
 //#define START_MM 0x600000
@@ -63,10 +64,12 @@ int main()
 	_cli();
 	load_idt();
 	createMemoryManager((void*) START_MM, MEM_FOR_MM);
-	initScheduler();
-	//createSemManager();
-	createProcess("init    ", MIN_PRIORITY, 1, (ProcessEntry) &idle, NULL, 0);
-	createProcess("Shell   ", MAX_PRIORITY, 1, (ProcessEntry) sampleCodeModuleAddress, NULL, 0);
+	createScheduler();
+	createSemManager();
+	createPipeManager();
+	int16_t fds[] = {STDIN, STDOUT};
+	createProcess("init    ", MIN_PRIORITY, 1, (ProcessEntry) &idle, NULL, 0, fds);
+	createProcess("Shell   ", MAX_PRIORITY, 1, (ProcessEntry) sampleCodeModuleAddress, NULL, 0, fds);
 	_sti();
 	while(1);
 

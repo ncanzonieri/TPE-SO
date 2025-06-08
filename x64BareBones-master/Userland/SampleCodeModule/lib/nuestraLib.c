@@ -362,11 +362,36 @@ char *strncpy(char *dest, const char *src, int count)
 	return dest;
 }
 
+char *strchr(char * input, int character){
+    for(int i= 0;input[i] != 0; i++){
+        if(input[i] == character){
+            return (char *) &input[i];
+        }
+    }
+    return NULL;
+}
+
 static unsigned long int next = 1;
 
 
 int ownRand(int from, int to) {
   unsigned long long ticks = (unsigned long long) sys_ticks();
     return (from + (ticks % to));
+}
+
+int atoi(const char * input) {
+    int result = 0;
+    int signMultiplier = 1;
+
+    if (input[0] == '-') {
+        signMultiplier = -1;
+        input++;
+    }
+
+    for (int i = 0; input[i] != '\0' && input[i] >= '0' && input[i] <= '9'; i++) {
+        result = result * 10 + (input[i] - '0');
+    }
+
+    return result * signMultiplier;
 }
 

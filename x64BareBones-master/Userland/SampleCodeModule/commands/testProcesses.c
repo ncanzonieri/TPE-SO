@@ -3,21 +3,23 @@
 #include <syscalls.h>
 #include <stdio.h>
 
-void testProcesses(){
-    char* argv[1];
-    argv[0] = "16";
-    if(sys_createProcess("testProc", 1, 0, &test_processes, argv, 1) == -1){
+int testProcesses(int argc, char *argv[]){
+    if(test_processes(argc,argv) == -1){
         printf("Error al inicializar testProcesses\n");
+        return 1;
     };
+    return 0;
 }
 
-void testPriorities(){
-    //char* argv[1];
-    //argv[0] = "";
-    //printf("pre testPriority %d\n", sys_getPid());
-    if(sys_createProcess("testPrio", 1, 1, &test_prio, NULL, 0) == -1){
-        printf("Error al inicializar testPriority\n");
-    };
-    //printf("post testPriority %d\n", sys_getPid());
+int testPriorities(int argc, char *argv[]){
+    test_prio();
+    return 0;
 }
 
+int testSync(int argc, char *argv[]){
+    if(test_sync(argv, argc) == -1){
+        printf("Error al inicializar testSync\n");
+        return 1;
+    }
+    return 0;
+}

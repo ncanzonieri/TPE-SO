@@ -43,4 +43,6 @@ int readFromKeyboard(char * buffer);
 
 int ownRand(int from, int to);
 
+int atoi(const char * input);
+
 #endif

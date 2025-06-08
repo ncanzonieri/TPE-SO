@@ -2,11 +2,12 @@
 #include <test_utils.h>
 #include <commands.h>
 #include <syscalls.h>
+#define WHITE 0xffffff
 
-void testMM(){
-    uint64_t argc = 1;
-    char *argv[1];
-    argv[0] = "1048576"; // 1MB
-    if(test_mm(argc, argv)==-1)
-        sys_write(STDOUT_FD, "test_mm ERROR\n", 14, 0x00FF0000);
+int testMM(int argc, char *argv[]) {
+    if(test_mm(argc, argv) == -1){
+        sys_write(STDOUT_FD, "Error al ingresar argumentos: testMM espera <max_memory> positivo.\n",68, WHITE);
+        return 1;
+    }
+    return 0;
 }

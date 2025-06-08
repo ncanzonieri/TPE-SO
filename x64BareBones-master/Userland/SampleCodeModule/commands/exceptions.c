@@ -1,6 +1,7 @@
 #include <commands.h>
+#include <syscalls.h>
 
-void divx0() {
+int divx0(int argc, char *argv[]) {
     int a, b, c;
     a = 0;
     b = 1;
@@ -9,7 +10,7 @@ void divx0() {
 }
 
 
-void invalid(){
+int invalid(int argc, char *argv[]){
     invalidOperation();
     // codOpInvalidASM(); // se hace en asm
 }

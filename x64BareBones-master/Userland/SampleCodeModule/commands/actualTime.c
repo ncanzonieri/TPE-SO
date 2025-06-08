@@ -15,7 +15,7 @@ static int bisiesto(int anio) {
     return (anio%4 == 0 && anio%100!= 0) || anio%400 == 0;
 }
 
-void actualTime(){
+int actualTime(int argc, char *argv[]){
     uint64_t sec=sys_getTime(SEC);
     uint64_t min=sys_getTime(MIN);
     uint64_t hour=sys_getTime(HOUR);
@@ -31,9 +31,10 @@ void actualTime(){
     }
     clearIfNotEnoughSpace(1);
     sys_write(STDOUT_FD, time,10, 0x00ffffff);
+    return 0;
 }
 
-void actualDate(){
+int actualDate(int argc, char *argv[]){
     uint64_t year=sys_getTime(YEAR);
     uint64_t month=sys_getTime(MONTH);
     uint64_t day=sys_getTime(DAY);
@@ -66,4 +67,5 @@ void actualDate(){
     }
     clearIfNotEnoughSpace(1);
     sys_write(STDOUT_FD, date,12, 0x00ffffff);
+    return 0;
 }

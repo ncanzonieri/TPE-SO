@@ -1,11 +1,12 @@
 #include "scheduler.h"
+#include "../include/pipes.h"
 
 static char** copyArgs(char** argv, int argc);
 static void updateAvailableIndex(Sched scheduler);
 static int initialized = 0;
 static ProcessInfo processList[MAX_PROCESSES+1];
 
-Sched initScheduler() {
+Sched createScheduler() {
 	Sched scheduler = (Sched) SCHEDULER_ADDRESS;
     for (int i = 0; i < MAX_PROCESSES; i++) {
         scheduler->processes[i].status = TERMINATED;
@@ -25,7 +26,7 @@ Sched getScheduler() {
 }
 
 
-int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc) {
+int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc, int * fds) {
 	Sched scheduler = getScheduler();
     int16_t availableIndex = scheduler->availableIndex;
 	if (scheduler->processCount == MAX_PROCESSES || availableIndex == MAX_PROCESSES) {
@@ -45,7 +46,7 @@ int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntr
 	}
 	// scheduler->currentPid = availableIndex;
     char** newArgv = copyArgs(argv, argc);
-    initProcess(process, name, availableIndex, pPid, priority, foreground, newArgv, argc, func);
+    initProcess(process, name, availableIndex, pPid, priority, foreground, newArgv, argc, func, fds);
 
     for(uint64_t pid=0; pid < MAX_PROCESSES; pid++) {
         if(scheduler->processes[pid].status == TERMINATED) {
@@ -100,6 +101,12 @@ uint64_t killProcess(uint64_t pid) {
         return 0;
     }
 
+    /*
+    if (parent != NULL && parent->status == BLOCKED &&
+		parent->waitingForPid == process->pid) {
+		unblockProcess(parent->pid);
+	}
+    */
     scheduler->processes[pid].status = TERMINATED;
     scheduler->processCount--;
     myFree(scheduler->processes[pid].stackBase);
@@ -112,6 +119,10 @@ uint64_t killProcess(uint64_t pid) {
     }
     if (scheduler->availableIndex > pid) {
         scheduler->availableIndex = pid;
+    }
+
+    if(scheduler->processes[pid].write != STDOUT){
+        sendEOF(scheduler->processes[pid].write);
     }
 
     if (scheduler->currentPid == pid) {
@@ -308,6 +319,13 @@ ProcessInfo* showProcessesStatus() {
     // newLine();
 
     return processList;
+}
+
+void getFDs(int* fds) {
+    Sched scheduler = getScheduler();
+	if (scheduler->currentPid == -1)    return;
+    fds[0] = scheduler->processes[scheduler->currentPid].read;
+	fds[1] = scheduler->processes[scheduler->currentPid].write;
 }
 
 void killForegroundProcess() {

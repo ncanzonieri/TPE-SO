@@ -18,6 +18,7 @@ GLOBAL sys_memoryDump
 GLOBAL sys_getPid
 GLOBAL sys_killProcess
 GLOBAL sys_showProcesses
+GLOBAL sys_waitForChildren
 GLOBAL sys_createProcess
 GLOBAL sys_changePriority
 GLOBAL sys_blockProcess
@@ -27,6 +28,8 @@ GLOBAL sys_semOpen
 GLOBAL sys_semClose
 GLOBAL sys_semWait
 GLOBAL sys_semPost
+GLOBAL sys_createPipe
+GLOBAL sys_destroyPipe
 
 section .text
 
@@ -66,3 +69,6 @@ sys_semOpen: syscall 0x1A
 sys_semClose: syscall 0x1B
 sys_semWait: syscall 0x1C
 sys_semPost: syscall 0x1D
+sys_waitForChildren: syscall 0x1E
+sys_createPipe: syscall 0x1F
+sys_destroyPipe: syscall 0x20

@@ -1,5 +1,6 @@
 #include "../include/process.h"
 #include "../include/scheduler.h"
+#include "../include/pipes.h"
 
 static void exit_process(int ret) {
     Sched scheduler = getScheduler();
@@ -11,6 +12,9 @@ static void exit_process(int ret) {
     scheduler->processCount--;
     myFree(process->stackBase);
     myFree(process->argv);
+    if(process->write != STDOUT) {
+        sendEOF(process->write);
+    }
     if(ppid != INIT_PID) {
         Process parent = getProcess(ppid);
         if (parent && parent->status == BLOCKED && parent->wPid == pid) {
@@ -27,7 +31,7 @@ void runProcessWrapper(ProcessEntry func, char **argv, uint64_t argc) {
     exit_process(ret);
 }
 
-void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func){
+void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8_t priority, char foreground, char** argv, int argc, ProcessEntry func, int * fds){
     myStrncpy(process->name, name, sizeof(process->name));
     process->pid = pid;
 	process->pPid = ppid;
@@ -38,6 +42,8 @@ void initProcess(Process process, char* name, uint64_t pid, uint64_t ppid, uint8
     process->foreground = foreground;
     process->stackBase = myMalloc(STACK_SIZE);
     process->status = READY;
+    process->read = fds[0];
+    process->write = fds[1];
     if (process->stackBase == NULL) {
         //error
         myFree(process->stackBase);
@@ -92,4 +98,25 @@ char* processInfo(Process process) {
         myStrncpy(status + myStrlen(status), "I", 14 - myStrlen(status));
     }
     return status;
+}
+
+int64_t waitChildren(uint64_t pid) {
+    Sched scheduler = getScheduler();
+    if (pid == INIT_PID) {
+        return -1;
+    }
+    Process child = getProcess(pid);
+    if (child == NULL) {
+        return -1;
+    }
+    Process parent = getProcess(child->pPid);
+    if (child->status != TERMINATED) {
+        parent->wPid = pid;
+        blockProcess(parent->pid);
+        _yield();
+    }
+    int8_t retValue = child->retValue;
+    child->status = TERMINATED;
+    scheduler->processCount--;
+    return retValue;
 }

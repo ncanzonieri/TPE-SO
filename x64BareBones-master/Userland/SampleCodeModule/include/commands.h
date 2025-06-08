@@ -9,12 +9,13 @@ typedef struct inputCommand {
     char* args[MAX_ARGS+1];
     int argCount;
     int pid;
+    int fds[2];
 } inputCommand_t;
 
 typedef struct command {
     char* name;
     char* description;
-    char foreground;
+    char processOrCommand;
     mainFunction_t function;
 } command_t;
 
@@ -23,8 +24,7 @@ typedef enum {
     INVALID,
     HELP,
     TIME,
-    ZOOM_IN,
-    ZOOM_OUT,
+    ZOOM,
     REGISTERS,
     AGRO,
     DATE,
@@ -35,23 +35,59 @@ typedef enum {
     PS,
     TEST_PROC,
     TEST_PRIO,
+    TEST_SYNC,
+    LOOP,
+    KILL,
+    NICE,
+    BLOCK,
+    UNBLOCK,
+    INVALID_OPERATION
 } commandId_t;
 
+command_t commands[INVALID_OPERATION] = {
+    {"divx0", "Simula la excepión de dividir por 0.", 0, divx0},
+    {"invalid", "Simula la excepción de código de operación inválida.", 0, invalid},
+    {"help", "Imprime la lista de los comandos disponibles y su descripción.", 0, help},
+    {"time", "Imprime hora actual en Buenos Aires.", 0, actualTime},
+    {"zoom", "Varía la escala del texto: <in> la aumenta, <out> la decrementa", 0, zoom},
+    {"registers", "Imprime los últimos registros cargados (se cargan con Ctrl+R).", 0, registers},
+    {"agro", "Imprime el escudo de Club Atlético Agropecuario.", 0, agro},
+    {"date", "Imprime fecha actual en Buenos Aires.", 0, actualDate},
+    {"snake", "Comienza el juego de snake." , 0, snake},
+    {"clear", "Limpia la pantalla.", 0, sys_clearScreen},
+    {"testMemM", "Test del memory manager.", 1, testMM},
+    {"mem", "Imprime el uso de memoria actual.", 1, memoryDump},
+    {"ps", "Imprime información sobre los procesos vivos al momento.", 1, ps},
+    {"testProc", "Test del scheduler.", 1, testProcesses},
+    {"testPrio", "Test de prioridades.", 1, testPriorities},
+    {"testSync", "Test de sincronización.", 1, testSync},
+    {"loop", "Imprime su ID con un saludo cada una determinada cantidad de segundos.", 1, loop},
+    {"kill", "Mata un proceso por su PID.", 1, kill},
+    {"nice", "Cambia la prioridad de un proceso dado su PID y nueva prioridad", 1, nice},
+    {"block", "Bloquea un proceso por su PID.", 1, block},
+    {"unblock", "Desbloquea un proceso por su PID.", 1, unblock}
+    };
+
 // Declaración de funciones
-void help();          // Muestra la ayuda sobre los comandos disponibles
-void snake();         // Ejecuta el juego de la serpiente
-void registers();     // Muestra el estado de los registros
-void invalid();  // Maneja el caso de operación inválida
-void divx0();        // Maneja la excepción de división por cero
-void zoomIn();       // Realiza el acercamiento
-void zoomOut();      // Realiza el alejamiento
-void actualTime();         // Muestra el tiempo actual
-void actualDate();         // Muestra la fecha de hoy
-extern void invalidOperation();
-void agro(); // imprime escudo de un equipo de futbol
-void testMM(); // testea el memory manager
-void memoryDump(); // imprime el estado de la memoria
-void ps(); // imprime los procesos en ejecución
-void testProcesses(); // Testea la creación de procesos
-void testPriorities(); // Testea cambio de prioridades
+int help(int argc, char *argv[]);          // Muestra la ayuda sobre los comandos disponibles
+int snake(int argc, char *argv[]);         // Ejecuta el juego de la serpiente
+int registers(int argc, char *argv[]);     // Muestra el estado de los registros
+int invalid(int argc, char *argv[]);  // Maneja el caso de operación inválida
+int divx0(int argc, char *argv[]);        // Maneja la excepción de división por cero
+int zoom(int argc, char *argv[]);       // Aumenta o disminuye la escala del texto
+int actualTime(int argc, char *argv[]);         // Muestra el tiempo actual
+int actualDate(int argc, char *argv[]);         // Muestra la fecha de hoy
+extern void invalidOperation(); // función de assembler que maneja una operación inválida
+int agro(int argc, char *argv[]); // imprime escudo de un equipo de futbol
+int testMM(int argc, char *argv[]); // testea el memory manager
+int memoryDump(int argc, char *argv[]); // imprime el estado de la memoria
+int ps(int argc, char *argv[]); // imprime los procesos en ejecución
+int testProcesses(int argc, char *argv[]); // Testea la creación de procesos
+int testPriorities(int argc, char *argv[]); // Testea cambio de prioridades
+int testSync(int argc, char *argv[]); // Testea la sincronización entre procesos
+int loop(int argc, char *argv[]); //  Imprime su ID con un saludo cada una determinada cantidad de segundos.
+int kill(int argc, char *argv[]); // Mata un proceso dado su PID
+int nice(int argc, char *argv[]); // Cambia la prioridad de un proceso dado su PID y nueva prioridad
+int block(int argc, char *argv[]); // Bloquea un proceso dado su PID
+int unblock(int argc, char *argv[]); // Desbloquea un proceso dado su PID
 #endif // COMMANDS_H

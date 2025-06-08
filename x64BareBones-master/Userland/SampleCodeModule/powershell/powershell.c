@@ -11,7 +11,7 @@
 #define CERO 0
 #define ESC 27
 #define TAB 9
-#define COMMANDS_COUNT 16 
+#define COMMANDS_COUNT 22 
 #define GREEN 0x66FF66 // Font Scale
 #define WHITE 0xFFFFFF
 #define ERROR -1
@@ -20,24 +20,27 @@
 void welcome();
 void getCommands();
 static void startShell(char * v);
-static int belongs(char * v);
+static commandId_t belongs(char * v);
+
 //static void runCommands(int index);
 
 ////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
-mainFunction_t runFuncts[] = {divx0, invalid, help, actualTime, zoomIn, zoomOut, registers, agro, actualDate, snake, sys_clearScreen,
- testMM, memoryDump, ps, testProcesses, testPriorities};
+mainFunction_t runFuncts[] = {divx0, invalid, help, actualTime, zoom, registers, agro, actualDate, snake, 
+sys_clearScreen, testMM, memoryDump, ps, testProcesses, testPriorities, testSync, loop, kill, nice, block, unblock,
+invalidCommand};
 
 static void putUser(){
-  sys_write(STDOUT_FD, "la-maquina$>",13,GREEN);
+  sys_write(STDOUT_FD, "la-maquina-del-mal$>",21,GREEN);
 }
 
 #define DEFAULT_SCALE 1
+static int foreground = 1;
 
 void welcome(){
     sys_clearScreen();
     sys_setFontScale(DEFAULT_SCALE);
-    sys_write(STDOUT_FD,"Today's date is: ",18,0x00ffffff);
-    actualDate();
+    sys_write(STDOUT_FD,"Hoy es: ",9,0x00ffffff);
+    actualDate(0,NULL);
 }
 //uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
 //uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color)
@@ -74,40 +77,130 @@ static void startShell(char * v){
     if( *v == 0){ 
         return;
     }
-    int flag = belongs(v);
-    if( flag == ERROR ){
-        sys_write(STDOUT_FD, "command not found, type 'help'\n",31, WHITE);
+    inputCommand_t cmd;
+    int foreground = parser(v, &cmd);
+    int index = belongs(cmd.name);
+    if(index < COMMANDS_COUNT && commands[index].processOrCommand){
+        cmd.pid=sys_createProcess(commands[index].name, 1, foreground, runFuncts[index], cmd.args, cmd.argCount);
+        if(cmd.pid < 0){
+            sys_write(STDOUT_FD, "Error al crear el proceso.\n", 28, WHITE);
+            return;
+        }
+        if(foreground){
+            sys_waitProcess(cmd.pid);
+        }
     }else{
-        runFuncts[flag](0,NULL);
+        runFuncts[index](0,NULL);
     }
+    
+}
+
+static int invalidCommand(int argc, char ** argv){
+    sys_write(STDOUT_FD, "Comando desconocido. Use 'help' para conocer los disponibles.\n", 55, WHITE);
+    return 0;
 }
 
 static int parser(char * input, inputCommand_t * command){
     if(input == NULL){
         return ERROR;
     }
-    int argCount = 0;
-    int foreground = 1;
+
+    inputCommand_t inputCommands[2]; //dos comandos máximo
+    for(int i = 0; i < 2; i++){
+        inputCommands[i].pid = -1;
+    }
+
+    char * pipe = strchr(input, '|');
+    size_t commandsToExecute = pipe != NULL ? 2:1;
+    if(pipe){
+        *pipe = 0;
+        if(strchr(pipe+1,'|')){
+            printf("Solo está permitido un pipe\n");
+            return ERROR;
+        }
+    }
+    for(int i = 0; i < commandsToExecute; i++){
+        inputCommands[i].argCount = commandArgs(&inputCommands[i].name,inputCommands[i].args,input);
+        if(inputCommands[i].argCount == -1){return -1;}
+        if(pipe) { input = pipe+1; }
+    }
+    
+    if(pipe){
+        int fds[2];
+        if(sys_createPipe(fds) == -1){
+            printf("Error al crear pipe");
+            return ERROR;
+        }
+        inputCommands[0].fds[1] = fds[1];
+        inputCommands[0].fds[0] = STDIN_FD;
+        inputCommands[1].fds[0] = fds[0];
+        inputCommands[1].fds[1] = STDOUT_FD;
+    } else {
+        inputCommands[0].fds[0] = foreground ? STDIN_FD : -1;
+        inputCommands[0].fds[1] = STDOUT_FD;
+    }
+    for(int i = 0; i < commandsToExecute;i++){
+        uint8_t flag = 0;
+        for(int j = 0; j < INVALID_OPERATION;j++){
+            if(strcmp(inputCommands[i].name,commands[j].name) == 0){
+                flag = 1;
+                
+                if(!commands[j].processOrCommand){
+                    return commands[j].function(inputCommands[i].argCount,inputCommands[i].args);
+                }
+                else{
+                    inputCommands[i].pid = _sys_createProcess(commands[j].function, inputCommands[i].args,inputCommands[i].name, 0, inputCommands[i].fds);
+					if (inputCommands[i].pid == -1) {
+                        printf("Error creating process.");
+						return ERROR;
+					}
+                }break;
+            }
+        }
+        if(!flag){
+            printf( "Command not found.");
+			for (int j = 0; j < commandsToExecute; j++) {
+				if (inputCommands[j].pid != -1) {
+					sys_killProcess(inputCommands[j].pid);
+				}
+			}
+			return ERROR;
+        }
+        
+    }
+    if (foreground) {
+		for (int i = 0; i < commandsToExecute; i++) {
+			if (inputCommands[i].pid != -1) {
+				sys_waitForChildren(inputCommands[i].pid);
+			}
+		}
+		if (pipe) {
+			sys_destroyPipe(inputCommands[0].fds[1]);
+		}
+	}
+	return 0; 
+}
+
+int commandArgs(char ** name, char * args[], char * input){
     char* copy = input;
-    command->name = input;
-    while(*copy==' '){
+    while(*copy == ' '){ 
         copy++;
     }
-    char* command = copy;
+    *name = copy;
+    int argCount = 0;
     while(*copy != '\0'){
         if(*copy == '&' && (*(copy+1) == ' ' || *(copy+1) == '\0')){
             foreground = 0;
             *copy = '\0';
             break;
         }
-
         if(*copy == ' '){
             *copy = '\0';
             while(*(copy+1) == ' '){
                 copy++;
             }
             if(*(copy+1) != '\0' && *(copy+1) != '&'){
-                command->args[argCount++] = copy + 1;
+                args[argCount++] = copy + 1;
                 if(argCount >= MAX_ARGS){
                     printf("Máximo de 3 argumentos alcanzado.\n");
                     break;
@@ -116,17 +209,17 @@ static int parser(char * input, inputCommand_t * command){
         }
         copy++;
     }
-    command->args[argCount] = NULL; // Terminar la lista de argumentos
-    command->argCount = argCount;
+    args[argCount] = NULL; // Terminar la lista de argumentos
     return argCount;
 }
 
-static int belongs(char * v){ 
-    char * commands[COMMANDS_COUNT] = {"divx0", "invalid", "help", "time", "zoomIn", "zoomOut", "registers", "agro","date","snake", "clear", "testMM", "mem","ps", "testPro","testPrio"};
-    for( int i=0; i < COMMANDS_COUNT; i++){
-        if( strcmp(v, commands[i]) == 0){
+
+static commandId_t belongs(char * v){ 
+    commandId_t i;
+    for( i=0; i < INVALID_OPERATION; i++){
+        if( strcmp(v, commands[i].name) == 0){
             return i;
         }
     }
-return ERROR;
+    return i;
 }

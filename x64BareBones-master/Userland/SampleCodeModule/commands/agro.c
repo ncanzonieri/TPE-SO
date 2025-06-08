@@ -56,10 +56,10 @@ static char* m[] = {
 
 
 
-void agro(){
+int agro(int argc, char *argv[]){
     sys_clearScreen();
     for (int i = 0; i < 51; i++) {
         sys_write(1,m[i],strlen(m[i])+1,WHITE);
     }
-return;
+    return 0;
 }

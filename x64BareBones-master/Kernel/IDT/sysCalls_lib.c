@@ -7,6 +7,7 @@
 #include <sysCalls.h>
 #include "../include/scheduler.h"
 #include "../include/semaphores.h"
+#include "../include/pipes.h"
 
 #define REGISTERS_DIM 16
 #define STDIN 0  
@@ -14,10 +15,11 @@
 enum syscallsList { READ=0, WRITE, DRAW_RECTANGLE, CLEAR_SCREEN, GET_COORDS,
  GET_SCREEN_INFO, GET_SCALE, GET_TIME, SET_SCALE, GET_REGISTERS, SLEEP,
  PLAY_SOUND, SET_BGCOLOR, GET_BGCOLOR, TICKS, MALLOC, FREE, DUMP, GET_PID, KILL_PROCESS, SHOW_PROCESSES, CREATE_PROCESS, 
- CHANGE_PRIORITY, BLOCK_PROCESS, UNBLOCK_PROCESS, YIELD, SEM_OPEN, SEM_CLOSE, SEM_WAIT, SEM_POST };
+ CHANGE_PRIORITY, BLOCK_PROCESS, UNBLOCK_PROCESS, YIELD, SEM_OPEN, SEM_CLOSE, SEM_WAIT, SEM_POST, WAIT_CHILDREN,
+ CREATE_PIPE, DESTROY_PIPE };
 
-extern void loadRegisters();
-extern uint64_t* getRegisters();
+extern void loadRegisters();   //
+extern uint64_t* getRegisters(); //  REVISAR ESTAS DOS FUNCIONES
 
 uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
     switch(rax){
@@ -66,7 +68,7 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
         case SHOW_PROCESSES:
             return sys_showProcesses();
         case CREATE_PROCESS:
-            return sys_createProcess((char*)otherRegs[0], (uint8_t)otherRegs[1], (char)otherRegs[2], (ProcessEntry)otherRegs[3], (char**)otherRegs[4], (int)otherRegs[5]);
+            return sys_createProcess((char*)otherRegs[0], (uint8_t)otherRegs[1], (char)otherRegs[2], (ProcessEntry)otherRegs[3], (char**)otherRegs[4], (int)otherRegs[5], (int *)otherRegs[6]);
         case CHANGE_PRIORITY:
             return sys_changePriority((uint64_t)otherRegs[0], (uint8_t)otherRegs[1]);
         case BLOCK_PROCESS:
@@ -83,35 +85,55 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
             return sys_semWait((char*)otherRegs[0]);
         case SEM_POST:
             return sys_semPost((char*)otherRegs[0]);
+        case WAIT_CHILDREN:
+            return sys_waitForChildren(otherRegs[0]);
+        case CREATE_PIPE:
+            return sys_createPipe((int*)otherRegs[0]);
+        case DESTROY_PIPE:
+            return sys_destroyPipe((int)otherRegs[0]);
         default:
             return 0;
     }
 }
 
+
 //USO BUFFER DE KEYBOARD2.C SE LO PASO COMO PARAMETRO
 uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
-    if(fd != STDIN)
-        return 0;
-
-    int i = 0;
-    for(; i < count;i++){
-        char c = getKeyboardChar();
-        if(c == 0){
-            return i; //cuantos caracteres fueron leidos
-        }
-        //sino cargo en mi buffer 
-        buffer[i] = c;
+    
+    if(fd < 0 || count <= 0){ return -1; }
+    if(fd != STDIN){
+       return readPipe(fd, (char*)buffer, count);
     }
-    return count;
+    int fds[2];
+    getFDs(fds);
+    if (fds[0] != STDIN) {
+        return readPipe(fds[0], (char*)buffer, count);
+    } else {
+        for (int i = 0; i < count; i++) {
+            char c = getKeyboardChar();
+            if (c == 0) {
+                return i; //cuantos caracteres fueron leidos
+            }
+            buffer[i] = c;
+        }
+        return count;
+    }
 }
 
 uint64_t _sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color) {
-    // STDOUT is the only file descriptor supported so far
-    if (fd == STDOUT) {
-        return printStringLength(color, buffer,count);
+    if (fd < 1 || count <= 0)
+		return -1;
+    if(fd != STDOUT) {
+        return writePipe(fd, buffer, count);
     }
-    return 0;
+    int fds[2];
+    getFDs(fds);
+    if (fds[1] != STDOUT) {
+        return writePipe(fds[1], buffer, count);
+    }
+    return printStringLength(color, buffer, count);
 }
+
 
 uint64_t sys_drawRectangle(uint32_t hexColor, uint64_t x, uint64_t y, uint64_t width, uint64_t height) {
     drawRectangle(hexColor, x, y, width, height);
@@ -202,13 +224,17 @@ uint64_t sys_showProcesses() {
     return (uint64_t) showProcessesStatus();
 }
 
-int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc){
-    int64_t pid = createProcess(name, priority, foreground, func, argv, argc);
+int64_t sys_createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc, int * fds){
+    int64_t pid = createProcess(name, priority, foreground, func, argv, argc, fds);
     return pid;
 }
 
 uint64_t sys_changePriority(uint64_t pid, uint8_t priority){
     return changePriority(pid, priority);
+}
+
+int64_t sys_waitForChildren(uint64_t pid) {
+    return waitChildren(pid);
 }
 
 uint64_t sys_blockProcess(uint64_t pid){
@@ -238,4 +264,13 @@ int64_t sys_semWait(char *semId) {
 
 int64_t sys_semPost(char *semId) {
     return semPost(semId);
+}
+
+int64_t sys_createPipe(int fds[2]) {
+	return createPipe(fds);
+}
+
+int64_t sys_destroyPipe(int writeFd) {
+	destroyPipe(writeFd);
+	return 1;
 }

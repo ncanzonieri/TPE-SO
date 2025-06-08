@@ -21,11 +21,18 @@ static void zoomAux(int inc){
     
 }
 
-void zoomIn(){
-    zoomAux(1);
+int zoom(int argc, char* argv[]){
+    if(argc != 1){
+        printf("Usage: zoom <in|out>\n");
+        return 1;
+    }
+    if(strcmp(argv[0], "in") == 0){
+        zoomAux(1);
+    }else if(strcmp(argv[0], "out") == 0){
+        zoomAux(-1);
+    }else{
+        printf("Invalid argument. Use 'in' or 'out'.\n");
+        return 1;
+    }
+    return 0;
 }
-
-void zoomOut(){
-    zoomAux(-1);
-}
-

@@ -99,3 +99,47 @@ int myStrcmp(const char *s1, const char *s2) {
     return (int)(*(const unsigned char *)s1 - *(const unsigned char *)s2);
 }
 
+char* myItoa(int num, char* str) {
+    uint64_t i = 0;
+    int isNegative = 0;
+    if (num < 0) {
+        isNegative = 1;
+        num = -num;
+    }
+    if (num == 0) {
+        str[i++] = '0';
+    } else {
+        while (num != 0) {
+            str[i++] = (num % 10) + '0';
+            num /= 10;
+        }
+    }
+    if (isNegative) {
+        str[i++] = '-';
+    }
+    str[i] = '\0';
+    uint64_t start = 0;
+    uint64_t end = i - 1;
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+    return str;
+}
+
+uint64_t myStrcat(char* dest, const char* src) {
+    uint64_t destLen = 0;
+    while (dest[destLen] != '\0') {
+        destLen++;
+    }
+    uint64_t i = 0;
+    while (src[i] != '\0') {
+        dest[destLen + i] = src[i];
+        i++;
+    }
+    dest[destLen + i] = '\0';
+    return destLen + i;
+}

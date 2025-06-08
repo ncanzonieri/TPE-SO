@@ -24,6 +24,9 @@
         "semaphores.h": "c",
         "linkedlist.h": "c",
         "memorymanageradt.h": "c",
-        "videodriver.h": "c"
+        "videodriver.h": "c",
+        "pipes.h": "c",
+        "bitset": "c",
+        "unordered_map": "c"
     }
 }

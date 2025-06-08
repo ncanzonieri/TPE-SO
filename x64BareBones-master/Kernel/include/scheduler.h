@@ -42,7 +42,7 @@ typedef struct Scheduler* Sched;
 
 Sched initScheduler();
 Sched getScheduler();
-int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc);
+int64_t createProcess(char* name, uint8_t priority, char foreground, ProcessEntry func, char** argv, int argc, int* fds);
 Process getProcess(uint64_t pid);
 uint8_t setStatus(uint8_t newStatus);
 uint16_t blockProcess(uint64_t pid);
@@ -52,6 +52,7 @@ Process updateQuantum(void* stackPtr);
 uint64_t killProcess(uint64_t pid);
 uint64_t changePriority(uint64_t pid, uint8_t newPriority);
 ProcessInfo* showProcessesStatus();
+void getFDs(int* fds);
 void killForegroundProcess();
 
 #endif // SCHEDULER_H
