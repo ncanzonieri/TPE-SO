@@ -11,7 +11,7 @@
 #define CERO 0
 #define ESC 27
 #define TAB 9
-#define COMMANDS_COUNT 22 
+#define COMMANDS_COUNT 25 
 #define GREEN 0x66FF66 // Font Scale
 #define WHITE 0xFFFFFF
 #define ERROR -1
@@ -26,10 +26,37 @@ static int parser(char * input, inputCommand_t * command);
 
 //static void runCommands(int index);
 
+command_t commands[INVALID_OPERATION] = {
+    {"divx0", "Simula la excepion de dividir por 0.", 0, divx0},
+    {"invalid", "Simula la excepcion de codigo de operación invalida.", 0, invalid},
+    {"help", "Imprime la lista de los comandos disponibles y su descripcion.", 0, help},
+    {"time", "Imprime hora actual en Buenos Aires.", 0, actualTime},
+    {"zoom", "Varia la escala del texto: <in> la aumenta, <out> la decrementa", 0, zoom},
+    {"registers", "Imprime los ultimos registros cargados (se cargan con Ctrl+R).", 0, registers},
+    {"agro", "Imprime el escudo de Club Atletico Agropecuario.", 0, agro},
+    {"date", "Imprime fecha actual en Buenos Aires.", 0, actualDate},
+    {"snake", "Comienza el juego de snake." , 0, snake},
+    {"clear", "Limpia la pantalla.", 0, sys_clearScreen},
+    {"testMem", "Test del memory manager.", 1, testMM},
+    {"mem", "Imprime el uso de memoria actual.", 1, memoryDump},
+    {"ps", "Imprime informacion sobre los procesos vivos al momento.", 1, ps},
+    {"testProc", "Test del scheduler.", 1, testProcesses},
+    {"testPrio", "Test de prioridades.", 1, testPriorities},
+    {"testSync", "Test de sincronizacion.", 1, testSync},
+    {"loop", "Imprime su ID con un saludo cada una determinada cantidad de segundos.", 1, loop},
+    {"kill", "Mata un proceso por su PID.", 1, kill},
+    {"nice", "Cambia la prioridad de un proceso dado su PID y nueva prioridad", 1, nice},
+    {"block", "Bloquea un proceso por su PID.", 1, block},
+    {"unblock", "Desbloquea un proceso por su PID.", 1, unblock},
+    {"cat", "Imprime el contenido de la entrada estandar.", 1, cat},
+    {"wc", "Cuenta las lineas de la entrada estandar.", 1, wc},
+    {"filter", "Filtra las vocales de la entrada estandar.", 1, filter}
+};
+
 ////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
 mainFunction_t runFuncts[] = {divx0, invalid, help, actualTime, zoom, registers, agro, actualDate, snake, 
 sys_clearScreen, testMM, memoryDump, ps, testProcesses, testPriorities, testSync, loop, kill, nice, block, unblock,
-invalidCommand};
+invalidCommand, cat, wc, filter};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina-del-mal$>",21,GREEN);
@@ -230,27 +257,3 @@ static commandId_t belongs(char * v){
     }
     return i;
 }
-
-command_t commands[INVALID_OPERATION] = {
-    {"divx0", "Simula la excepión de dividir por 0.", 0, divx0},
-    {"invalid", "Simula la excepción de código de operación inválida.", 0, invalid},
-    {"help", "Imprime la lista de los comandos disponibles y su descripción.", 0, help},
-    {"time", "Imprime hora actual en Buenos Aires.", 0, actualTime},
-    {"zoom", "Varía la escala del texto: <in> la aumenta, <out> la decrementa", 0, zoom},
-    {"registers", "Imprime los últimos registros cargados (se cargan con Ctrl+R).", 0, registers},
-    {"agro", "Imprime el escudo de Club Atlético Agropecuario.", 0, agro},
-    {"date", "Imprime fecha actual en Buenos Aires.", 0, actualDate},
-    {"snake", "Comienza el juego de snake." , 0, snake},
-    {"clear", "Limpia la pantalla.", 0, sys_clearScreen},
-    {"testMemM", "Test del memory manager.", 1, testMM},
-    {"mem", "Imprime el uso de memoria actual.", 1, memoryDump},
-    {"ps", "Imprime información sobre los procesos vivos al momento.", 1, ps},
-    {"testProc", "Test del scheduler.", 1, testProcesses},
-    {"testPrio", "Test de prioridades.", 1, testPriorities},
-    {"testSync", "Test de sincronización.", 1, testSync},
-    {"loop", "Imprime su ID con un saludo cada una determinada cantidad de segundos.", 1, loop},
-    {"kill", "Mata un proceso por su PID.", 1, kill},
-    {"nice", "Cambia la prioridad de un proceso dado su PID y nueva prioridad", 1, nice},
-    {"block", "Bloquea un proceso por su PID.", 1, block},
-    {"unblock", "Desbloquea un proceso por su PID.", 1, unblock}
-};

@@ -1,6 +1,7 @@
 #include <keyboardDriver.h>
 #include <sysCalls.h>
 #include <scheduler.h>
+#include <pipes.h>
 
 extern uint8_t getKeyCode();
 extern void loadRegisters();
@@ -70,7 +71,9 @@ int64_t keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
             killForegroundProcess();
         }else if (asciiChar == 'd' || asciiChar == 'D') {
             _sys_write(1, "^D", 2, 0x00FFFFFF);
-            // send eof
+            //    return -1;//sendEOF(i);
+            insertCharIntoBuffer(-1);
+            
         }
         
         //loadRegisters();

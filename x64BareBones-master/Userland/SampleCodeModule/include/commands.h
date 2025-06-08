@@ -41,6 +41,9 @@ typedef enum {
     NICE,
     BLOCK,
     UNBLOCK,
+    CAT,
+    WC,
+    FILTER,
     INVALID_OPERATION
 } commandId_t;
 
@@ -93,4 +96,9 @@ int kill(int argc, char *argv[]); // Mata un proceso dado su PID
 int nice(int argc, char *argv[]); // Cambia la prioridad de un proceso dado su PID y nueva prioridad
 int block(int argc, char *argv[]); // Bloquea un proceso dado su PID
 int unblock(int argc, char *argv[]); // Desbloquea un proceso dado su PID
+int cat(int argc, char *argv[]); // Imprime el stdin tal como lo recibe
+int wc(int argc, char *argv[]); // Cuenta las lineas del stdin
+int filter(int argc, char *argv[]); // Imprime el stdin filtrando las vocales
+
+
 #endif // COMMANDS_H

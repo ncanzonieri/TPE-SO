@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define EOF -1
+
 typedef int (*ProcessEntry)(uint64_t argc, char **argv);
 
 void clearIfNotEnoughSpace(int linesItNeeds);
