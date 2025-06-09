@@ -99,7 +99,7 @@ int philosopher(int argc, char **argv) {
             eat();
             putForks(i);   
         }
-        printStatus();
+       // printStatus();
     }
     return 0;
 }
@@ -139,6 +139,7 @@ void removePhilo(int i) {
         return;
     }
     sys_semWait(mutex);
+<<<<<<< Updated upstream
     int right = (i + 1) % philoCount;
     int left = (i + philoCount - 1) % philoCount;
     while(philosophers[left].state == EATING && philosophers[right].state == EATING) {
@@ -150,6 +151,22 @@ void removePhilo(int i) {
     sys_killProcess(philosophers[i].pid);
     printf("Rip filosofo %d\n", philoCount);
     philoCount--;
+=======
+    int idx = philoCount - 1;
+//    int left = (idx + philoCount - 1) % philoCount;
+//    int right = (idx + 1) % philoCount;
+
+    while (philosophers[idx].state == EATING) {
+        sys_semPost(mutex);
+        sys_sleep(100);
+        sys_semWait(mutex);
+    }
+
+    sys_semClose(forkNames[idx]);
+    sys_killProcess(philosophers[idx].pid);
+    philoCount--;
+    printf("Rip filosofo %d\n", philoCount + 1);
+>>>>>>> Stashed changes
     printStatus();
     sys_semPost(mutex);
 }
