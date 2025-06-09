@@ -39,5 +39,6 @@ Tener instalado los siguientes programas:
 
 - Existen tres niveles de escala: la mínima es 1, la intermedia es 2, y la máxima es 3. Se aumenta o se disminuye a de a uno.
 
+- El compilador.sh necesita el nombre de un contenedor existente como primer argumento. Si se desea usar el sistema "Buddy" como manejo de memoria, agregar como segundo argumento "MM=BUDDY"
 
 - Usamos el TGDB para hacer seguimiento de registros, stack y memoria.

@@ -40,7 +40,7 @@ typedef struct ProcessInfo {
 /*
  * getRegisters data
  */
-#define REGS_AMOUNT 17
+//#define REGS_AMOUNT 17
 
 enum registers_idx {
     RAX_IDX = 0,
@@ -85,6 +85,8 @@ uint64_t sys_setFontScale(uint64_t scale);
 uint64_t sys_getRegisters(uint64_t * regs);
 
 uint64_t sys_sleep(uint64_t millis);
+
+uint64_t sys_ticks();
 
 uint64_t sys_playSound(uint64_t f, uint64_t millis);
 

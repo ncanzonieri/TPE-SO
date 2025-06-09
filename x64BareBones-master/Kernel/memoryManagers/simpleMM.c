@@ -1,6 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#ifndef BUDDY_MM
+#ifndef BUDDY
 
 #include <MemoryManagerADT.h>
 #include <stddef.h>
@@ -44,6 +44,7 @@ memoryStats_t *memDump() {
 	memoryStats.totalMemory = MAX_BLOCKS * BLOCK_SIZE;
 	memoryStats.usedMemory = usedMemory;
 	memoryStats.freeMemory = (MAX_BLOCKS * BLOCK_SIZE) - usedMemory;
+	memoryStats.isBuddy = 0;
 	return &memoryStats;
 }
 

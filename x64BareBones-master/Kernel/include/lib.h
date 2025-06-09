@@ -19,6 +19,8 @@ int argCount(char** arr);
 int myStrcmp(const char *s1, const char *s2);
 char *cpuVendor(char *result);
 
+uint8_t log2(uint64_t inputSize);
+
 extern void acquire(uint8_t* lock);
 extern void release(uint8_t* lock);
 

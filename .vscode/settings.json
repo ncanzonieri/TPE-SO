@@ -28,6 +28,9 @@
         "pipes.h": "c",
         "bitset": "c",
         "unordered_map": "c",
-        "powershell.h": "c"
+        "powershell.h": "c",
+        "cmath": "c",
+        "buddy.h": "c",
+        "complex": "c"
     }
 }

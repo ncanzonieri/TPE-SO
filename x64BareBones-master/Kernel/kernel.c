@@ -13,7 +13,6 @@
 #include <pipes.h>
 
 #define MEM_FOR_MM 0x100000
-//#define START_MM 0x600000
 #define START_MM 0xF00000
 
 extern uint8_t text;

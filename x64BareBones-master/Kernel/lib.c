@@ -143,3 +143,14 @@ uint64_t myStrcat(char* dest, const char* src) {
     dest[destLen + i] = '\0';
     return destLen + i;
 }
+
+uint8_t log2(uint64_t inputSize) {
+    unsigned int levelCount = 0;
+    uint64_t currentValue = 1;
+    while (currentValue < inputSize) {
+        currentValue *= 2;
+        levelCount++;
+    }
+    return levelCount;
+}
+

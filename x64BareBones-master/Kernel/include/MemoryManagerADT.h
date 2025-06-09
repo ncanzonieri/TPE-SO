@@ -3,13 +3,17 @@
 
 #include <stdint.h>
 
-#define MEM_SIZE 1048576
+#define MM_ADDRESS 0x600000
+#define MEM_SIZE 0x100000
 #define MIN_SIZE 32
+#define MIN_LEVEL 1
+#define MAX_LEVEL 24
 
 typedef struct memoryStats {
 	uint64_t totalMemory;
 	uint64_t usedMemory;
 	uint64_t freeMemory;
+	uint64_t isBuddy;
 } memoryStats_t;
 
 void createMemoryManager(void *startAddress, uint32_t memorySize);

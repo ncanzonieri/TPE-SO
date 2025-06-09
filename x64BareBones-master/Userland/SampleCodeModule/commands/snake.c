@@ -261,7 +261,7 @@ return;
 int welcomeSnake(){
     printf("Welcome to Snake\n");
     printf("Number of players: 1 o 2\n");
-    char game;
+    char game = '0';
     while (game != '1' && game != '2') {
         game = getChar();
     }

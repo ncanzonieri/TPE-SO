@@ -66,7 +66,6 @@ int strlen(const char * s) {
     return i;
 } 
 
-
 char getChar(){
     uint8_t c;
     int size = 0;
@@ -371,7 +370,7 @@ char *strchr(char * input, int character){
     return NULL;
 }
 
-static unsigned long int next = 1;
+//static unsigned long int next = 1;
 
 
 int ownRand(int from, int to) {

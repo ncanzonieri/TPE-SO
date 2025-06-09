@@ -2,7 +2,7 @@
 #include "../include/pipes.h"
 
 static char** copyArgs(char** argv, int argc);
-static void updateAvailableIndex(Sched scheduler);
+//static void updateAvailableIndex(Sched scheduler);
 static int initialized = 0;
 static ProcessInfo processList[MAX_PROCESSES+1];
 
@@ -269,16 +269,16 @@ Process getProcess(uint64_t pid) {
 	return NULL;
 }
 
-static void updateAvailableIndex(Sched scheduler) {
-	int16_t availableIndex = -1;
-	for (int i = 0; i < MAX_PROCESSES; i++) {
-		if (scheduler->processes[i].status == TERMINATED) {
-			availableIndex = i;
-			break;
-		}
-	}
-	scheduler->availableIndex = availableIndex;
-}
+// static void updateAvailableIndex(Sched scheduler) {
+// 	int16_t availableIndex = -1;
+// 	for (int i = 0; i < MAX_PROCESSES; i++) {
+// 		if (scheduler->processes[i].status == TERMINATED) {
+// 			availableIndex = i;
+// 			break;
+// 		}
+// 	}
+// 	scheduler->availableIndex = availableIndex;
+// }
 
 ProcessInfo* showProcessesStatus() {
     Sched scheduler = getScheduler();

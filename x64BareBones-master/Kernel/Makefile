@@ -34,7 +34,11 @@ $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_DRI
 	$(LD) $(LDFLAGS) -T kernel.ld --oformat=elf64-x86-64 -o kernel.elf $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(STATICLIBS) $(OBJECTS_DRIVERS) $(OBJECTS_IDT) $(OBJECTS_MM) $(OBJECTS_PROCESS) $(OBJECTS_SCHEDULER) $(OBJECTS_LIST) $(OBJECTS_SEMAPHORE) $(OBJECTS_PIPE)
 
 %.o: %.c
+ifeq ($(MM), BUDDY)
+	$(GCC) $(GCCFLAGS) -DBUDDY -I./include -c $< -o $@
+else
 	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
+endif
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
