@@ -395,3 +395,33 @@ int atoi(const char * input) {
     return result * signMultiplier;
 }
 
+char* itoa(int num, char* str) {
+    uint64_t i = 0;
+    int isNegative = 0;
+    if (num < 0) {
+        isNegative = 1;
+        num = -num;
+    }
+    if (num == 0) {
+        str[i++] = '0';
+    } else {
+        while (num != 0) {
+            str[i++] = (num % 10) + '0';
+            num /= 10;
+        }
+    }
+    if (isNegative) {
+        str[i++] = '-';
+    }
+    str[i] = '\0';
+    uint64_t start = 0;
+    uint64_t end = i - 1;
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+    return str;
+}

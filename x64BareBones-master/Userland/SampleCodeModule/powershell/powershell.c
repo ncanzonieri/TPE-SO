@@ -50,7 +50,8 @@ command_t commands[INVALID_OPERATION] = {
     {"unblock", "Desbloquea un proceso por su PID.", 1, unblock},
     {"cat", "Imprime el contenido de la entrada estandar.", 1, cat},
     {"wc", "Cuenta las lineas de la entrada estandar.", 1, wc},
-    {"filter", "Filtra las vocales de la entrada estandar.", 1, filter}
+    {"filter", "Filtra las vocales de la entrada estandar.", 1, filter},
+    {"phylo", "Implementa el problema de los filosofos comensales.", 1, phylo},
 };
 
 ////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
