@@ -1,10 +1,13 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <syscalls.h>
 #include <library.h>
 #include <commands.h>
 #include <philosophers.h>
 
-#define MAX_PHILOSOPHERS 10
-#define MIN_PHILOSOPHERS 2
+#define MAX_PHILO 10
+#define MIN_PHILO 3
 
 typedef enum states{
     THINKING = 0,
@@ -12,196 +15,192 @@ typedef enum states{
     HUNGRY
 } states;
 
-typedef struct{
-    states state;
+typedef struct {
+    int state;
     int pid;
-    int leftFork;
-    int rightFork;
 } Philosopher;
 
-char* forks[MAX_PHILOSOPHERS] = {
-    "fork0", "fork1", "fork2", "fork3", "fork4",
-    "fork5", "fork6", "fork7", "fork8", "fork9"
-};
-
+Philosopher philosophers[MAX_PHILO];
+int philoCount = 0;
 char* mutex = "mutexPhilo";
 
-Philosopher philosophers[MAX_PHILOSOPHERS];
-int philosophersQuantity;
-int changeSem;
+char* forkNames[MAX_PHILO] = {
+    "fork0", "fork1", "fork2", "fork3", "fork4",
+    "fork5", "fork6", "fork7", "fork8", "fork9",
+};
 
-int phylo(int argc, char** argv) {
-    philosophersQuantity = 0;
-    changeSem = sys_semOpen(mutex, 1);
-    if (changeSem < 0) {
-        printf("Error creating change semaphore\n");
-        return -1;
-    }
-    char* args[MIN_PHILOSOPHERS][2];
-    for (int i = 0; i < MAX_PHILOSOPHERS; i++) {
-        if(sys_semOpen(forks[i], 1) < 0) {
-            printf("Error creating fork semaphore %d\n", i);
-            sys_semClose(mutex);
-            for (int j = 0; j < i; j++) {
-                sys_semClose(forks[j]);
-            }
-            return -1;
-        }
-        philosophers[i].state = THINKING;
-        
-    }
-
-    int* vec;
-    vec[0] = 0;
-    vec[1] = 1;
-
-    for(int i=0; i<MIN_PHILOSOPHERS; i++){
-        itoa(i, args[i][0]);
-        args[i][1] = 0;
-        philosophers[i].pid = sys_createProcess("philosopher", 1, 0, &philosopher, args[i], 1, vec);
-        if (philosophers[i].pid < 0) {
-            printf("Error creating philosopher %d\n", i);
-            sys_semClose(mutex);
-            for (int j = 0; j < MAX_PHILOSOPHERS; j++) {
-                sys_semClose(forks[j]);
-            }
-            return -1;
-        }
-        philosophers[i].state = THINKING;
-        philosophers[i].leftFork = sys_semOpen(forks[i], 1);
-        philosophers[i].rightFork = sys_semOpen(forks[(i + 1) % MAX_PHILOSOPHERS], 1);
-    }
-
+int phylo(int argc, char **argv) {
+    sys_semOpen(mutex, 1);
     printInstructions();
-    
-    while (1) {
-        char c = getChar();
-        if (!processInput(c)) {
-            break;
-        }
-        
+
+    for (int i = 0; i < MIN_PHILO; i++) {
+        addPhilo();
     }
-    
+
+    int running = 1;
+    while (running) {
+        char key = getChar();
+        running = processInput(key);
+    }
+
+    for(int i = 0; i < philoCount; i++) {
+        sys_semClose(forkNames[i]);
+        sys_killProcess(philosophers[i].pid);
+    }
+    philoCount = 0;
+    sys_semClose(mutex);
     return 0;
 }
 
-int philosopher(int argc, char** argv) {
-    int id = atoi(argv[0]);
-    char even = id % 2;
-    while (1) {
-        sys_sleep(1000); // Simulate thinking time
-        //sys_semWait(mutex);
-        if(even){
-            sys_semWait(forks[(id + philosophersQuantity - 1)%philosophersQuantity]);
-            sys_semWait(forks[id]);
-            philosophers[id].state = EATING;
-        }else{
-            sys_semWait(forks[id]);
-            sys_semWait(forks[(id + philosophersQuantity - 1)%philosophersQuantity]);
-            philosophers[id].state = EATING;
-        }
-        //sys_semPost(mutex);
-        sys_sleep(1000); // Simulate eating time
-        //sys_semWait(mutex);
-        sys_semPost(forks[id]);
-        sys_semPost(forks[(id+1)%philosophersQuantity]);
-        philosophers[id].state = THINKING;
-        //sys_semPost(mutex);
-        sys_semWait(mutex);
-        printPhilosopherStatus();
-        sys_semPost(mutex);
+void canEat(int i) {
+    int left = (i + philoCount - 1) % philoCount;
+    int right = (i + 1) % philoCount;
+    if(philosophers[left].state != EATING && philosophers[right].state != EATING){
+        philosophers[i].state = EATING;
+        sys_semPost(forkNames[i]);
+        
     }
 }
 
-int availableToEat(int i){
-    int left = (i + philosophersQuantity - 1) % philosophersQuantity;
-    int right = (i+1) % philosophersQuantity;
-    return philosophers[left].state != EATING && philosophers[right].state != EATING;
-}
-
-void thinking(int i){
+void think() {
     sys_sleep(1000);
 }
 
-void eating(int i){
+void eat() {
     sys_sleep(2000);
 }
 
-void takeForks(int i){
-    philosophers[i].state = HUNGRY;
-    if(availableToEat(i)){
-        philosophers[i].state = EATING;
-        sys_semWait(philosophers[i].leftFork);
-        sys_semWait(philosophers[i].rightFork);
-    }
-}
-
-void putForks(int i){
-    philosophers[i].state = THINKING;
-    sys_semPost(philosophers[i].leftFork);
-    sys_semPost(philosophers[i].rightFork);
-}
-
-void addPhilosopher(){
+void takeForks(int i) {
     sys_semWait(mutex);
-    if(philosophersQuantity < MAX_PHILOSOPHERS){
-        int i = philosophersQuantity;
-//        int idForkLeft = sys_semOpen();
-//        int idForkRight = sys_semOpen();
+    philosophers[i].state = HUNGRY;
+    canEat(i);
+    sys_semPost(mutex);
+    sys_semWait(forkNames[i]);
+}
+
+void putForks(int i) {
+    sys_semWait(mutex);
+    philosophers[i].state = THINKING;
+    canEat((i + philoCount - 1) % philoCount);
+    canEat((i + 1) % philoCount);
+    sys_semPost(mutex);
+}
+
+int philosopher(int argc, char **argv) {
+    int i = atoi(argv[0]);
+    philosophers[i].pid = sys_getPid();
+
+    while (1) {
+        think();
+        
+        takeForks(i);
+        
+        if (philosophers[i].state == EATING) {
+            eat();
+            putForks(i);   
+        }
+        printStatus();
+    }
+    return 0;
+}
+
+void addPhilo() {
+    if (philoCount >= MAX_PHILO) {
+        printf("Maximo de filosofos alcanzado, no se puede agregar mas.\n");
+        return;
+    }
+    sys_semWait(mutex);
+    if (philoCount < MAX_PHILO) {
+        int i = philoCount;
         philosophers[i].state = THINKING;
-//        philosophers[i].leftFork = sys_semOpen(idForkLeft, 1);
-//        philosophers[i].rightFork = sys_semOpen(idForkRight, 1);
+
+        sys_semOpen(forkNames[i], 1);
+
         char philoNumber[4];
         itoa(i, philoNumber);
         char *argv[] = {philoNumber, 0};
-        philosophersQuantity++;
-        int* vec;
-        vec[0] = 0;
-        vec[1] = 1;
-        sys_createProcess("philosopher", 1, 0, &philosopher, argv, 1, vec);
+
+        int fds[2] = {0, 1};
+        philosophers[i].pid = sys_createProcess("philosopher", 1, 0, (ProcessEntry)&philosopher, argv, 1, fds);
+
+        philoCount++;
+        printf("Filosofo %d creado\n", philoCount);
+        printStatus();
     }
     sys_semPost(mutex);
 }
 
-void removePhilosopher(){
-    sys_semWait(mutex); //changeSem
-    philosophersQuantity--;
-    sys_semClose(philosophers[philosophersQuantity].leftFork);
-    sys_semClose(philosophers[philosophersQuantity].rightFork);
-    sys_killProcess(philosophers[philosophersQuantity].pid);
+void removePhilo() {
+    if (philoCount <= MIN_PHILO) {
+        printf("No se puede eliminar mas filosofos, minimo alcanzado.\n");
+        return;
+    }
+    philoCount--;
+    int left = 0;
+    int right = philoCount - 1;
+    sys_semWait(mutex);
+    while(philosophers[left].state == EATING && philosophers[right].state == EATING) {
+        sys_semPost(mutex);
+        sys_semWait(forkNames[philoCount]);
+        sys_semWait(mutex);
+    }
+    sys_semClose(forkNames[philoCount]);
+    sys_killProcess(philosophers[philoCount].pid);
+    printf("Rip filosofo %d\n", philoCount + 1);
+    printStatus();
+    sys_semPost(mutex);
+}
 
-    sys_semPost(mutex); //changeSem
+void printInstructions() {
+    printf("\nWelcome to Philosophers!\n");
+    printf("\nMinimum philosophers: %d, Maximum philosophers: %d\n", MIN_PHILO, MAX_PHILO);
+
+    printf("Press 'a' to add a philosopher\n");
+    printf("Press 'r' to remove a philosopher\n");
+    printf("Press 'e' to exit\n");
+
+    printf("Press 's' to start\n");
+    char c = 0;
+    while (c != 's') {
+        c = getChar();
+    }
+    printf("\nPhylo starts in 3...");
+    sys_sleep(1000);
+    printf("2...");
+    sys_sleep(1000);
+    printf("1...");
+    sys_sleep(1000);
+    sys_clearScreen();
 }
 
 int processInput(char c) {
     if (c == 'a') {
-        addPhilosopher();
+        addPhilo();
         return 1;
-    } else if (c == 'r') {
-        if (philosophersQuantity > MIN_PHILOSOPHERS)
-            removePhilosopher();
+    }
+    if (c == 'r') {
+        removePhilo();
         return 1;
-    } else if (c == 'e') {
+    }
+    if(c == 'c'){
+        sys_clearScreen();
+        printStatus();
+        return 1;
+    }
+    if (c == 'e') {
         return 0;
     }
     return 1;
 }
 
-void printInstructions() {
-    printf("\n\t\t\tWelcome to Philosophers!\n");
-    printf("\t\t\tPress 'a' to add a philosopher\n");
-    printf("\t\t\tPress 'r' to remove a philosopher\n");
-    printf("\t\t\tPress 'e' to exit\n");
-}
-
-void printPhilosopherStatus() {
+void printStatus() {
+    clearIfNotEnoughSpace(1);
     printf("\t\t\t\t");
-    for (int i = 0; i < philosophersQuantity; i++) {
-        if (philosophers[i].state == EATING) { 
+    for (int i = 0; i < philoCount; i++) {
+        if (philosophers[i].state == EATING)
             putChar('E', 0x00FFFFFF);
-        } else {
+        else
             putChar('.', 0x00FFFFFF);
-        }
         putChar(' ', 0x00FFFFFF);
     }
     printf("\n");

@@ -7,10 +7,12 @@ int divx0(int argc, char *argv[]) {
     b = 1;
     c = b / a;
     a = c;
+    return 0;
 }
 
 
 int invalid(int argc, char *argv[]){
     invalidOperation();
     // codOpInvalidASM(); // se hace en asm
+    return 0;
 }

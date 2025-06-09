@@ -2,10 +2,10 @@
 #define PHILOSOPHERS_H
 
 int philosopher(int argc, char** argv);
-void printPhilosopherStatus();
+void printStatus();
 void printInstructions();
 int processInput(char c);
-void addPhilosopher();
-void removePhilosopher();
+void addPhilo();
+void removePhilo();
 
 #endif
