@@ -71,8 +71,6 @@ static Pipe* initPipe(int fds[2]) {
     return pipe;
 }
 
-
-
 int writePipe(int fd, const char *buffer, int bytes) {
     if (fd < BUILTIN_FDS || fd >= nextFd) { return -1;  }
     int index = getIndex(fd, 1);
@@ -134,40 +132,3 @@ static int getIndex(int fd, int pos) {
     }
     return -1;
 }
-
-
-/*
-int createPipe(int fds[2]) {
-    for (int i = 0; i < MAX_PIPES; i++) {
-        if (pipes[i] == NULL) {
-            pipes[i] = (Pipe *)myMalloc(sizeof(Pipe));
-            if (pipes[i] == NULL) { return -1;  }
-            pipes[i]->readPos = 0;
-            pipes[i]->writePos = 0;
-            pipes[i]->size = 0;
-            pipes[i]->fds[0] = nextFd++;
-            fds[0] = pipes[i]->fds[0];
-            pipes[i]->fds[1] = nextFd++;
-            fds[1] = pipes[i]->fds[1];
-            myItoa(pipes[i]->fds[0], pipes[i]->writeSem);
-            myItoa(pipes[i]->fds[1], pipes[i]->readSem);
-            myStrcat(pipes[i]->writeSem, "_w");
-            myStrcat(pipes[i]->readSem, "_r");
-
-            if (semOpen(pipes[i]->writeSem, PIPE_SIZE) == -1) {
-                myFree(pipes[i]);
-                pipes[i] = NULL;
-                return -1;
-            }
-            if (semOpen(pipes[i]->readSem, 0) == -1) {
-                semClose(pipes[i]->writeSem);
-                myFree(pipes[i]);
-                pipes[i] = NULL;
-                return -1;
-            }
-            return i;
-        }
-    }
-    return -1;
-}
-*/

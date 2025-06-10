@@ -127,7 +127,7 @@ void putchar(char c) {
 }*/
 int putString(char * c, uint32_t color) {
     uint32_t length = strlen(c);
-    return sys_write(STDOUT,(uint8_t *)c,length,color);
+    return sys_write(STDOUT,c,length,color);
 }
 //----------------------------------------------------------------------------------------
 int intToString(int num, char *str) {

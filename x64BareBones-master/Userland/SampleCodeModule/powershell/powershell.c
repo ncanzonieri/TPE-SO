@@ -20,15 +20,13 @@
 void welcome();
 void getCommands();
 static void startShell(char * v);
-static commandId_t belongs(char * v);
-static int invalidCommand(int argc, char ** argv);
 static int parser(char * input, inputCommand_t * command);
-
+int commandArgs(inputCommand_t* cmd, char * input);
 //static void runCommands(int index);
 
 command_t commands[INVALID_OPERATION] = {
     {"divx0", "Simula la excepion de dividir por 0.", 0, divx0},
-    {"invalid", "Simula la excepcion de codigo de operación invalida.", 0, invalid},
+    {"invalid", "Simula la excepcion de codigo de operacion invalida.", 0, invalid},
     {"help", "Imprime la lista de los comandos disponibles y su descripcion.", 0, help},
     {"time", "Imprime hora actual en Buenos Aires.", 0, actualTime},
     {"zoom", "Varia la escala del texto: <in> la aumenta, <out> la decrementa", 0, zoom},
@@ -36,7 +34,7 @@ command_t commands[INVALID_OPERATION] = {
     {"agro", "Imprime el escudo de Club Atletico Agropecuario.", 0, agro},
     {"date", "Imprime fecha actual en Buenos Aires.", 0, actualDate},
     {"snake", "Comienza el juego de snake." , 0, snake},
-    {"clear", "Limpia la pantalla.", 0, sys_clearScreen},
+    {"clear", "Limpia la pantalla.", 0, (mainFunction_t) sys_clearScreen},
     {"testMem", "Test del memory manager.", 1, testMM},
     {"mem", "Imprime el uso de memoria actual.", 1, memoryDump},
     {"ps", "Imprime informacion sobre los procesos vivos al momento.", 1, ps},
@@ -53,11 +51,6 @@ command_t commands[INVALID_OPERATION] = {
     {"filter", "Filtra las vocales de la entrada estandar.", 1, filter},
     {"phylo", "Implementa el problema de los filosofos comensales.", 1, phylo},
 };
-
-////FALTA AGREGAR EL SNAKE ANTES DE ZOOMIN
-mainFunction_t runFuncts[] = {divx0, invalid, help, actualTime, zoom, registers, agro, actualDate, snake, 
-sys_clearScreen, testMM, memoryDump, ps, testProcesses, testPriorities, testSync, loop, kill, nice, block, unblock,
-invalidCommand, cat, wc, filter};
 
 static void putUser(){
   sys_write(STDOUT_FD, "la-maquina-del-mal$>",21,GREEN);
@@ -107,26 +100,7 @@ static void startShell(char * v){
         return;
     }
     inputCommand_t cmd;
-    int foreground = parser(v, &cmd);
-    // int index = belongs(cmd.name);
-    // if(index < COMMANDS_COUNT && commands[index].processOrCommand){
-    //     cmd.pid = sys_createProcess(commands[index].name, 1, foreground, runFuncts[index], cmd.args, cmd.argCount, cmd.fds);
-    //     if(cmd.pid < 0){
-    //         sys_write(STDOUT_FD, "Error al crear el proceso.\n", 28, WHITE);
-    //         return;
-    //     }
-    //     if(foreground){
-    //         sys_waitForChildren(cmd.pid); //ACA QUE ONDA
-    //     }
-    // }else{
-    //     runFuncts[index](0,NULL);
-    // }
-    
-}
-
-static int invalidCommand(int argc, char ** argv){
-    sys_write(STDOUT_FD, "Comando desconocido. Use 'help' para conocer los disponibles.\n", 55, WHITE);
-    return 0;
+    parser(v, &cmd);
 }
 
 static int parser(char * input, inputCommand_t * command){
@@ -178,10 +152,10 @@ static int parser(char * input, inputCommand_t * command){
                     return commands[j].function(inputCommands[i].argCount,inputCommands[i].args);
                 }
                 else{
-                    int* vector;
+                    int* vector = {0};
                     vector[0] = inputCommands[i].fds[0];
                     vector[1] = inputCommands[i].fds[1];
-                    inputCommands[i].pid = sys_createProcess(inputCommands[i].name, 1, foreground, commands[j].function, inputCommands[i].args, 
+                    inputCommands[i].pid = sys_createProcess(inputCommands[i].name, 1, foreground, (ProcessEntry)commands[j].function, inputCommands[i].args, 
                         inputCommands[i].argCount, vector);
 					if (inputCommands[i].pid == -1) {
                         printf("Error creating process.");
@@ -191,7 +165,7 @@ static int parser(char * input, inputCommand_t * command){
             }
         }
         if(!flag){
-            printf( "Command not found.");
+            printf( "Command not found.\n");
 			for (int j = 0; j < commandsToExecute; j++) {
 				if (inputCommands[j].pid != -1) {
 					sys_killProcess(inputCommands[j].pid);
@@ -248,13 +222,3 @@ int commandArgs(inputCommand_t* cmd, char * input){
     return foreground;
 }
 
-
-static commandId_t belongs(char * v){ 
-    commandId_t i;
-    for( i=0; i < INVALID_OPERATION; i++){
-        if( strcmp(v, commands[i].name) == 0){
-            return i;
-        }
-    }
-    return i;
-}

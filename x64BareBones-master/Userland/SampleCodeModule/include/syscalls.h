@@ -63,9 +63,13 @@ enum registers_idx {
 };
 
 
-uint64_t sys_read(int fd, char * buffer, int count);
+//uint64_t sys_read(int fd, char * buffer, int count);
+uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count);
 
-uint64_t sys_write(int fd, const char * buffer, int count, uint32_t color);
+
+//uint64_t sys_write(int fd, const char * buffer, int count, uint32_t color);
+uint64_t sys_write(uint8_t fd, char * buffer, uint64_t count, uint32_t color);
+
 
 
 uint64_t sys_drawRectangle(uint32_t hexColor, uint64_t x, uint64_t y, uint64_t width, uint64_t height);
@@ -111,7 +115,8 @@ int64_t sys_semClose(char* semId);
 int64_t sys_semWait(char* semId);
 int64_t sys_semPost(char* semId);
 
-int64_t sys_createPipe(char* pipeId);
-int64_t sys_destroyPipe(char* pipeId);
+int64_t sys_createPipe(int fds[2]);
+//
+int64_t sys_destroyPipe(int writeFd);
 
 #endif

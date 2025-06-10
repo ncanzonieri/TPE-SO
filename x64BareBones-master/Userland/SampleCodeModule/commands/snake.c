@@ -348,7 +348,8 @@ void deleteTail(struct snakeStruct * s){
 
  int keyPlayerOne(snakeStruct * s){
     int flag =0;
-    char c = 0;
+//    char c = 0;
+    uint8_t c = 0;
     sys_read(STDIN_FD,&c,1);
     switch (c){
         case KEY_ESC:
@@ -388,7 +389,8 @@ void deleteTail(struct snakeStruct * s){
 
  int keyPlayerTwo(snakeStruct *s1, snakeStruct *s2){
     int flagS1 = 0, aux = 0;
-    char c = 0;
+//    char c = 0;
+    uint8_t c = 0;
     sys_read(STDIN_FD,&c,1);
     switch (c) {
         case KEY_ESC: // Quit game (ESC)

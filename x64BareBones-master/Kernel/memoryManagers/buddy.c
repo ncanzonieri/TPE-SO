@@ -33,7 +33,7 @@ typedef struct MemoryManagerCDT * memManager;
 static memoryStats_t memoryStats;
 
 static memManager getMemoryManager() {
-	return (memManager) MM_ADDRESS;
+	return (memManager) 0x50000;
 }
 
 void createMemoryManager(void *startAddress, uint32_t memorySize) {

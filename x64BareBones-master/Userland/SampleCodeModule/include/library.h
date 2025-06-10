@@ -29,6 +29,8 @@ char toLower(char c);
 
 int putString(char * c, uint32_t color);
 
+char *strchr(char * input, int character);
+
 int intToString(int num, char *str);
 
 int hexToString(uint64_t num, char *toPrint);

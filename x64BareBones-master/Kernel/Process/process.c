@@ -58,48 +58,6 @@ uint64_t getPid() {
     return scheduler->currentPid;
 }
 
-char* processInfo(Process process) {
-    static char status[16];
-    myStrncpy(status, "", 16);
-    
-    switch (process->status) {
-        case READY:
-            myStrncpy(status, "REA", 14);
-            break;
-        case RUNNING:
-            myStrncpy(status, "RUN", 14);
-            break;
-        case BLOCKED:
-            myStrncpy(status, "BLO", 14);
-            break;
-        case TERMINATED:
-            myStrncpy(status, "TER", 14);
-            break;
-        default:
-            myStrncpy(status, "UNKNOWN", 14);
-            return status;
-    }
-    if (process->priority == 4) {
-        myStrncpy(status + myStrlen(status), " - HIGH - ", 14 - myStrlen(status));
-    }
-    else if (process->priority == 3) {
-        myStrncpy(status + myStrlen(status), " - MEDH - ", 14 - myStrlen(status));
-    }
-    else if (process->priority == 2) {
-        myStrncpy(status + myStrlen(status), " - MEDL - ", 14 - myStrlen(status));
-    }
-    else if (process->priority == 1) {
-        myStrncpy(status + myStrlen(status), " - LOW - ", 14 - myStrlen(status));
-    }
-    if (process->foreground) {
-        myStrncpy(status + myStrlen(status), "F", 14 - myStrlen(status));
-    }
-    else if (process->pid == INIT_PID) {
-        myStrncpy(status + myStrlen(status), "I", 14 - myStrlen(status));
-    }
-    return status;
-}
-
 int64_t waitChildren(uint64_t pid) {
     Sched scheduler = getScheduler();
     if (scheduler == NULL || pid >= MAX_PROCESSES || pid == INIT_PID) {
@@ -116,20 +74,4 @@ int64_t waitChildren(uint64_t pid) {
     scheduler->processes[scheduler->currentPid].wPid = INIT_PID;
     int64_t retValue = scheduler->processes[pid].retValue;
     return retValue;
-
-    // Process child = getProcess(pid);
-    // if (child == NULL) {
-    //     return -1;
-    // }
-    // Process parent = getProcess(child->pPid);
-    
-    // if (child->status != TERMINATED) {
-    //     parent->wPid = pid;
-    //     blockProcess(parent->pid);
-    //     //_yield();
-    // }
-    // int8_t retValue = child->retValue;
-    // child->status = TERMINATED;
-    // scheduler->processCount--;
-    // return retValue;
 }

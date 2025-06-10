@@ -59,6 +59,7 @@ void canEat(int i) {
         philosophers[i].state = EATING;
         sys_semPost(forkNames[i]);
         printStatus();
+        printStatus();
     }
 }
 
@@ -132,29 +133,15 @@ void addPhilo(int i) {
     sys_semPost(mutex);
 }
 
-void removePhilo(int i) {
-    
+void removePhilo() {
     if (philoCount <= MIN_PHILO) {
         printf("No se puede eliminar mas filosofos, minimo alcanzado.\n");
         return;
     }
     sys_semWait(mutex);
-<<<<<<< Updated upstream
-    int right = (i + 1) % philoCount;
-    int left = (i + philoCount - 1) % philoCount;
-    while(philosophers[left].state == EATING && philosophers[right].state == EATING) {
-        sys_semPost(mutex);
-        sys_semWait(forkNames[i]);
-        sys_semWait(mutex);
-    }
-    sys_semClose(forkNames[i]);
-    sys_killProcess(philosophers[i].pid);
-    printf("Rip filosofo %d\n", philoCount);
-    philoCount--;
-=======
     int idx = philoCount - 1;
-//    int left = (idx + philoCount - 1) % philoCount;
-//    int right = (idx + 1) % philoCount;
+//   int left = (idx + philoCount - 1) % philoCount;
+//   int right = (idx + 1) % philoCount;
 
     while (philosophers[idx].state == EATING) {
         sys_semPost(mutex);
@@ -166,10 +153,10 @@ void removePhilo(int i) {
     sys_killProcess(philosophers[idx].pid);
     philoCount--;
     printf("Rip filosofo %d\n", philoCount + 1);
->>>>>>> Stashed changes
     printStatus();
     sys_semPost(mutex);
 }
+
 
 void printInstructions() {
     printf("\nWelcome to Philosophers!\n");
