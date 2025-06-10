@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <snake.h>
 #include <commands.h>
 #include <syscalls.h>
@@ -55,7 +57,7 @@ static void startTitle(){
     char* details[]={"Player 1:\n\tMoves with W A S D\n\tStarts in the left\n",
     "Player 2:\n\tMoves with I J K L\n\tStarts in the right\n"};
     for(int i=0; i<flagPlayers; i++){
-        printf(details[i]);
+        printf("%s",details[i]);
     }
     printf("\t\t\t\tSnake game starts in 3...");
     sys_sleep(1000);

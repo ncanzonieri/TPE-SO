@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <videoDriver.h>
 #include <fontDriver.h>
 #include <stdint.h>
@@ -41,8 +43,8 @@ struct vbe_mode_info_structure {
 	uint8_t reserved1[206];
 } __attribute__ ((packed));
 
-static uint64_t cx=0;
-static uint64_t cy=16;
+static uint64_t coordenadaX=0;
+static uint64_t coordenadaY=16;
 static uint32_t bgColor=0x00000000;
 static uint8_t scale=1;
 
@@ -84,13 +86,13 @@ void printCharacter(uint32_t hexCollor, char c, uint64_t x, uint64_t y){
 }
 
 uint64_t printStringInCoord(uint32_t hexCollor, char* s, uint64_t x, uint64_t y){
-	uint64_t auxX=cx;
-	uint64_t auxY=cy;
-	cx=0;
-	cy=0;
+	uint64_t auxX=coordenadaX;
+	uint64_t auxY=coordenadaY;
+	coordenadaX=0;
+	coordenadaY=0;
 	uint64_t ans =printString(hexCollor,s);
-	cx=auxX;
-	cy=auxY;
+	coordenadaX=auxX;
+	coordenadaY=auxY;
 	return ans;
 }
 
@@ -102,29 +104,29 @@ uint64_t printStringLength(uint32_t hexCollor, char* s, uint64_t count){
 				newLine();
 				break;
 			case '\t':
-				if(cx+ 4*8 >= VBE_mode_info->width){
+				if(coordenadaX+ 4*8 >= VBE_mode_info->width){
 					newLine();
 				}else{
 					for(int i=0; i<4; i++){
-						printCharacter(hexCollor, ' ', cx, cy);
+						printCharacter(hexCollor, ' ', coordenadaX, coordenadaY);
 						nextBlank();
 					}
 				}
 				break;
 			case '\b':
-				if(cx<8*scale){
-					if(cy>=16*scale){
-						cy-=16*scale;
-						cx=VBE_mode_info->width-8*scale;
-						cx-=cx%(8*scale);
+				if(coordenadaX<8*scale){
+					if(coordenadaY>=16*scale){
+						coordenadaY-=16*scale;
+						coordenadaX=VBE_mode_info->width-8*scale;
+						coordenadaX-=coordenadaX%(8*scale);
 					}
 				}else{
-					cx-=8*scale;
+					coordenadaX-=8*scale;
 				}
-				printCharacter(hexCollor, ' ', cx, cy);
+				printCharacter(hexCollor, ' ', coordenadaX, coordenadaY);
 				break;
 			default:
-				printCharacter(hexCollor, *s, cx, cy);
+				printCharacter(hexCollor, *s, coordenadaX, coordenadaY);
 				nextBlank();
 				break;
 		}
@@ -140,29 +142,29 @@ uint64_t printString(uint32_t hexCollor, char* s){
 				newLine();
 				break;
 			case '\t':
-				if(cx+ 4*8 >= VBE_mode_info->width){
+				if(coordenadaX+ 4*8 >= VBE_mode_info->width){
 					newLine();
 				}else{
 					for(int i=0; i<4; i++){
-						printCharacter(hexCollor, ' ', cx, cy);
+						printCharacter(hexCollor, ' ', coordenadaX, coordenadaY);
 						nextBlank();
 					}
 				}
 				break;
 			case '\b':
-				if(cx<8*scale){
-					if(cy>=16*scale){
-						cy-=16*scale;
-						cx=VBE_mode_info->width-8*scale;
-						cx-=cx%(8*scale);
+				if(coordenadaX<8*scale){
+					if(coordenadaY>=16*scale){
+						coordenadaY-=16*scale;
+						coordenadaX=VBE_mode_info->width-8*scale;
+						coordenadaX-=coordenadaX%(8*scale);
 					}
 				}else{
-					cx-=8*scale;
+					coordenadaX-=8*scale;
 				}
-				printCharacter(hexCollor, ' ', cx, cy);
+				printCharacter(hexCollor, ' ', coordenadaX, coordenadaY);
 				break;
 			default:
-				printCharacter(hexCollor, *s, cx, cy);
+				printCharacter(hexCollor, *s, coordenadaX, coordenadaY);
 				nextBlank();
 				break;
 		}
@@ -197,8 +199,8 @@ void printInt(int num) {
         j++;
     }
     printString(0xFFFFFF, buffer);
-    cx += (length) * 8 * scale;
-    if (cx >= VBE_mode_info->width) {
+    coordenadaX += (length) * 8 * scale;
+    if (coordenadaX >= VBE_mode_info->width) {
         newLine();
     }
 }
@@ -230,27 +232,27 @@ void printHex(uint64_t value) {
     buffer[i + 1] = '\n';
     buffer[i + 2] = 0;
     printString(0xFFFFFF, buffer);
-    cx += (i + 2) * 8 * scale;
-    if (cx >= VBE_mode_info->width) {
+    coordenadaX += (i + 2) * 8 * scale;
+    if (coordenadaX >= VBE_mode_info->width) {
         newLine();
     }
 }
 
 void nextBlank(){
-	if(cx+8*scale >= VBE_mode_info->width){
+	if(coordenadaX+8*scale >= VBE_mode_info->width){
 		newLine();
 	}else{
-		cx+=8*scale;
+		coordenadaX+=8*scale;
 	}
 }
 
 void newLine(){
-	cy+=16*scale;
-	cx=0;
+	coordenadaY+=16*scale;
+	coordenadaX=0;
 }
 
 uint64_t getCoords(){
-	return (cy << 32) | ((uint32_t) cx);
+	return (coordenadaY << 32) | ((uint32_t) coordenadaX);
 }
 
 void drawRectangle(uint32_t hexColor, uint64_t x, uint64_t y, uint64_t width, uint64_t height){
@@ -263,8 +265,8 @@ void drawRectangle(uint32_t hexColor, uint64_t x, uint64_t y, uint64_t width, ui
 
 void clearScreen(){
 	drawRectangle(bgColor, 0, 0, VBE_mode_info->width, VBE_mode_info->height );
-	cx=0;
-	cy=0;
+	coordenadaX=0;
+	coordenadaY=0;
 }
 
 void setBGColor(uint32_t hexCollor){

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <keyboardDriver.h>
 #include <stdint.h>
 #include <videoDriver.h>
@@ -100,7 +102,7 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t * otherRegs){
 //USO BUFFER DE KEYBOARD2.C SE LO PASO COMO PARAMETRO
 uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
     
-    if(fd < 0 || count <= 0){ return -1; }
+    if(count == 0){ return -1; }
     if(fd != STDIN){
        return readPipe(fd, (char*)buffer, count);
     }
@@ -180,9 +182,9 @@ uint64_t sys_sleep(uint64_t millis) {
 
 uint64_t sys_playSound(uint64_t f, uint64_t millis) {
     playSound(f);
-    sys_sleep(millis);
+    uint64_t ans = sys_sleep(millis);
     stopSound();
-    return 1;
+    return ans;
 }
 
 uint64_t sys_setBgColor(uint32_t color) {

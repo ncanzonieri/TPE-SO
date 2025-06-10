@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "scheduler.h"
 #include "../include/pipes.h"
 
@@ -88,11 +90,12 @@ uint16_t unblockProcess(uint64_t pid) {
 
 uint64_t killProcess(uint64_t pid) {
     Sched scheduler = getScheduler();
-    Process process = &scheduler->processes[pid];
-    Process parent = &scheduler->processes[process->pPid];
     if (pid <= INIT_PID + 1 || pid >= MAX_PROCESSES || scheduler->processes[pid].status == TERMINATED) {
         return 0;
     }
+    Process process = &scheduler->processes[pid];
+    Process parent = &scheduler->processes[process->pPid];
+    
 
     if (parent != NULL && parent->status == BLOCKED &&
 		parent->wPid == process->pid) {

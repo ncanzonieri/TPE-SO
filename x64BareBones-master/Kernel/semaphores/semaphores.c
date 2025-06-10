@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "../include/semaphores.h"
 
 struct SemCDT {
@@ -15,7 +17,6 @@ struct SemManagerCDT {
 
 SemManager createSemManager() {
     SemManager semManager = (SemManager) SEMAPHORE_ADDRESS;
-    if (semManager == NULL) return NULL;
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
         semManager->semaphores[i] = NULL;
     }

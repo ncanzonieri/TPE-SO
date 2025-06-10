@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <library.h>
 #include <syscalls.h>
 #include <library.h>
@@ -58,7 +60,7 @@ static char* m[] = {
 
 int agro(int argc, char *argv[]){
     sys_clearScreen();
-    for (int i = 0; i < 51; i++) {
+    for (int i = 0; i < 48; i++) {
         sys_write(1,m[i],strlen(m[i])+1,WHITE);
     }
     return 0;

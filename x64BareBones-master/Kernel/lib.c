@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #define NULL ((void*)0)
 
@@ -144,13 +146,21 @@ uint64_t myStrcat(char* dest, const char* src) {
     return destLen + i;
 }
 
-uint8_t log2(uint64_t inputSize) {
-    unsigned int levelCount = 0;
-    uint64_t currentValue = 1;
-    while (currentValue < inputSize) {
-        currentValue *= 2;
-        levelCount++;
+uint8_t log2(uint64_t n) {
+    unsigned int count = 0;
+    uint64_t aux = 1;
+    while (aux < n) {
+        aux *= 2;
+        count++;
     }
-    return levelCount;
+    return count;
 }
 
+uint32_t align(uint32_t x) {
+	x |= x >> 1;
+	x |= x >> 2;
+	x |= x >> 4;
+	x |= x >> 8;
+	x |= x >> 16;
+	return x + 1;
+}

@@ -8,6 +8,8 @@
 #define MIN_SIZE 32
 #define MIN_LEVEL 1
 #define MAX_LEVEL 24
+#define MEM_FOR_MM 0x100000
+#define START_MM 0xF00000
 
 typedef struct memoryStats {
 	uint64_t totalMemory;

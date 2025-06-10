@@ -18,6 +18,7 @@ uint64_t myStrcat(char* dest, const char* src);
 int argCount(char** arr);
 int myStrcmp(const char *s1, const char *s2);
 char *cpuVendor(char *result);
+uint32_t align(uint32_t x);
 
 uint8_t log2(uint64_t inputSize);
 

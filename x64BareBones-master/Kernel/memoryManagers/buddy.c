@@ -1,236 +1,167 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #ifdef BUDDY
-
 #include <MemoryManagerADT.h>
 #include <lib.h>
 #include <videoDriver.h>
 #include <stddef.h>
 
-typedef struct BuddyBlock {
-	struct BuddyBlock * prev;
-	struct BuddyBlock * next;
-	int level;
-	char isFree;
-} BuddyBlock;
-
-typedef struct BuddyBlock * Block;
-
-static Block splitBlock(Block block);
-static Block createFreeBlock(void* startAddress, int level, Block next, Block prev);
-static Block findBlock(int level);
-static void mergeBlock(Block block);
-static void addBlock(Block block);
-static void removeBlock(Block block);
-
-
-struct MemoryManagerCDT {
+typedef struct buddyBlock {
+	struct buddyBlock *left;
+	struct buddyBlock *right;
+	void *address;
 	uint64_t size;
-	void* startAddress;
-	uint64_t maxLevels;
-	Block freeList[MAX_LEVEL];
-}MemoryManagerCDT;
+	uint32_t status;
+	uint32_t index;
+} buddyBlock_t;
 
-typedef struct MemoryManagerCDT * memManager;
+typedef enum { EMPTY = 0,
+			   FULL,
+			   SPLIT } status_t;
+
+typedef buddyBlock_t *node_t;
+
+#define IS_POWER_OF_2(x) (!((x) & ((x) - 1)))
+
+static void *mallocRec(node_t node, uint32_t size);
+static uint8_t hasNoChildren(node_t node);
+static void freeRec(node_t node, void *ptr);
+static void setBlockState(node_t node);
+static void setChildren(node_t node);
+
+static node_t memoryManager;
+static uint64_t usedMemory = 0;
 static memoryStats_t memoryStats;
 
-static memManager getMemoryManager() {
-	return (memManager) 0x50000;
-}
-
 void createMemoryManager(void *startAddress, uint32_t memorySize) {
-	memManager mem = getMemoryManager();
-	mem->startAddress = startAddress;
-	mem->size = memorySize;
-	mem->maxLevels = log2(memorySize);
-
-	if (mem->maxLevels > MAX_LEVEL) {
-		printString(0xFF0000,"Error, tamaño de memoria demasiado grande");
-	}
-	else if (mem->maxLevels < MIN_LEVEL) {
-		printString(0xFF0000, "Error, tamaño de memoria demasiado pequeño");
-	}
-
-	for (int i = 0; i < mem->maxLevels; i++) {
-		mem->freeList[i] = NULL;
-	}
-
-	int level = mem->maxLevels - 1;
-	mem->freeList[level] = createFreeBlock(startAddress, level, NULL, NULL);
-    memoryStats.totalMemory = memorySize;
-    memoryStats.usedMemory = 0;
-    memoryStats.freeMemory = memorySize;
+	memoryManager = (node_t) MM_ADDRESS;
+	memoryManager->address = startAddress;
+	memoryManager->index = 0;
+	memoryManager->size = memorySize;
+	memoryManager->status = EMPTY;
+	memoryManager->left = NULL;
 }
 
-void *myMalloc(uint32_t size){
-	int level = log2(size + sizeof(BuddyBlock));
-
-	if (level < MIN_LEVEL) {
-		level = MIN_LEVEL;
-	}
-	else if (level > MAX_LEVEL) {
+void *myMalloc(uint32_t blockSize) {
+	if (blockSize < MIN_SIZE)
+		blockSize = MIN_SIZE;
+	else if (blockSize > memoryManager->size) {
 		return NULL;
 	}
-
-	Block block = findBlock(level);
-	if (block == NULL) {
-		return NULL;
+	if (!IS_POWER_OF_2(blockSize)) {
+		blockSize = align(blockSize);
 	}
-    memoryStats.usedMemory += (1ULL << block->level);
-    memoryStats.freeMemory -= (1ULL << block->level);
-	return (void *) ((uint64_t) block + sizeof(BuddyBlock));
+	return mallocRec(memoryManager, blockSize);
 }
 
-void myFree(void *ptr){
-	if (ptr == NULL) {
+static void *mallocRec(node_t node, uint32_t size) {
+	if (node->status == FULL) {
+		return NULL;
+	}
+	if (node->left != NULL || node->right != NULL) {
+		void *aux = mallocRec(node->left, size);
+		if (aux == NULL) {
+			return mallocRec(node->right, size);
+		}
+		setBlockState(node);
+		return aux;
+	}
+	else {
+		if (size > node->size) {
+			return NULL;
+		}
+		if ((node->size / 2) >= size) {
+			setChildren(node);
+			void *ans = mallocRec(node->left, size);
+			setBlockState(node);
+			return ans;
+		}
+		node->status = FULL;
+		usedMemory += size;
+		return node->address;
+	}
+}
+
+static void setBlockState(node_t node) {
+	if (hasNoChildren(node)) {
+		node->status = EMPTY;
+	}
+	else if (node->left->status == FULL && node->right->status == FULL) {
+		node->status = FULL;
+	}
+	else if (node->left->status == FULL || node->right->status == FULL ||
+			 node->left->status == SPLIT || node->right->status == SPLIT) {
+		node->status = SPLIT;
+	}
+	else {
+		node->status = EMPTY;
+	}
+}
+
+static uint8_t hasNoChildren(node_t node) {
+	return (node->left == NULL || node->right == NULL);
+}
+
+static void setChildren(node_t node) {
+	uint32_t parentIdx = node->index;
+	uint32_t leftIdx = parentIdx * 2 + 1;
+	uint64_t childrenSize = ((uint64_t) (node->size) / 2);
+	node->left = node + leftIdx;
+
+	if ((uint64_t) node->left >= START_MM) {
 		return;
 	}
+	node->left->index = leftIdx;
+	node->left->size = childrenSize;
+	node->left->address = node->address;
+	node->left->status = EMPTY;
 
-	Block block = (Block) ((uint64_t) ptr - sizeof(BuddyBlock));
-
-	if (block->isFree) {
+	unsigned int rightIdx = leftIdx + 1;
+	node->right = node + rightIdx;
+	if ((uint64_t) node->right >= START_MM) {
 		return;
 	}
+	node->right->index = rightIdx;
+	node->right->size = childrenSize;
+	node->right->address = (void *) ((uint64_t) (node->address) + childrenSize);
+	node->right->status = EMPTY;
+}
 
-	block->isFree = 1;
-    memoryStats.usedMemory -= (1ULL << block->level);
-    memoryStats.freeMemory += (1ULL << block->level);
-	mergeBlock(block);
+void myFree(void *ptr) {
+	freeRec(memoryManager, ptr);
+}
+
+static void freeRec(node_t node, void *ptr) {
+	if (node == NULL) {
+		return;
+	}
+	if (node->left != NULL || node->right != NULL) {
+		if (node->right != 0 && (uint64_t) node->right->address > (uint64_t) ptr) {
+			freeRec(node->left, ptr);
+		}
+		else {
+			freeRec(node->right, ptr);
+		}
+		setBlockState(node);
+		if (node->status == EMPTY) {
+			node->right = NULL;
+			node->left = NULL;
+		}
+	}
+	else if (node->status == FULL) {
+		if (node->address == ptr) {
+			node->status = EMPTY;
+			usedMemory -= node->size;
+		}
+	}
+	return;
 }
 
 memoryStats_t *memDump(){
-    memManager memoryManager = getMemoryManager();
+	memoryStats.usedMemory = usedMemory;
 	memoryStats.totalMemory = memoryManager->size;
+	memoryStats.freeMemory = memoryManager->size - usedMemory;
     memoryStats.isBuddy = 1;
     return &memoryStats;
 }
-
-static Block createFreeBlock(void * startAddress, int level, Block next, Block prev) {
-	Block block = (Block) startAddress;
-	block->level = level;
-	block->isFree = 1;
-	block->next = next;
-	block->prev = prev;
-	return block;
-}
-
-static Block splitBlock(Block block) {
-	memManager mem = getMemoryManager();
-	int newLevel = block->level - 1;
-
-	block->level = newLevel;
-
-	Block buddy = (Block ) ((uint64_t) block + (1 << newLevel));
-
-	buddy->level = newLevel;
-	buddy->isFree = 1;
-	buddy->next = mem->freeList[newLevel];
-	buddy->prev = NULL;
-
-	if (mem->freeList[newLevel] != NULL) {
-		mem->freeList[newLevel]->prev = buddy;
-	}
-	mem->freeList[newLevel] = buddy;
-
-	return block;
-}
-
-static Block findBlock(int level) {
-	memManager mem = getMemoryManager();
-
-	if (level > mem->maxLevels) {
-		return NULL;
-	}
-
-	for (int i = level; i <= mem->maxLevels; i++) {
-		if (mem->freeList[i] != NULL) {
-			Block block = mem->freeList[i];
-
-			mem->freeList[i] = block->next;
-			if (block->next != NULL) {
-				block->next->prev = NULL;
-			}
-			block->next = block->prev = NULL;
-
-			while (i > level) {
-				block = splitBlock(block);
-				i--;
-			}
-
-			block->isFree = 0;
-			return block;
-		}
-	}
-
-	return NULL;
-}
-
-static void mergeBlock(Block block) {
-	memManager mem = getMemoryManager();
-
-	int level = block->level;
-
-	uint64_t blockOffset = (uint64_t) block - (uint64_t) mem->startAddress;
-	uint64_t buddyIndex = blockOffset / (1ULL << level);
-	uint64_t buddyOffset = 0;
-
-	if (buddyIndex % 2 == 0) {
-		buddyOffset = blockOffset + (1ULL << level);
-	}
-	else {
-		buddyOffset = blockOffset - (1ULL << level);
-	}
-
-	Block buddy = (Block) ((uint64_t) mem->startAddress + buddyOffset);
-
-	if ((uint64_t) buddy < (uint64_t) mem->startAddress ||
-		(uint64_t) buddy >= (uint64_t) mem->startAddress + mem->size) {
-		addBlock(block);
-		return;
-	}
-
-	if (buddy->isFree && buddy->level == level) {
-		removeBlock(buddy);
-
-		Block mergedBlock = (block < buddy) ? block : buddy;
-		mergedBlock->level = level + 1;
-//        memoryStats.usedMemory -= (1ULL << level);
-//        memoryStats.freeMemory += (1ULL << level);
-		mergeBlock(mergedBlock);
-	}
-	else {
-		addBlock(block);
-	}
-}
-
-static void addBlock(Block block) {
-	memManager mem = getMemoryManager();
-	int level = block->level;
-
-	block->isFree = 1;
-	block->next = mem->freeList[level];
-	block->prev = NULL;
-
-	if (mem->freeList[level] != NULL) {
-		mem->freeList[level]->prev = block;
-	}
-	mem->freeList[level] = block;
-}
-
-static void removeBlock(Block block) {
-	memManager mem = getMemoryManager();
-	int level = block->level;
-
-	if (block->prev != NULL) {
-		block->prev->next = block->next;
-	}
-	else {
-		mem->freeList[level] = block->next;
-	}
-
-	if (block->next != NULL) {
-		block->next->prev = block->prev;
-	}
-
-	block->next = block->prev = NULL;
-}
-
 #endif

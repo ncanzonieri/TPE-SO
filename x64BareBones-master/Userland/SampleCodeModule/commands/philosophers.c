@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <syscalls.h>
 #include <library.h>
@@ -133,15 +135,13 @@ void addPhilo(int i) {
     sys_semPost(mutex);
 }
 
-void removePhilo() {
+void removePhilo(int idx) {
+    
     if (philoCount <= MIN_PHILO) {
         printf("No se puede eliminar mas filosofos, minimo alcanzado.\n");
         return;
     }
     sys_semWait(mutex);
-    int idx = philoCount - 1;
-//   int left = (idx + philoCount - 1) % philoCount;
-//   int right = (idx + 1) % philoCount;
 
     while (philosophers[idx].state == EATING) {
         sys_semPost(mutex);
