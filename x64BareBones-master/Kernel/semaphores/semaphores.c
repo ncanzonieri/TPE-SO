@@ -21,6 +21,7 @@ SemManager createSemManager() {
         semManager->semaphores[i] = NULL;
     }
     semManager->size = 0;
+    semOpen("sem_del_kb", 0);
     return semManager;
 }
 

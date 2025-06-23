@@ -114,6 +114,8 @@ uint64_t sys_read(uint8_t fd, uint8_t* buffer, uint64_t count){
         for (int i = 0; i < count; i++) {
             char c = getKeyboardChar();
             if (c == 0) {
+                //uint64_t waitingPid = sys_getPid();
+                //sys_blockProcess(waitingPid);
                 return i; //cuantos caracteres fueron leidos
             }
             buffer[i] = c;

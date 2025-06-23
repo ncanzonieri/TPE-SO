@@ -58,6 +58,7 @@ static struct {
 
 static volatile uint64_t cpuRegisters[REGS_AMOUNT];
 static uint64_t registersAvailable = 0;
+static int64_t waitingPid = -1;
 
 int64_t keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
     uint8_t scancode = getKeyCode();
@@ -80,7 +81,14 @@ int64_t keyboard_handler() { // lo llama desde IrqKeyboard (IDT)
         
         //loadRegisters();
     } else if (asciiChar) {
-        insertCharIntoBuffer(asciiChar);
+        //insertCharIntoBuffer(asciiChar);
+        if(insertCharIntoBuffer(asciiChar)){
+            // if(waitingPid != 1){
+            //     sys_unblockProcess(waitingPid);
+            //     waitingPid = -1;
+            // }
+            semPost("sem_del_kb");
+        }
     }
     return 0;
     
@@ -142,7 +150,9 @@ static char insertCharIntoBuffer(char c) {
 }
 
 static char removeCharFromBuffer() {
-    if (isBufferEmpty()) return 0;
+    
+    // if (isBufferEmpty()) return 0;
+    semWait("sem_del_kb");
     char c = buffer.data[buffer.readIndex];
     buffer.readIndex = (buffer.readIndex + 1) % BUFFER_SIZE;
     buffer.count--;
